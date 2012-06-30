@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+	<head>
+{% block head %}
+	{% block metas %}{{ metas }}{% endblock %}
+	{% block links %}
+<link rel="stylesheet" type="text/css" href="/css/suture.php{% set styleAmp = '?' %}{% for style in styles %}{{ styleAmp ~ style }}{% set styleAmp = '&' %}{% endfor %}" />
+	{% endblock %}
+	{% block scripts %}
+<script type="text/javascript" src="/js/suture.php{% set scriptAmp = '?' %}{% for script in scripts %}{{ scriptAmp ~ script }}{% set scriptAmp = '&' %}{% endfor %}"></script>
+	{% endblock %}
+	<title>{% block title %}{{ title }}{% endblock %}</title>
+{% endblock %}
+	</head>
+	<body>
+{% block body %}
+	{{ content }}
+{% endblock %}
+	</body>
+</html>
