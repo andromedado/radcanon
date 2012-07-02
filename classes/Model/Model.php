@@ -36,7 +36,11 @@ abstract class Model {
 	}
 	
 	public function getData () {
-		return static::$AllData[$this->id];
+		$d = static::$AllData[$this->id];
+		foreach ($this->readOnly as $f) {
+			$d[$f] = $this->$f;
+		}
+		return $d;
 	}
 	
 	public function __get ($property) {
@@ -52,6 +56,10 @@ abstract class Model {
 		$this->load();
 	}
 	
+	public function idInArray (array $haystack) {
+		return in_array($this->id, $haystack);
+	}
+	
 	public function safeFindAll (array $options) {
 		$options['fields'] = UtilsArray::filterWithWhiteList(isset($options['fields']) ? $options['fields'] : array(), $this->dbFields, false);
 		return static::findAll($options);
@@ -62,7 +70,7 @@ abstract class Model {
 		return static::findAllLike($options);
 	}
 	
-	final protected function mirrorCrypt ($text) {
+	protected function mirrorCrypt ($text) {
 		$key = get_called_class() . ' how now brown c0w';
 		srand(348756);
 		$out = '';
@@ -161,7 +169,6 @@ abstract class Model {
 	 */
 	public function saveData (array $data) {
 		if ($this->isValid()) {
-			if (isset($data[$this->idCol])) unset($data[$this->idCol]);
 			return $this->updateVars($data);
 		}
 		return $this->createWithVars($data);
@@ -655,15 +662,9 @@ abstract class Model {
 		return array($sql, $args, $Class);
 	}
 	
-	public static function findOwner (Model $M) {
-		$idc = static::$IdCol;
-		return static::findOne(array(
-			'fields' => array(
-				$idc => $M->$idc,
-			),
-		));
-	}
-	
+	/**
+	 * @return Model
+	 */
 	public static function findOneBelongingTo () {
 		$args = func_get_args();
 		$fields = array();
@@ -676,6 +677,18 @@ abstract class Model {
 		));
 	}
 	
+	/**
+	 * @return Model
+	 */
+	public static function findOwner (Model $M) {
+		$idc = static::$IdCol;
+		return static::findOne(array(
+			'fields' => array(
+				$idc => $M->$idc,
+			),
+		));
+	}
+	
 	public static function findAllBelongingTo (Model $Model) {
 		return static::findAll(array(
 			'fields' => array(
@@ -684,6 +697,9 @@ abstract class Model {
 		));
 	}
 	
+	/**
+	 * @return Model
+	 */
 	public static function findOne (array $options = array(), $Class = NULL) {
 		list($sql, $args, $Class) = static::buildQueryFromOptions($options, $Class);
 		$O = UtilsPDO::fetchIdIntoInstance($sql, $args, $Class);
