@@ -23,27 +23,22 @@ class AuthNetCimPayProfile extends AuthNetCim {
 			}
 		}
 		$data = $raw;
-		$Data = new UtilsArray($data, 0);
 		
-		$Arr = array('amount' => $data['amount']);
+		$Arr = array('amount' => round($data['amount'], 2));
 		if (isset($data['taxAmount'])) {
-			$Arr['tax'] = array(
-				'amount' => $data['taxAmount'],
-				'name' => $Data->taxName,
-				'description' => $Data->taxDescription,
-			);
+			$Arr['tax'] = array('amount' => round($data['taxAmount'], 2));
+			UtilsArray::ifKeyAddToThis('taxName', $data, $Arr['tax'], 'name');
+			UtilsArray::ifKeyAddToThis('taxDescription', $data, $Arr['tax'], 'description');
 		}
 		if (isset($data['shippingAmount'])) {
-			$Arr['shipping'] = array(
-				'amount' => $data['shippingAmount'],
-				'name' => $Data->shippingName,
-				'description' => $Data->shippingDescription,
-			);
+			$Arr['shipping'] = array('amount' => round($data['shippingAmount'], 2));
+			UtilsArray::ifKeyAddToThis('shippingName', $data, $Arr['shipping'], 'name');
+			UtilsArray::ifKeyAddToThis('shippingDescription', $data, $Arr['shipping'], 'description');
 		}
 		if (isset($data['dutyAmount'])) {
-			$Arr['duty'] = array('amount' => $data['dutyAmount']);
-			UtilsArray::ifKeyAddToThis('dutyName', $Data, $Arr['duty'], 'name');
-			UtilsArray::ifKeyAddToThis('dutyDescription', $Data, $Arr['duty'], 'description');
+			$Arr['duty'] = array('amount' => round($data['dutyAmount'], 2));
+			UtilsArray::ifKeyAddToThis('dutyName', $data, $Arr['duty'], 'name');
+			UtilsArray::ifKeyAddToThis('dutyDescription', $data, $Arr['duty'], 'description');
 		}
 		if (isset($data['lineItems'])) {
 			$Arr['lineItems'] = array();
@@ -58,6 +53,7 @@ class AuthNetCimPayProfile extends AuthNetCim {
 				foreach ($lineItemFields as $f) {
 					UtilsArray::ifKeyAddToThis($f, $ItemsArr, $buildTo);
 				}
+				if (isset($buildTo['unitPrice'])) $buildTo['unitPrice'] = round($buildTo['unitPrice'], 2);
 				$Arr['lineItems'][] = $buildTo;
 				$c++;
 			}
@@ -81,7 +77,7 @@ class AuthNetCimPayProfile extends AuthNetCim {
 	 * @param Array $raw
 	 * @return AuthNetAimResponse
 	 */
-	public function createTransaction (array $raw) {
+	public function createTransaction (array $raw, $validateResponse = true) {
 		if (!$this->isValid()) {
 			throw new ExceptionAuthNet('Invalid Pay Profile');
 		}
@@ -99,11 +95,14 @@ class AuthNetCimPayProfile extends AuthNetCim {
 			),
 		);
 		$R = $this->getAuthNetXMLRequest()->getAuthNetXMLResponse('createCustomerProfileTransactionRequest', $RequestData);
+		/*/
 		if (!$R->isGood) {
+			ModelLog::mkLog(array($R, $RequestData));
 			throw new ExceptionAuthNet($this->getPublicError($R->code));
 		}
+		/*/
 		$Response = new AuthNetAimResponse(strval($R->XML->directResponse));
-		if (!$Response->isGood) {
+		if ($validateResponse && !$Response->isGood) {
 			ModelLog::mkLog($Response->getInfo(), 'cim_pp', 1);
 			throw new ExceptionAuthNet(AuthNet::getPublicError($Response->code, 'aim'));
 		}

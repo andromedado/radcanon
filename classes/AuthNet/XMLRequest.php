@@ -30,7 +30,7 @@ class AuthNetXMLRequest extends AuthNet {
 	 * @return AuthNetXMLResponse
 	 */
 	public function getAuthNetXMLResponse($requestType, array $information) {
-		return new AuthNetXMLResponse($this->getResponse($requestType, $information, 'xml'));
+		return new AuthNetXMLResponse($this->getResponse($requestType, $information, 'xml'), array($requestType, $information));
 	}
 	
 	/**
@@ -88,6 +88,7 @@ class AuthNetXMLRequest extends AuthNet {
 		$xml .= '<' . $type . ' xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">' . "\n";
 		$xml .= $this->xmlIfiy($info, $type);
 		$xml .= "\n" . '</' . $type . '>';
+		if (DEBUG) ModelLog::mkLog($xml, 'anXML');
 		return $xml;
 	}
 	
@@ -104,13 +105,16 @@ class AuthNetXMLRequest extends AuthNet {
 		if (is_array($info) || is_object($info)) {
 			foreach ($info as $key => $val) {
 				$ign = false;
-				$pre = '<' . $key . '>';
-				$post = '</' . $key . '>';
 				if (!$ignoreParent && in_array($parentNode, $this->MultiInstancesPermissible) && is_numeric($key)) {
-					$key = $parentNode;
 					$ign = true;
+					$pre = '<' . $parentNode . '>';
+					$post = '</' . $parentNode . '>';
+					$key = $parentNode;
 				} elseif (in_array($key, $this->MultiInstancesPermissible) && is_array($val) && is_array(current($val))) {
 					$pre = $post = '';
+				} else {
+					$pre = '<' . $key . '>';
+					$post = '</' . $key . '>';
 				}
 				$xml .= $pre;
 				$xml .= $this->xmlIfiy($val, $key, $ign);

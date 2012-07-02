@@ -65,6 +65,11 @@ class AuthNetAimResponse extends AuthNetResponse {
 		$this->text = $this->rawArray[3];
 	}
 	
+	public function override (array $withInfo) {
+		$this->aimArray = array_merge($this->aimArray, $withInfo);
+		return $this;
+	}
+	
 	public function getInfo () {
 		return $this->aimArray;
 	}

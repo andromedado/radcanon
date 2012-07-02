@@ -39,6 +39,7 @@ class AuthNet {
 			"E00016" => 'Invalid Information Provided [%s]',
 			"E00041" => 'Required Field Missing',
 			"E00014" => 'Required Field Missing',
+			"E00027" => 'Transaction Failed: Card Declined',
 		),
 		'default' => 'The system has experienced a problem [%s]. Please Try Again Later',
 	);
