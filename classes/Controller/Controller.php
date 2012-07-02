@@ -138,7 +138,7 @@ class Controller {
 				$m = self::$MethodSynonyms[$m];
 				$tempM = $prefix . $m;
 			}
-			if (method_exists($tempC, $tempM)) {
+			if (in_array($tempM, get_class_methods($tempC))) {
 				//Looks Good
 				$Parts->class = $tempC;
 				$Parts->method = $tempM;
