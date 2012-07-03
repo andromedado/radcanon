@@ -86,7 +86,8 @@ class Request {
 		return $this->abstractedGet($key, $this->get, $default);
 	}
 	
-	public function cookie($key, $default = NULL) {
+	public function cookie($key = NULL, $default = NULL) {
+		if (is_null($key)) return $this->cookie;
 		return $this->abstractedGet($key, $this->cookie, $default);
 	}
 	

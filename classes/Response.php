@@ -71,6 +71,11 @@ class Response {
 		
 	}
 	
+	public function setCookie () {
+		$args = func_get_args();
+		call_user_func_array('setcookie', $args);
+	}
+	
 	public function forceSSL () {
 		if ($this->request->server('SERVER_PORT') !== '443') {
 			$this->redirectTo('https://' . SITE_HOST . $this->request->getIniURI());
