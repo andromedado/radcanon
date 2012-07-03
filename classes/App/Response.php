@@ -1,6 +1,6 @@
 <?php
 
-class AppResponse extends Request {
+class AppResponse extends Response {
 	
 }
 
