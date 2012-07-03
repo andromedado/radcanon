@@ -7,6 +7,10 @@ class FileSingleImage extends FileSingle {
 		return UtilsImage::getMimeType($this->getFilename());
 	}
 	
+	public function getSrcToImageAtWidth ($width) {
+		return APP_SUB_DIR . str_replace(SERVER_PREFIX, '', $this->getPathToImageAtWidth($width));
+	}
+	
 	public function getPathToImageAtWidth($width) {
 		$width = abs((int)$width);
 		if ($width < 1) throw new ExceptionBase('invalid width');
