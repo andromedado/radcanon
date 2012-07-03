@@ -8,7 +8,12 @@ class ControllerAdmin extends ControllerAdminOnly {
 	public $model = NULL;
 	protected $modelName = 'ModelAdmin';
 	
-	public function edit ($id = NULL) {
+	protected function load () {
+		parent::load();
+		$this->set('logoutAction', FilterRoutes::buildUrl(array('Admin', 'logout')));
+	}
+	
+	private function edit ($id = NULL) {
 		if (!is_a($this->user, 'SuperAdmin')) return $this->notFound();
 		$A = AdminFactory::build($id);
 		if (!$A->isValid()) return $this->notFound();
@@ -23,7 +28,7 @@ class ControllerAdmin extends ControllerAdminOnly {
 		return array('html' => $this->renderForm($A));
 	}
 	
-	public function create () {
+	private function create () {
 		if (!is_a($this->user, 'SuperAdmin')) return $this->notFound();
 		$errors = new HtmlErrors;
 		if ($this->request->isPost()) {
@@ -42,7 +47,7 @@ class ControllerAdmin extends ControllerAdminOnly {
 		return new HtmlC($errors, $this->renderForm(NULL, $this->request));
 	}
 	
-	public function delete ($id = NULL) {
+	private function delete ($id = NULL) {
 		if (is_a($this->user, 'SuperAdmin')) {
 			if ($this->request->isPost()) {
 				$A = AdminFactory::build($id);
@@ -71,7 +76,7 @@ class ControllerAdmin extends ControllerAdminOnly {
 		return $AF;
 	}
 	
-	public function manage ($id = NULL) {
+	private function manage ($id = NULL) {
 		if (!is_a($this->user, 'SuperAdmin')) return $this->notFound();
 		
 		$c = new HtmlC;
@@ -114,21 +119,22 @@ class ControllerAdmin extends ControllerAdminOnly {
 	}
 	
 	public function changePassword ($modifier = '') {
-		$errors = new HtmlErrors;
+		$errors = array();
 		if ($this->request->isPost()) {
 			try {
 				$this->user->updatePassword($this->request->post());
-				$_SESSION['msg'] = 'Password Updated';
-				$this->response->redirectTo(array('Patient', 'search'));
+				$this->response->addMessage('Password Updated');
+				$this->response->redirectTo(array('Admin'));
+				return;
 			} catch (ExceptionValidation $e) {
-				$errors->add($e->getMessage());
+				$errors[] = $e->getMessage();
 			}
 		}
 		
-		$c = new HtmlC($errors, $F = new AppForm(($modifier === 'must' ? 'You Must ' : '') . 'Update Your Password', array('Admin', 'changePassword')));
-		$F->addField('New Password', Html::n('input', 't:password;n:new_pass;c:not_blank'));
-		$F->addField('Confirm New Password', Html::n('input', 't:password;n:confirm_new_pass;c:not_blank'));
-		return $c;
+		$this->set('errors', $errors);
+		$this->set('modifier', $modifier);
+		$this->set('action', FilterRoutes::buildUrl(array('Admin', 'changePassword')));
+		return;
 	}
 	
 	public function logout () {
@@ -147,13 +153,12 @@ class ControllerAdmin extends ControllerAdminOnly {
 			$this->response->redirectTo(array('Admin'));
 			return;
 		}
-		$email = $_SESSION['resetSentTo'];
+		$this->set('email', $_SESSION['resetSentTo']);
 		$_SESSION['resetSentTo'] = NULL;
-		return Html::n('h2', '', 'Password reset e-mail sent to ' . $email);
 	}
 	
 	public function forgotPassword () {
-		$errors = new HtmlErrors;
+		$errors = array();
 		if ($this->request->isPost()) {
 			$_SESSION['resetSentTo'] = NULL;
 			$email = $this->request->post('email', '');
@@ -174,16 +179,19 @@ class ControllerAdmin extends ControllerAdminOnly {
 				$this->response->redirectTo(array('Admin', 'resetSent'));
 				return;
 			}
-			$errors->add('Invalid E-Mail provided');
+			$errors[] = 'Invalid E-Mail provided';
 		}
 		
-		$c = new HtmlC($errors, $F = new AppForm('Trigger Password Reset:'));
-		$F->addField('E-mail Address:', 'email');
-		return $c;
+		$this->set('action', FilterRoutes::buildUrl(array("Admin", 'forgotPassword')));
+	}
+	
+	public function index () {
+		
+		
 	}
 	
 	public function login ($modifier = NULL) {
-		$errors = new HtmlErrors;
+		$errors = array();
 		if ($this->request->isPost()) {
 			$MA = ModelAdmin::findOne(array(
 				'fields' => array(
@@ -193,7 +201,7 @@ class ControllerAdmin extends ControllerAdminOnly {
 			if ($MA->isValid() && $MA->passwordAcceptable($this->request->post('pwd'))) {
 				$MA->recordLogin();
 				$_SESSION['msg'] = 'You have logged in';
-				$dest = array('Patient', 'search');
+				$dest = array('Admin');
 				if (!empty($_SESSION['afterLogin'])) {
 					$dest = $_SESSION['afterLogin'];
 					$_SESSION['afterLogin'] = '';
@@ -202,21 +210,18 @@ class ControllerAdmin extends ControllerAdminOnly {
 				return;
 			}
 			$this->response->cancelRedirect(Response::TYPE_HTML);
-			$errors->add('Login Failed');
+			$errors[] = 'Login Failed';
 		}
 		
 		if (is_a($this->user, 'Admin')) {
 			$this->response->redirectTo(array('Admin'));
-//			$_SESSION['fmsg'] = 'You have already logged in';
 			return;
 		}
-		$c = new HtmlC($errors, $F = new AppForm('Login:', array('Admin','login'), array(
-			'email' => 'E-mail Address',
-			'pwd' => 'Password',
-		), $this->request));
-		$F->field('pwd')->type('password')->value('');
-		Html::n('div', 'c:ar', AppLink::newLink(Html::n('i', '', 'Forgot your Password?'), array('Admin', 'forgotPassword')), $c);
-		return $c;
+		
+		$this->set('errors', $errors);
+		$this->set('post', $this->request->post());
+		$this->set('forgotHref', FilterRoutes::buildUrl(array('Admin', 'forgotPassword')));
+		$this->set('action', FilterRoutes::buildUrl(array('Admin', 'login')));
 	}
 	
 }

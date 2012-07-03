@@ -1,0 +1,7 @@
+{% extends "base.html.twig" %}
+{% block topContent %}
+{{ parent() }}
+<form action="{{ logoutAction }}" method="post" id="topLogoutForm">
+<input type="submit" value="logout" />
+</form>
+{% endblock %}

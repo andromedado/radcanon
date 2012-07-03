@@ -120,7 +120,7 @@ class Controller {
 		$Parts->class = new ControllerPages($Request, $Response, $User);
 		$Parts->method = 'notFound';
 		$Parts->arguments = array();
-		$elems = explode('/', $Request->getURI());
+		$elems = explode('/', trim($Request->getURI(), '/'));
 		if (count($elems) > 1) {
 			list($c, $m) = array_slice($elems, 0, 2);
 			$Parts->arguments = array_slice($elems, 2);

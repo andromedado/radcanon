@@ -3,7 +3,6 @@
 class FilterRoutes implements Filter {
 	const CACHED_ROUTES_KEY = 'cached_routes';
 	protected static $DeniedRoutes = array(
-		'Admin',
 	);
 	protected static $PregRoutes = array(
 		'example' => array(
