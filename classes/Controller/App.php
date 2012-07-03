@@ -10,6 +10,7 @@ abstract class ControllerApp {
 	/** @var Model $model */
 	public $model = NULL;
 	protected $modelName = NULL;
+	protected $TemplateDir = NULL;
 	
 	final public function __construct(Request $req, Response $res, User $user) {
 		$this->request = $req;
@@ -57,11 +58,16 @@ abstract class ControllerApp {
 		return $this;
 	}
 	
+	public function getTemplateDir () {
+		if (!is_null($this->TemplateDir)) return $this->TemplateDir;
+		return preg_replace('/^Controller/', '', get_class($this));
+	}
+	
 	public function invoke ($method, array $arguments = array()) {
 		$this->prefilterInvocation($method, $arguments);
 		$this->response->set('invocation', array(get_called_class(), $method, $arguments));
 		if (!method_exists($this, $method)) throw new ExceptionBase('Invoke called on with invalid combo: ' . $method);
-		$template = preg_replace('/^Controller/', '', get_class($this)) . DS . $method . '.html.twig';
+		$template = $this->getTemplateDir() . DS . $method . '.html.twig';
 		if (file_exists(APP_TEMPLATES_DIR . $template) || file_exists(RADCANON_TEMPLATES_DIR . $template)) {
 			$this->response->template = $template;
 		} elseif (DEBUG) {
