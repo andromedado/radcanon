@@ -7,12 +7,20 @@ class Controller {
 	);
 	private static $postFilters = array(
 	);
-	private static $ClassSynonyms = array(
+	private static $ControllerSynonyms = array(
 	);
 	private static $MethodSynonyms = array(
 	);
 	private static $CustomHeaders = array();
 	private static $DebugText = array();
+	
+	public static function addControllerSynonym ($from, $to = NULL) {
+		if (is_null($to) && is_array($from)) {
+			self::$ControllerSynonyms = array_merge(self::$ControllerSynonyms, $from);
+		} else {
+			self::$ControllerSynonyms[$from] = $to;
+		}
+	}
 	
 	public static function addPreFilters () {
 		$filters = func_get_args();
@@ -128,8 +136,8 @@ class Controller {
 			$c = array_shift($elems);
 			$m = 'index';
 		}
+		if (array_key_exists($c, self::$ControllerSynonyms)) $c = self::$ControllerSynonyms[$c];
 		$c = 'Controller' . $c;
-		if (array_key_exists($c, self::$ClassSynonyms)) $c = self::$ClassSynonyms[$c];
 		if (class_exists($c)) {
 			$tempC = new $c($Request, $Response, $User);
 			if (!is_a($tempC, 'ControllerApp')) throw new ExceptionClear('Invalid Controller invoked: ' . $c . '; needs to be a subclass of ControllerApp');
