@@ -56,6 +56,16 @@ abstract class Model {
 		$this->load();
 	}
 	
+	/**
+	 * Does this Model belong to the given Model?
+	 * @param Model $M
+	 * @return Boolean
+	 */
+	public function belongsTo (Model $M) {
+		$idc = $M->idCol;
+		return $this->$idc === $M->$idc;
+	}
+	
 	public function idInArray (array $haystack) {
 		return in_array($this->id, $haystack);
 	}
@@ -418,7 +428,7 @@ abstract class Model {
 		return true;
 	}
 	
-	protected function preFilterVars (array $vars, $creating) {
+	protected function preFilterVars (array &$vars, $creating) {
 		
 	}
 	
