@@ -10,6 +10,33 @@ class AuthNetCimPayProfile extends AuthNetCim {
 		'profileTransVoid',
 	);
 	
+	public function buildProfileTransVoidRequestArray (array $raw) {
+		$reqsAndMaxLength = array(
+			'customerProfileId' => NULL,
+			'transId' => NULL,
+		);
+		foreach ($reqsAndMaxLength as $field => $maxLength) {
+			if (!isset($raw[$field])) {
+				throw new ExceptionAuthNet('Missing Field: ' . $field);
+			} elseif (!is_null($maxLength) && strlen($raw[$field]) > $maxLength) {
+				$raw[$field] = substr($raw[$field], 0, $maxLength);
+			}
+		}
+		$fin = array(
+			'customerProfileId' => $raw['customerProfileId'],
+			'customerPaymentProfileId' => $this->id,
+			'transId' => $raw['transId'],
+		);
+		return $fin;
+	}
+	
+	public function buildProfileTransPriorAuthCaptureRequestArray (array $raw) {
+		$data = $this->buildProfileTransAuthOnlyRequestArray($raw);
+		if (!isset($raw['transId'])) throw new ExceptionAuthNet('Transaction ID is required');
+		$data['transId'] = $raw['transId'];
+		return $data;
+	}
+	
 	public function buildProfileTransAuthOnlyRequestArray (array $raw) {
 		$reqsAndMaxLength = array(
 			'amount' => NULL,
@@ -94,6 +121,9 @@ class AuthNetCimPayProfile extends AuthNetCim {
 				$type => call_user_func(array($this, $buildFunc), $raw),
 			),
 		);
+		if (isset($raw['extraOptions'])) {
+			$RequestData['extraOptions'] = $raw['extraOptions'];
+		}
 		$R = $this->getAuthNetXMLRequest()->getAuthNetXMLResponse('createCustomerProfileTransactionRequest', $RequestData);
 		/*/
 		if (!$R->isGood) {

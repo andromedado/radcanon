@@ -64,6 +64,7 @@ class Response {
 		$this->request = $req;
 		$this->set('currentUri', $this->request->getIniURI());
 		if (!isset($_SESSION['msg'])) $_SESSION['msg'] = array();
+		if (!isset($_SESSION['f_msg'])) $_SESSION['f_msg'] = array();
 		$this->load();
 	}
 	
@@ -197,12 +198,14 @@ class Response {
 		return $opts;
 	}
 	
-	public function setMessage ($msg) {
-		$_SESSION['msg'] = array($msg);
+	public function setMessage ($msg, $bad = false) {
+		$k = $bad ? 'f_msg' : 'msg';
+		$_SESSION[$k] = array($msg);
 	}
 	
-	public function addMessage ($msg) {
-		$_SESSION['msg'][] = $msg;
+	public function addMessage ($msg, $bad = false) {
+		$k = $bad ? 'f_msg' : 'msg';
+		$_SESSION[$k][] = $msg;
 	}
 	
 	/**
@@ -238,9 +241,8 @@ class Response {
 					$twigLoader = new Twig_Loader_Filesystem(array(APP_TEMPLATES_DIR, RADCANON_TEMPLATES_DIR));
 					$twigEnv = new Twig_Environment($twigLoader, $this->getTwigOptions());
 					$twigEnv->addExtension(new Twig_Extension_Debug());
-					$this->set('messages', $_SESSION['msg']);
-					$content = $twigEnv->render($this->template, array_merge($this->defaultVars, $this->appVars, $this->vars));
-					$_SESSION['msg'] = array();
+					$content = $twigEnv->render($this->template, array_merge(array('messages' => $_SESSION['msg'], 'errors' => $_SESSION['f_msg']), $this->defaultVars, $this->appVars, $this->vars));
+					$_SESSION['f_msg'] = $_SESSION['msg'] = array();
 				} catch (Twig_Error $e) {
 					if (DEBUG) {
 						$content = $e->getMessage();

@@ -27,7 +27,7 @@ abstract class ControllerApp {
 		
 	}
 	
-	public function prefilterInvocation (&$method, array &$arguments) {
+	protected function prefilterInvocation (&$method, array &$arguments) {
 		
 	}
 	

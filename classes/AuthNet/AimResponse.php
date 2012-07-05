@@ -61,8 +61,8 @@ class AuthNetAimResponse extends AuthNetResponse {
 			$this->aimArray[$this->aimFields[$k]] = $v;
 		}
 		$this->isGood = $this->rawArray[0] === '1';
-		$this->code = $this->rawArray[2];
-		$this->text = $this->rawArray[3];
+		$this->code = isset($this->rawArray[2]) ? $this->rawArray[2] : NULL;
+		$this->text = isset($this->rawArray[3]) ? $this->rawArray[3] : NULL;
 	}
 	
 	public function override (array $withInfo) {

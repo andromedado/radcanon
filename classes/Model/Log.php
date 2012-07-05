@@ -63,7 +63,7 @@ CREATE TABLE `logs` (
   `addressed` enum('0','1') NULL default NULL,
   `file` varchar(120) NOT NULL,
   `content` text NOT NULL,
-  `when` timestamp NOT NULL default '0000-00-00 00:00:00' on update CURRENT_TIMESTAMP,
+  `when` timestamp NOT NULL default CURRENT_TIMESTAMP,
   `line` int(11) NOT NULL,
   PRIMARY KEY  (`log_id`),
   KEY `category` (`category`),

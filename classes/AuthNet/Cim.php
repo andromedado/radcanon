@@ -25,8 +25,8 @@ class AuthNetCim extends AuthNet {
 		return $this->id > 0;
 	}
 	
-	public function getPublicError ($code) {
-		return parent::getPublicError($code, 'cim');
+	public function getPublicError ($code, $type = 'cim') {
+		return parent::getPublicError($code, $type);
 	}
 	
 }

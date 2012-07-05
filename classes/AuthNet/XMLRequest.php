@@ -11,6 +11,9 @@ class AuthNetXMLRequest extends AuthNet {
 	protected $MultiInstancesPermissible = array(
 		'lineItems',
 	);
+	protected $NVPCdataElements = array(
+		'extraOptions',
+	);
 	
 	public function __construct ($login_id = NULL, $transaction_key = NULL) {
 		$this->login_id = is_null($login_id) ? AuthNet::$default_login_id : $login_id;
@@ -104,6 +107,16 @@ class AuthNetXMLRequest extends AuthNet {
 		$xml = '';
 		if (is_array($info) || is_object($info)) {
 			foreach ($info as $key => $val) {
+				if (!is_numeric($key) && in_array($key, $this->NVPCdataElements) && is_array($val)) {
+					$xml .= '<' . $key . '><![CDATA[';
+					$amp = '';
+					foreach ($val as $K => $V) {
+						$xml .= $amp . $K . '=' . urlencode($V);
+						$amp = '&';
+					}
+					$xml .= ']]></' . $key . '>';
+					continue;
+				}
 				$ign = false;
 				if (!$ignoreParent && in_array($parentNode, $this->MultiInstancesPermissible) && is_numeric($key)) {
 					$ign = true;
