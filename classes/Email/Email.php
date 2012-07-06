@@ -62,7 +62,7 @@ class Email {
 	public function send() {
 		$r = self::sendMail($this->to, $this->subject, strval($this->body), $this->from, '', $this->attachements);
 		if (DEBUG || $r !== true) {
-			ModelLog::mkLog('Mail Delivery' . ($r !== true ? ' Failure' : '') . ': ' . json_encode(array($this->to, $this->subject, strval($this->body), $this->from, '', $this->attachements)), 'email', 1);
+			Log::mkLog('Mail Delivery' . ($r !== true ? ' Failure' : '') . ': ' . json_encode(array($this->to, $this->subject, strval($this->body), $this->from, '', $this->attachements)), 'email', 1);
 		}
 		return $r;
 	}
@@ -101,8 +101,8 @@ class Email {
 		}
 		$Contact_Email=preg_replace('/[\s\S]+<([^>]+)>[\s\S]+/','$1',$from);
 
-		$mime_boundary = "----=_" . rand(100000000000, 1000000000000);
-		$nl = "\n";
+		$mime_boundary = "----=_" . date('Ymd') . rand(100000000000, 1000000000000) . date('_His');
+		$nl = "\r\n";
 		
 		$headers = '';
 		$headers .= "Date: " . date('D, j M Y H:i:s O (T)') . $nl; 
@@ -116,14 +116,14 @@ class Email {
 		
 		$mail_content = '';
 		$mail_content .= "--".$mime_boundary . $nl;
-		$mail_content .= "Content-Type: text/html; charset=\"UTF-8\"" . $nl;
+		$mail_content .= "Content-Type: text/html; charset=\"CHARSET_GOES_HERE\"" . $nl;
 		$mail_content .= "Content-Transfer-Encoding: base64" . $nl . $nl;
 		$mail_content .= trim(chunk_split(base64_encode($plainBody))) . $nl;
 		$mail_content .= "--".$mime_boundary . $nl;
-		$mail_content .= "Content-Type: text/html; charset=\"UTF-8\"" . $nl;
+		$mail_content .= "Content-Type: text/html; charset=\"CHARSET_GOES_HERE\"" . $nl;
 		$mail_content .= "Content-Transfer-Encoding: base64" . $nl . $nl;
 		$mail_content .= trim(chunk_split(base64_encode($htmlBody))) . $nl;
-		$mail_content .="--".$mime_boundary;
+		$mail_content .= "--".$mime_boundary;
 		
 		if(!empty($attachments)){
 			foreach($attachments as $att){
@@ -140,10 +140,11 @@ EOT;
 			}
 		}
 		$mail_content .="--" . $nl . $nl;
+		$mail_content = preg_replace('/CHARSET_GOES_HERE/', mb_detect_encoding($mail_content), $mail_content);
 		
 		$m = mail($to, $subject, $mail_content, $headers);
 		if (defined('DEBUG') && DEBUG) {
-			mail('shad@stellaractive.com', '(' . $to . ') ' . $subject, $mail_content, $headers);
+			mail('shad@stellaractive.com', '(' . $to . ') ' . $subject . ' ' . mb_detect_encoding($mail_content), $mail_content, $headers);
 		}
 		
 		return $m;
