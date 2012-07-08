@@ -66,7 +66,7 @@ class Response {
 		$this->set('currentUri', $this->request->getIniURI());
 		if (!isset($_SESSION['msg'])) $_SESSION['msg'] = array();
 		if (!isset($_SESSION['f_msg'])) $_SESSION['f_msg'] = array();
-		if (defined('APP_TEMPLATES_DIR')) {
+		if (defined('APP_TEMPLATES_DIR') && is_dir(APP_TEMPLATES_DIR)) {
 			$this->tplDirs[] = APP_TEMPLATES_DIR;
 		}
 		$this->tplDirs[] = RADCANON_TEMPLATES_DIR;
