@@ -1,6 +1,5 @@
 {
 	"name" : "radcanon/radcanon",
-	"version" : "1.0.0",
 	"type" : "library",
 	"description" : "Rapid Application Development Canon",
 	"keywords" : ["rad"],
