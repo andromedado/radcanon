@@ -1,0 +1,12 @@
+{
+	"name" : "radcanon/radcanon",
+	"type" : "library",
+	"description" : "Rapid Application Development Canon",
+	"keywords" : ["rad"],
+	"homepage" : "https://github.com/andromedado/radcanon",
+	"license" : "MIT",
+	"authors" : ["Shad Downey"],
+	"require" : {
+		"php" : ">=5.3.0"
+	}
+}
