@@ -136,7 +136,14 @@ class Request {
 	 * @return String
 	 */
 	public function getURI() {
-		return preg_replace('/\?.*$/', '', $this->getSERVERVal('REQUEST_URI', ''));
+		if (USE_HTACCESS) {
+			return preg_replace('/\?.*$/', '', $this->getSERVERVal('REQUEST_URI', ''));
+		}
+		$uri = preg_replace('#^' . preg_quote(APP_SUB_DIR . '/index.php?', '#') . '#', '', $this->getSERVERVal('REQUEST_URI', ''));
+		if (strpos($uri, '&') !== false) {
+			$uri = preg_replace('#^([^&]+)&.*#', '$1', $uri);
+		}
+		return $uri;
 	}
 	
 	public function getIniURI() {

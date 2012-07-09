@@ -19,6 +19,7 @@ class Response {
 	protected $type = 0;
 	protected $error = false;
 	protected $headers = array();
+	protected $tplDirs = array();
 	/** @var Exception $exception */
 	protected $exception = NULL;
 	protected $location = NULL;
@@ -65,6 +66,10 @@ class Response {
 		$this->set('currentUri', $this->request->getIniURI());
 		if (!isset($_SESSION['msg'])) $_SESSION['msg'] = array();
 		if (!isset($_SESSION['f_msg'])) $_SESSION['f_msg'] = array();
+		if (defined('APP_TEMPLATES_DIR')) {
+			$this->tplDirs[] = APP_TEMPLATES_DIR;
+		}
+		$this->tplDirs[] = RADCANON_TEMPLATES_DIR;
 		$this->load();
 	}
 	
@@ -238,7 +243,7 @@ class Response {
 			break;
 			case self::TYPE_HTML :
 				try {
-					$twigLoader = new Twig_Loader_Filesystem(array(APP_TEMPLATES_DIR, RADCANON_TEMPLATES_DIR));
+					$twigLoader = new Twig_Loader_Filesystem($this->tplDirs);
 					$twigEnv = new Twig_Environment($twigLoader, $this->getTwigOptions());
 					$twigEnv->addExtension(new Twig_Extension_Debug());
 					$content = $twigEnv->render($this->template, array_merge(array('messages' => $_SESSION['msg'], 'errors' => $_SESSION['f_msg']), $this->defaultVars, $this->appVars, $this->vars));
