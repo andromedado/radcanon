@@ -31,6 +31,10 @@ class UtilsArray {
 		}
 	}
 	
+	public static function useModelIdForKey (array $Models) {
+		return self::redoKeysWithMethod($Models, 'getID');
+	}
+	
 	public static function checkEmptiness (array $tested, array $testWith) {
 		$empty = false;
 		foreach ($testWith as $key) {
@@ -63,6 +67,20 @@ class UtilsArray {
 		self::$CompareInvert = $Invert;
 		uasort($Os, array(__CLASS__, 'compWith'));
 		return $Os;
+	}
+	
+	/**
+	 * Use the given method to split the array into two groups by boolean response,
+	 * and then recombine the resultant groups
+	 * @param Array $Os
+	 * @param String $Method
+	 * @param Array $Arguments
+	 * @param Boolean $Invert
+	 * @return Array
+	 */
+	public static function orderWithBool (array $Os, $Method, array $Arguments = array(), $Invert = false) {
+		return array_merge(self::filterWithMethod($Os, $Method, $Arguments, $Invert),
+			self::filterWithMethod($Os, $Method, $Arguments, !$Invert));
 	}
 	
 	/**
