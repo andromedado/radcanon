@@ -40,7 +40,12 @@ abstract class Model {
 		foreach ($this->readOnly as $f) {
 			$d[$f] = $this->$f;
 		}
+		$this->appendAdditionalData($d);
 		return $d;
+	}
+	
+	protected function appendAdditionalData(array &$data) {
+		
 	}
 	
 	public function __get ($property) {
