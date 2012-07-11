@@ -465,6 +465,7 @@ abstract class Model {
 		$sets = $comma = '';
 		$vs = array();
 		foreach ($varsToVals as $var => $val) {
+			if ($var == $this->idCol) continue;
 			$sets .= $comma . DBCFactory::quote($var) . " = ?";
 			$comma = ', ';
 			if (in_array($var, $this->symmetricallyEncryptedFields)) {
