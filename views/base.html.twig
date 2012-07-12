@@ -14,7 +14,14 @@
 	</head>
 	<body>
 {% block body %}
-	{{ content }}
+	{% block notifications %} {% block errorNotifications %} {% for
+	error in errors %}
+	<h2 class="f_msg msg">{{ error|raw }}</h2>
+	{% endfor %} {% endblock %} {% block goodNotifications %} {% for
+	notice in messages %}
+	<h2 class="s_msg msg">{{ notice|raw }}</h2>
+	{% endfor %} {% endblock %} {% endblock %}
+{{ content }}
 {% endblock %}
 <!--
 {{ dump(invocation)|raw }}-->
