@@ -51,7 +51,7 @@ abstract class DBCFactory {
 			$db_info = self::$ReadDBCs[array_rand(self::$ReadDBCs, 1)];
 		}
 		$db_info['host'] = empty($db_info['host']) ? self::$DefaultHost : $db_info['host'];
-		$db_info['type'] = empty($db_info['type']) ? self::$DefaultType : $db_info['type'];
+		$type = empty($db_info['type']) ? self::$DefaultType : $db_info['type'];
 		switch ($type) {
 			case "mysql":
 				self::$OpenQuote = self::$CloseQuote = '`';
