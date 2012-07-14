@@ -18,6 +18,11 @@ abstract class DBCFactory {
 	/** @var PDO $ReadPDOConnection */
 	private static $ReadPDOConnection;
 	
+	private static $DefaultHost = '127.0.0.1';
+	private static $DefaultType = 'sqlite';
+	private static $DefaultDir = CACHE_DIR;
+	private static $DefaultFile = 'radcanon.db';
+	
 	private static $WriteDBC = array();
 	private static $ReadDBCs = array();
 	
@@ -45,14 +50,25 @@ abstract class DBCFactory {
 		} else {
 			$db_info = self::$ReadDBCs[array_rand(self::$ReadDBCs, 1)];
 		}
-		$db_info['host'] = empty($db_info['host']) ? '127.0.0.1' : $db_info['host'];
-		if (DIRECTORY_SEPARATOR === '/') {
-			self::$OpenQuote = self::$CloseQuote = '`';
-			$dsn = 'mysql:dbname=' . $db_info['db'] . ';host=' . $db_info['host'];
-		} else {
-			self::$OpenQuote = '[';
-			self::$CloseQuote = ']';
-			$dsn = 'sqlsrv:Server=' . $db_info['host'] . ';Database=' . $db_info['db'];
+		$db_info['host'] = empty($db_info['host']) ? self::$DefaultHost : $db_info['host'];
+		$db_info['type'] = empty($db_info['type']) ? self::$DefaultType : $db_info['type'];
+		switch ($type) {
+			case "mysql":
+				self::$OpenQuote = self::$CloseQuote = '`';
+				$dsn = 'mysql:dbname=' . $db_info['db'] . ';host=' . $db_info['host'];
+				break;
+			case "sqlsrv":
+				self::$OpenQuote = '[';
+				self::$CloseQuote = ']';
+				$dsn = 'sqlsrv:Server=' . $db_info['host'] . ';Database=' . $db_info['db'];
+				break;
+			case "sqlite3":
+			case "sqlite":
+				$dsn = 'sqlite:' . empty($db_info['file']) ? self::$DefaultDir . self::$DefaultFile : $db_info['file'];
+				$db_info['usr'] = $db_info['pwd'] = NULL;
+				break;
+			default:
+				throw new ExceptionBase('Unknown DB Type: ' . $type);
 		}
 		return new PDO($dsn, $db_info['usr'], $db_info['pwd']);
 	}
