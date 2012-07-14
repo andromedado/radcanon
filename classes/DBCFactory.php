@@ -64,7 +64,7 @@ abstract class DBCFactory {
 				break;
 			case "sqlite3":
 			case "sqlite":
-				$dsn = 'sqlite:' . empty($db_info['file']) ? self::$DefaultDir . self::$DefaultFile : $db_info['file'];
+				$dsn = 'sqlite:' . (empty($db_info['file']) ? self::$DefaultDir . self::$DefaultFile : $db_info['file']);
 				$db_info['usr'] = $db_info['pwd'] = NULL;
 				break;
 			default:
