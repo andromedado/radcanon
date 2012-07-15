@@ -12,6 +12,7 @@ abstract class UtilsPDO {
 	public static function fetchIdsIntoInstances($sql, array $params, $Class) {
 		$Os = array();
 		$stmt = DBCFactory::rPDO()->prepare($sql);
+		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
 		$r = $stmt->execute($params);
 		if ($r) {
 			$data = $stmt->fetchAll(PDO::FETCH_NUM);
@@ -36,6 +37,7 @@ abstract class UtilsPDO {
 	public static function fetchIdIntoInstance($sql, array $params, $Class) {
 		$id = 0;
 		$stmt = DBCFactory::rPDO()->prepare($sql);
+		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
 		$r = $stmt->execute($params);
 		if ($r) {
 			list($id) = $stmt->fetch(PDO::FETCH_NUM);
