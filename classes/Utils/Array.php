@@ -24,6 +24,18 @@ class UtilsArray {
 		return $this->whenNotFound;
 	}
 	
+	public static function getValuesForTheseKeys(array $keys, array $pullFrom, $useNullIfNotFound = true) {
+		$fin = array();
+		foreach ($keys as $key) {
+			if (array_key_exists($key, $pullFrom)) {
+				$fin[] = $pullFrom[$key];
+			} elseif ($useNullIfNotFound) {
+				$fin[] = NULL;
+			}
+		}
+		return $fin;
+	}
+	
 	public static function ifKeyAddToThis($key, array $tested, array &$recip, $newKey = NULL) {
 		if (array_key_exists($key, $tested)) {
 			if (is_null($newKey)) $newKey = $key;
