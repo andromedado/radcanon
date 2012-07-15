@@ -13,6 +13,7 @@ class ExceptionBase extends Exception {
 	
 	public function __construct($msg = '', $code = 1, $previous = NULL){
 		$this->code = $code;
+		if (is_array($msg)) $msg = json_encode($msg);
 		$this->internalMessage = "Exception!,\nError: {$msg}";
 		$this->message = self::$publicMessage;
 	}
