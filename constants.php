@@ -4,6 +4,7 @@ if (!defined('LIB_DIR')) define('LIB_DIR', dirname(__DIR__) . DS);
 if (!defined('RADCANON_DIR')) define('RADCANON_DIR', __DIR__ . DS);
 if (!defined('RADCANON_CACHE_DIR')) define('RADCANON_CACHE_DIR', RADCANON_DIR . 'cache' . DS);
 if (!defined('CACHE_DIR')) define('CACHE_DIR', RADCANON_CACHE_DIR);
+if (!defined('LOG_FILE')) define('LOG_FILE', CACHE_DIR . 'rc.log');
 if (!defined('MAIL_FROM')) define('MAIL_FROM', 'Info <info@radcanon.com>');
 if (!defined('USE_HTACCESS')) define('USE_HTACCESS', true);
 if (!class_exists('Twig_Autoloader')) {
