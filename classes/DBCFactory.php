@@ -9,8 +9,8 @@ abstract class DBCFactory {
 	 * Segregate Read v. Write Queries?
 	 */
 	const SEGREGATE = false;
-	private static $OpenQuote = '';
-	private static $CloseQuote = '';
+	private static $OpenQuote = '"';
+	private static $CloseQuote = '"';
 	private static $WriteConnectionResource;
 	private static $ReadConnectionResource;
 	/** @var PDO $WritePDOConnection */
@@ -64,13 +64,25 @@ abstract class DBCFactory {
 				break;
 			case "sqlite3":
 			case "sqlite":
-				$dsn = 'sqlite:' . (empty($db_info['file']) ? self::$DefaultDir . self::$DefaultFile : $db_info['file']);
+				$dsn = 'sqlite:' . self::getDbFile();
 				$db_info['usr'] = $db_info['pwd'] = NULL;
 				break;
 			default:
 				throw new ExceptionBase('Unknown DB Type: ' . $type);
 		}
 		return new PDO($dsn, $db_info['usr'], $db_info['pwd']);
+	}
+	
+	protected static function getDbFile()
+	{
+		return empty(self::$WriteDBC['file']) ? self::$DefaultDir . self::$DefaultFile : self::$WriteDBC['file'];
+	}
+
+	public static function prepSqliteDb()
+	{
+		$f = self::getDbFile();
+		touch($f);
+		chmod($f, 0777);
 	}
 	
 	/**
