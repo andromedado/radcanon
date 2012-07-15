@@ -35,6 +35,48 @@ abstract class Model {
 		$this->loadAs($id);
 	}
 	
+	public function importFromCsv(
+		$csvPath,
+		$headerRow = false,
+		$delimiter = ',',
+		$enclosure = '"',
+		$escape = '\\'
+	) {
+		$handle = fopen($csvPath, 'r');
+		if (!$handle) throw new ExceptionValidation('Invalid File');
+		$useKey = array();
+		$cols = $values = $comma = '';
+		if ($headerRow) {
+			$headers = fgetcsv($handle, 0, $delimiter, $enclosure, $escape);
+			if ($headers === false) throw new ExceptionValidation('Invalid CSV');
+			foreach ($headers as $key => $header) {
+				if (in_array($header, $this->dbFields)) {
+					$useKey[] = $key;
+					$cols .= $comma . DBCFactory::quote($header);
+					$values .= $comma . '?';
+					$comma = ', ';
+				}
+			}
+		} else {
+			$row = fgetcsv($handle, 0, $delimiter, $enclosure, $escape);
+			if ($row === false) throw new ExceptionValidation('Invalid CSV');
+			rewind($handle);
+			$until = min(count($row), count($this->dbFields));
+			for ($i = 0; $i < $until; $i++) {
+				$useKey[] = $i;
+				$cols .= $comma . DBCFactory::quote($this->dbFields[$i]);
+				$values .= $comma . '?';
+				$comma = ', ';
+			}
+		}
+		$sql = "INSERT INTO " . DBCFactory::quote($this->table) . " ({$cols}) VALUES({$values})";
+		$stmt = DBCFactory::wPDO()->prepare($sql);
+		while (($data = fgetcsv($handle, 0, $delimiter, $enclosure, $escape)) !== false) {
+			$values = UtilsArray::getValuesForTheseKeys($useKey, $data);
+			$r = $stmt->execute($values);
+		}
+	}
+	
 	public function getData () {
 		$d = static::$AllData[$this->id];
 		foreach ($this->readOnly as $f) {
