@@ -27,19 +27,27 @@ class ModelLog extends Model {
 	}
 	
 	public static function mkLog ($content, $category = 'misc', $criticality = '0', $file = '', $line = 0) {
-		$O = new self(0);
-		if (is_array($content) || is_object($content)) {
-			$content = json_encode($content);
-		}
-		$O->createWithVars(array(
+		$stmt = DBCFactory::rPDO()->prepare("SELECT * FROM " . self::$Table . " WHERE " . self::$IdCol . " = ?");
+		$logInfo = array(
 			'content' => $content,
 			'category' => $category,
 			'addressed' => '0',
 			'criticality' => $criticality,
 			'file' => $file,
 			'line' => $line,
-		), true, true);
-		return $O->id;
+		);
+		if ($stmt) {
+			$O = new self(0);
+			if (is_array($content) || is_object($content)) {
+				$content = json_encode($content);
+			}
+			$O->createWithVars($logInfo, true, true);
+			return $O->id;
+		}
+		if ($h = fopen(LOG_FILE, 'a+')) {
+			fwrite($h, json_encode($logInfo) . "\n");
+			fclose($h);
+		}
 	}
 
 }
