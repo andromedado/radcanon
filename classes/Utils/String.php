@@ -40,6 +40,28 @@ abstract class UtilsString {
         return $j;
 	}
 	
+	public static function determineEntropy($str) {
+		$pots = 0;
+		if (preg_match('/[A-Z]/', $str)) {
+			$pots += 26;
+		}
+		if (preg_match('/[a-z]/', $str)) {
+			$pots += 26;
+		}
+		if (preg_match('/\d/', $str)) {
+			$pots += 10;
+		}
+		if (preg_match('/[^\dA-Za-z]/', $str)) {
+			$pots += 22;
+		}
+		return pow($pots, strlen($str));
+	}
+	
+	public static function enoughEntropy($str, $min = NULL) {
+		if (is_null($min)) $min = pow(84, 8);
+		return self::determineEntropy($str) >= $min;
+	}
+	
 }
 
 ?>
