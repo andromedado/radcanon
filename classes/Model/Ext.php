@@ -1,7 +1,12 @@
 <?php
 
-class ModelExt extends Model {
+class ModelExt extends Model
+{
 	protected $dbFields = array(
+	);
+	protected $readOnly = array(
+	);
+	protected $requiredFields = array(
 	);
 	protected $whatIAm = '';
 	protected $table = '';
@@ -10,11 +15,5 @@ class ModelExt extends Model {
 	protected static $Table = '';
 	protected static $IdCol = '';
 	protected static $AllData = array();
-	
-	public function load() {
-		parent::load();
-	}
-	
-}
 
-?>
+}
