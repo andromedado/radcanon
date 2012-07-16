@@ -2,6 +2,12 @@
 
 abstract class UtilsPDO {
 	
+	public static function writeExecute($sql, $args = array()) {
+		$stmt = DBCFactory::wPDO()->prepare($sql);
+		if (!$stmt) throw new ExceptionBase(DBCFactory::wPDO()->errorInfo());
+		return $stmt->execute($args);
+	}
+	
 	/**
 	 * Using the given SQL, params and Class, fetch Instances from the resulting Ids
 	 * @param String $sql
