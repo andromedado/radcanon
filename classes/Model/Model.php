@@ -82,6 +82,7 @@ abstract class Model {
 		foreach ($this->readOnly as $f) {
 			$d[$f] = $this->$f;
 		}
+		$d['id'] = $this->id;
 		$this->appendAdditionalData($d);
 		return $d;
 	}
