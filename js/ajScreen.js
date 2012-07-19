@@ -61,8 +61,29 @@ new App.Module(function ($) {
 		hideTO = setTimeout(Module.hide, delay);
 	};
 	
+	Module.preparePane = function (noEmpty) {
+		if (!$('#ajForms').length) {
+			$ajFWrap.html('<img id="ajScreenClose" src="images/close2.png" alt="Close" title="Close" border="0" /><table border="0" cellspacing="0" cellpadding="0" id="ajForms_table"><tr><td id="ajTL" class="top left"><div>&nbsp;</div></td><td id="ajTC" class="top center"><div>&nbsp;</div></td><td id="ajTR" class="top right"><div>&nbsp;</div></td></tr><tr><td id="ajML" class="middle left"><div>&nbsp;</div></td><td id="ajMC" class="middle center"></td><td id="ajMR" class="middle right"><div>&nbsp;</div></td></tr><tr><td id="ajBL" class="bottom left"><div>&nbsp;</div></td><td id="ajBC" class="bottom center"><div>&nbsp;</div></td><td id="ajBR" class="bottom right"><div>&nbsp;</div></td></tr></table>').prependTo($wrapper);
+			$('#ajMC').append($ajForms);
+		}
+		if (!noEmpty) {
+			$ajForms.empty();
+		}
+		return $ajForms.unbind('change', fit).bind('change', fit);
+	};
+	
+	Module.screen = function (adi) {
+		Module.show(function () {
+			Module.preparePane(true);
+			fit();
+			if (adi && typeof adi === 'function') adi();
+		});
+		return $ajForms;
+	};
+	
 	Module.prompt = function (url, data) {
 		var tD, bits, i, l;
+		if (!url) 
 		if (!url.match(RegExp('\^' + App.subDir))) {
 			url = App.subDir + url;
 		}
@@ -76,15 +97,11 @@ new App.Module(function ($) {
 			}
 		}
 		Module.show(function () {
-			if(!$('#ajForms').length){
-				$ajFWrap.html('<img id="ajScreenClose" src="images/close2.png" alt="Close" title="Close" border="0" /><table border="0" cellspacing="0" cellpadding="0" id="ajForms_table"><tr><td id="ajTL" class="top left"><div>&nbsp;</div></td><td id="ajTC" class="top center"><div>&nbsp;</div></td><td id="ajTR" class="top right"><div>&nbsp;</div></td></tr><tr><td id="ajML" class="middle left"><div>&nbsp;</div></td><td id="ajMC" class="middle center"><div id="ajForms"></div></td><td id="ajMR" class="middle right"><div>&nbsp;</div></td></tr><tr><td id="ajBL" class="bottom left"><div>&nbsp;</div></td><td id="ajBC" class="bottom center"><div>&nbsp;</div></td><td id="ajBR" class="bottom right"><div>&nbsp;</div></td></tr></table>').prependTo($wrapper);
-			}else{
-				$('#ajForms').empty();
-			}
+			Module.preparePane();
 			fit();
 			App.ajax({url : url,
 				data : data,
-				recip : $('#ajForms'),
+				recip : $ajForms,
 				complete : function () {
 					fit();
 				}
@@ -94,7 +111,7 @@ new App.Module(function ($) {
 	};
 	
 	$(function () {
-		$wrapper = $('#wrapper');
+		$wrapper = $('body > div');
 		$('body').delegate('#ajScreen, #ajScreenClose, .ajScreenClose', 'click', Module.hide);
 	});
 	
