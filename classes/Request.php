@@ -151,6 +151,9 @@ class Request {
 	}
 	
 	public function setURI($uri) {
+		if (is_array($uri)) {
+			$uri = FilterRoutes::buildUrl($uri);
+		}
 		return $this->server['REQUEST_URI'] = $uri;
 	}
 	
