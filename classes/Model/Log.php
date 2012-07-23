@@ -41,8 +41,12 @@ class ModelLog extends Model {
 			if (is_array($content) || is_object($content)) {
 				$content = json_encode($content);
 			}
-			$O->createWithVars($logInfo, true, true);
-			return $O->id;
+			try {
+				$O->createWithVars($logInfo);
+				return $O->id;
+			} catch (ExceptionPDO $e) {
+				
+			}
 		}
 		if ($h = fopen(LOG_FILE, 'a+')) {
 			fwrite($h, json_encode($logInfo) . "\n");
