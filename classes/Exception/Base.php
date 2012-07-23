@@ -1,5 +1,4 @@
 <?php
-defined('PaZsCA8p') or exit;
 
 /**
  * Base Exception Class for Rad Canon
@@ -31,5 +30,3 @@ class ExceptionBase extends Exception {
 	}
 	
 } // END
-
-?>
