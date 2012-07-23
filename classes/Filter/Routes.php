@@ -79,7 +79,7 @@ class FilterRoutes implements Filter {
 		}
 	}
 	
-	public static function buildUrl (array $info, $relative = false) {
+	public static function buildUrl (array $info, $relative = false, $useShortcuts = true) {
 		$Info = array();
 		if (isset($info['controller'])) {
 			$Info = $info;
@@ -97,30 +97,32 @@ class FilterRoutes implements Filter {
 			$Info['arguments'] = implode('/', $Info['arguments']);
 		}
 		$suffix = implode('/', $Info);
-		foreach (self::$Routes as $Suffix => $Route) {
-			$route = $Route;
-			if (isset($route['arguments']) && is_array($route['arguments'])) {
-				$route['arguments'] = implode('/', $route['arguments']);
+		if ($useShortcuts) {
+			foreach (self::$Routes as $Suffix => $Route) {
+				$route = $Route;
+				if (isset($route['arguments']) && is_array($route['arguments'])) {
+					$route['arguments'] = implode('/', $route['arguments']);
+				}
+				if ($route === $Info) {
+					$path = $Route;
+					$suffix = $Suffix;
+					break;
+				}
 			}
-			if ($route === $Info) {
-				$path = $Route;
-				$suffix = $Suffix;
-				break;
-			}
-		}
-		if (!isset($path['arguments'])) $path['arguments'] = array();
-		foreach (self::$PregRoutes as $bits) {
-			if (isset($path['controller']) && isset($path['action']) && count($path['arguments']) === count($bits['encode']['arguments'])) {
-				if (preg_match($bits['encode']['controller'], $path['controller']) && preg_match($bits['encode']['action'], $path['action'])) {
-					$continue = true;
-					foreach ($bits['encode']['arguments'] as $k => $pattern) {
-						$continue = $continue && preg_match($pattern, $path['arguments'][$k]);
-					}
-					if ($continue) {
-						$args = $path['arguments'];
-						array_unshift($args, $path['action'], $path['controller']);
-						$suffix = vsprintf($bits['encode']['pattern'], $args);
-						break;
+			if (!isset($path['arguments'])) $path['arguments'] = array();
+			foreach (self::$PregRoutes as $bits) {
+				if (isset($path['controller']) && isset($path['action']) && count($path['arguments']) === count($bits['encode']['arguments'])) {
+					if (preg_match($bits['encode']['controller'], $path['controller']) && preg_match($bits['encode']['action'], $path['action'])) {
+						$continue = true;
+						foreach ($bits['encode']['arguments'] as $k => $pattern) {
+							$continue = $continue && preg_match($pattern, $path['arguments'][$k]);
+						}
+						if ($continue) {
+							$args = $path['arguments'];
+							array_unshift($args, $path['action'], $path['controller']);
+							$suffix = vsprintf($bits['encode']['pattern'], $args);
+							break;
+						}
 					}
 				}
 			}
