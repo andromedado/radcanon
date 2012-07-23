@@ -47,8 +47,14 @@ class Controller {
 		$Response = new AppResponse($Request);
 		$User = UserFactory::build();
 		self::filterWith(self::$preFilters, $Request, $Response, $User);
-		self::determineResponseType($Request, $Response);
-		self::executeApplicationCall(self::prepareApplicationCall($Request, $Response, $User), $Response);
+		try {
+			self::determineResponseType($Request, $Response);
+			self::executeApplicationCall(self::prepareApplicationCall($Request, $Response, $User), $Response);
+		} catch (ExceptionReroute $e) {
+			$Request->setURI($e->getUri());
+			self::determineResponseType($Request, $Response);
+			self::executeApplicationCall(self::prepareApplicationCall($Request, $Response, $User), $Response);
+		}
 		self::filterWith(self::$postFilters, $Request, $Response, $User);
 		return $Response;
 	}
@@ -92,6 +98,8 @@ class Controller {
 	protected static function executeApplicationCall(stdClass $Parts, Response $Response) {
 		try {
 			call_user_func_array(array($Parts->class, 'invoke'), array($Parts->method, $Parts->arguments));
+		} catch (ExceptionReroute $E) {
+			throw $E;
 		} catch (ExceptionBase $E) {
 			$lid = ModelLog::mkLog($E->getInternalMessage(), get_class($E), $E->getCode(), $E->getFile(), $E->getLine());
 			$Response->set('errors', array(sprintf($E->getMessage(), $lid)));
