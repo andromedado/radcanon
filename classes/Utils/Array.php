@@ -186,6 +186,36 @@ class UtilsArray {
 	}
 	
 	/**
+	 * Build a new array using the specified methods for values and keys
+	 * @param Array $Os
+	 * @param String $ValueMethod
+	 * @param Array $ValueArguments
+	 * @param String $KeyMethod
+	 * @param Array $KeyArguments
+	 * @return Array
+	 */
+	public static function buildWithMethods(
+		array $Os,
+		$ValueMethod,
+		array $ValueArguments = array(),
+		$KeyMethod = NULL,
+		array $KeyArguments = array()
+	) {
+		$fin = array();
+		if (is_null($KeyMethod)) {
+			foreach ($Os as $O) {
+				$fin[] = call_user_func_array(array($O, $ValueMethod), $ValueArguments);
+			}
+		} else {
+			foreach ($Os as $O) {
+				$k = call_user_func_array(array($O, $KeyMethod), $KeyArguments);
+				$fin[$k] = call_user_func_array(array($O, $ValueMethod), $ValueArguments);
+			}
+		}
+		return $fin;
+	}
+	
+	/**
 	 * Filters the given array of objects by the given Method
 	 * If the returned value from the method call is truthy,
 	 * the Object Makes it onto the final array
