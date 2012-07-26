@@ -79,6 +79,11 @@ abstract class Model {
 	
 	public function getData () {
 		$d = static::$AllData[$this->id];
+		if ($d === false) {
+			foreach ($this->dbFields as $f) {
+				$d[$f] = $this->$f;
+			}
+		}
 		foreach ($this->readOnly as $f) {
 			$d[$f] = $this->$f;
 		}
