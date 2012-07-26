@@ -723,6 +723,9 @@ abstract class Model {
 				$sql .= " ORDER BY {$options['sort']}";
 			}
 		}
+		if (isset($options['limit'])) {
+			$sql .= " LIMIT " . $options['limit'];
+		}
 		return array($sql, $args, $Class);
 	}
 	
