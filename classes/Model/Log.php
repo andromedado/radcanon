@@ -82,7 +82,7 @@ CREATE TABLE `logs` (
   KEY `criticality` (`criticality`),
   KEY `addressed` (`addressed`),
   KEY `file` (`file`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 CREATE VIEW `issues` AS
 SELECT *
