@@ -11,12 +11,32 @@ class Request {
 	protected $iniCookie;
 	
 	protected $Accessable = array('get', 'server', 'post', 'cookie');
+	protected $Abstracted = array('get', 'server', 'post', 'cookie');
 	
 	public function __construct(array $_server, array $_get, array $_post, array $_cookie) {
 		$this->iniServer = $this->server = $_server;
 		$this->iniGet = $this->get = $_get;
 		$this->iniPost = $this->post = $_post;
 		$this->iniCookie = $this->cookie = $_cookie;
+	}
+	
+	public function __call($func, $args) {
+		if (in_array($func, $this->Abstracted)) {
+			$key = $default = $cast = null;
+			switch (true) {
+				case count($args) > 2 :
+					$cast = $args[2];
+				case count($args) > 1 :
+					$default = $args[1];
+				case !empty($args) :
+					$key = $args[0];
+			}
+			if (is_null($key)) {
+				return $this->$func;
+			}
+			return $this->abstractedGet($key, $this->$func, $default, $cast);
+		}
+		return parent::__call($func, $args);
 	}
 	
 	public function postFieldEmpty () {
@@ -65,7 +85,7 @@ class Request {
 		return $curArr;
 	}
 	
-	public function abstractedGet($key, array $array, $default = NULL) {
+	public function abstractedGet($key, array $array, $default = NULL, $cast = NULL) {
 		if (strpos($key, '[') !== false) {
 			$results = array();
 			if (preg_match('/^([A-Z\d_-]+)\[([A-Z\d_-]+)\](.*)$/i', $key, $results) && 
@@ -74,21 +94,38 @@ class Request {
 				return $this->abstractedGet($results[2] . $results[3], $array[$results[1]], $default);
 			}
 		}
-		return isset($array[$key]) ? $array[$key] : $default;
+		$value = isset($array[$key]) ? $array[$key] : $default;
+		if (!is_null($cast)) {
+			switch ($cast) {
+				case 'array' :
+					$value = (array)$value;
+					break;
+				case 'int' :
+				case 'integer' :
+					$value = (int)$value;
+					break;
+				case 'float' :
+				case 'double' :
+				case 'real' :
+					$value = (float)$value;
+					break;
+				case 'bool' :
+				case 'boolean' :
+					$value = (bool)$value;
+					break;
+				case 'string' :
+					$value = (string)$value;
+					break;
+				case 'object' :
+					$value = (object)$value;
+					break;
+			}
+		}
+		return $value;
 	}
 	
 	public function getGETVal($key, $default = NULL) {
 		return $this->abstractedGet($key, $this->get, $default);
-	}
-	
-	public function get($key = NULL, $default = NULL) {
-		if (is_null($key)) return $this->get;
-		return $this->abstractedGet($key, $this->get, $default);
-	}
-	
-	public function cookie($key = NULL, $default = NULL) {
-		if (is_null($key)) return $this->cookie;
-		return $this->abstractedGet($key, $this->cookie, $default);
 	}
 	
 	public function getIniGET() {
@@ -111,16 +148,6 @@ class Request {
 	public function isPostEmpty($key = NULL) {
 		if (is_null($key)) return empty($this->post);
 		return empty($this->post[$key]);
-	}
-	
-	public function post($key = NULL, $default = NULL) {
-		if (is_null($key)) return $this->post;
-		return $this->abstractedGet($key, $this->post, $default);
-	}
-	
-	public function server($key = NULL, $default = NULL) {
-		if (is_null($key)) return $this->server;
-		return $this->abstractedGet($key, $this->server, $default);
 	}
 	
 	public function getIniPOST() {
