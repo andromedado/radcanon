@@ -128,12 +128,6 @@ var App = (function ($) {
 		return ajaxLoadingGifs[which];
 	};
 	
-	$.fn.ajMask = function (which) {
-		return this.each(function (i, E) {
-			$(E).html(app.getAjMask(which));
-		});
-	};
-	
 	/**
 	 * Top Level Utilities
 	 */
@@ -146,7 +140,7 @@ var App = (function ($) {
 	app.parseFloat = function (str) {
 		if (!str) return 0;
 		return parseFloat(String(str).replace(/[^\d\.-]/g, '')) || 0;
-	}
+	};
 
 	app.notZero = function (fl) {
 		return (Math.floor(fl)<0 && fl + 0.001 < 0) || (Math.ceil(fl)>0 && fl - 0.001 > 0);
@@ -186,6 +180,35 @@ var App = (function ($) {
 		perc = app.parseFloat(str) || 0;
 		sign = perc + 0.01 > 0 ? '' : '-';
 		return sign + Math.abs((Math.round(perc * Math.pow(10, precision))) / Math.pow(10, precision)).toFixed(precision) + '%';
+	};
+	
+	app.jqBindInputGetSetter = function (funcName, func) {
+		if ($.fn[funcName]) throw 'Don\'t want to override pre-existing ' + funcName;
+		$.fn[funcName] = function (newVal) {
+			if (newVal) {
+				nv = func(newVal);
+				return this.each(function (i, E) {
+					$(E).val(nv);
+				});
+			}
+			return func(this.val());
+		};
+	};
+	
+	app.jqBindInputGetSetter('floatVal', app.parseFloat);
+	app.jqBindInputGetSetter('cashVal', app.cashFormat);
+	
+	$.fn.ajMask = function (which) {
+		return this.each(function (i, E) {
+			$(E).html(app.getAjMask(which));
+		});
+	};
+	
+	$.fn.cashFormat = function () {
+		return this.each(function (i, E) {
+			var $e = $(E);
+			$e.val(app.cashFormat($e.val()));
+		});
 	};
 	
 	/**
