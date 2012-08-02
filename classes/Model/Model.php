@@ -88,6 +88,7 @@ abstract class Model {
 			$d[$f] = $this->$f;
 		}
 		$d['id'] = $this->id;
+		$d['isValid'] = $this->isValid();
 		$this->appendAdditionalData($d);
 		return $d;
 	}
@@ -651,11 +652,11 @@ abstract class Model {
 	}
 	
 	public static function getIDCol(){
-		return self::$IdCol;
+		return static::$IdCol;
 	}
 	
 	public static function getTable(){
-		return self::$Table;
+		return static::$Table;
 	}
 	
 	function whatAmI(){
