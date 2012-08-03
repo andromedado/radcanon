@@ -9,7 +9,7 @@ abstract class UtilsColor {
 		$color->b = 0;
 		if ( $s == 0 ) {
 			$color->r = $color->g = $color->b = $v;
-			return;
+			return $color;
 		}
 		$h /= 60;
 		$i = floor( $h );
