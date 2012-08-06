@@ -2,6 +2,8 @@
 
 /**
  * Email Base Class
+ * @author Shad Downey
+ * @version 1.3
  */
 class Email {
 	protected $to;
@@ -61,8 +63,8 @@ class Email {
 	
 	public function send() {
 		$r = self::sendMail($this->to, $this->subject, strval($this->body), $this->from, '', $this->attachements);
-		if (DEBUG || $r !== true) {
-			Log::mkLog('Mail Delivery' . ($r !== true ? ' Failure' : '') . ': ' . json_encode(array($this->to, $this->subject, strval($this->body), $this->from, '', $this->attachements)), 'email', 1);
+		if (class_exists('ModelLog') && ((defined('DEBUG') && DEBUG) || $r !== true)) {
+			ModelLog::mkLog('Mail Delivery' . ($r !== true ? ' Failure' : '') . ': ' . json_encode(array($this->to, $this->subject, strval($this->body), $this->from, '', $this->attachements)), 'email', 1);
 		}
 		return $r;
 	}
@@ -116,7 +118,7 @@ class Email {
 		
 		$mail_content = '';
 		$mail_content .= "--".$mime_boundary . $nl;
-		$mail_content .= "Content-Type: text/html; charset=\"CHARSET_GOES_HERE\"" . $nl;
+		$mail_content .= "Content-Type: text/plain; charset=\"CHARSET_GOES_HERE\"" . $nl;
 		$mail_content .= "Content-Transfer-Encoding: base64" . $nl . $nl;
 		$mail_content .= trim(chunk_split(base64_encode($plainBody))) . $nl;
 		$mail_content .= "--".$mime_boundary . $nl;
@@ -151,5 +153,3 @@ EOT;
 	}
 	
 }
-
-?>
