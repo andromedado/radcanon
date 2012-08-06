@@ -2,6 +2,10 @@
 if (!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 if (!defined('LIB_DIR')) define('LIB_DIR', dirname(__DIR__) . DS);
 if (!defined('RADCANON_DIR')) define('RADCANON_DIR', __DIR__ . DS);
+if (!defined('RADCANON_CSS_DIR')) define('RADCANON_CSS_DIR', RADCANON_DIR . 'css' . DS);
+if (!defined('CSS_DIR')) define('CSS_DIR', RADCANON_CSS_DIR);
+if (!defined('RADCANON_JS_DIR')) define('RADCANON_JS_DIR', RADCANON_DIR . 'js' . DS);
+if (!defined('JS_DIR')) define('JS_DIR', RADCANON_JS_DIR);
 if (!defined('RADCANON_CACHE_DIR')) define('RADCANON_CACHE_DIR', RADCANON_DIR . 'cache' . DS);
 if (!defined('CACHE_DIR')) define('CACHE_DIR', RADCANON_CACHE_DIR);
 if (!defined('LOG_FILE')) define('LOG_FILE', CACHE_DIR . 'rc.log');
