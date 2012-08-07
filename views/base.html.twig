@@ -4,10 +4,10 @@
 {% block head %}
 	{% block metas %}{{ metas }}{% endblock %}
 	{% block links %}
-<link rel="stylesheet" type="text/css" href="/css/suture.php{% set styleAmp = '?' %}{% for style in styles %}{{ styleAmp ~ style }}{% set styleAmp = '&' %}{% endfor %}" />
+<link rel="stylesheet" type="text/css" href="/css/suture.php{% set styleAmp = '?' %}{% for style in styles %}{{ styleAmp ~ style|url_encode }}{% set styleAmp = '&' %}{% endfor %}" />
 	{% endblock %}
 	{% block scripts %}
-<script type="text/javascript" src="/js/suture.php{% set scriptAmp = '?' %}{% for script in scripts %}{{ scriptAmp ~ script }}{% set scriptAmp = '&' %}{% endfor %}"></script>
+<script type="text/javascript" src="/js/suture.php{% set scriptAmp = '?' %}{% for script in scripts %}{{ scriptAmp ~ script|url_encode }}{% set scriptAmp = '&' %}{% endfor %}"></script>
 	{% endblock %}
 	<title>{% block title %}{{ title }}{% endblock %}</title>
 {% endblock %}
