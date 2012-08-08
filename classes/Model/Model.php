@@ -443,7 +443,7 @@ abstract class Model {
 	
 	protected static function updateCacheValue($id, $var, $val) {
 		if (!isset(static::$AllData[$id]) || !is_array(static::$AllData[$id])) static::$AllData[$id] = array();
-		return static::$AllData[$var] = $val;
+		return static::$AllData[$id][$var] = $val;
 	}
 	
 	protected static function updateCacheValues($id, array $varsToVals) {
