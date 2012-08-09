@@ -33,7 +33,7 @@ class Response {
 	protected $defaultVars = array(
 		'styles' => array(),
 		'scripts' => array(),
-		'title' => ' - RADCANON - ',
+		'title' => DEFAULT_PAGE_TITLE,
 		'content' => '',
 		'metas' => '',
 		'baseHref' => BASE_URL,
