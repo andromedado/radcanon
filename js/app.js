@@ -132,6 +132,12 @@ var App = (function ($) {
 	 * Top Level Utilities
 	 */
 	
+	app.round = function (number, significantDigits) {
+		var pow = Math.pow(10, Number(significantDigits) || 0);
+		number = Number(number) || 0;
+		return Math.round(number * pow) / pow;
+	};
+	
 	app.parseInt = function (str){
 		if (!str) return 0;
 		return parseInt(String(str).replace(/[^\d\.-]/g, ''), 10) || 0;
@@ -159,19 +165,19 @@ var App = (function ($) {
 	};
 	
 	app.numberFormat = function (str) {
-		return app.addCommas(app.parseFloat(str).toFixed(0));
+		return app.addCommas(Math.round(app.parseFloat(str)));
 	};
 	
 	app.cashFormat = function (str) {
 		var cash = app.parseFloat(str),
 			sign = cash + 0.01 > 0 ? '' : '-';
-		return sign + '$' + app.addCommas(Math.abs(cash).toFixed(2));
+		return sign + '$' + app.addCommas(app.round(Math.abs(cash), 2));
 	};
 	
 	app.bigCashFormat = function (str) {
 		var cash = app.parseFloat(str),
 			sign = cash + 0.01 > 0 ? '' : '-';
-		return sign + '$' + app.addCommas(Math.abs(cash).toFixed(0));
+		return sign + '$' + app.addCommas(Math.round(Math.abs(cash)));
 	};
 
 	app.percentageFormat = function (str, precision) {
@@ -179,7 +185,7 @@ var App = (function ($) {
 		precision = Number(precision) || 1;
 		perc = app.parseFloat(str) || 0;
 		sign = perc + 0.01 > 0 ? '' : '-';
-		return sign + Math.abs((Math.round(perc * Math.pow(10, precision))) / Math.pow(10, precision)).toFixed(precision) + '%';
+		return sign + app.round(Math.abs((Math.round(perc * Math.pow(10, precision))) / Math.pow(10, precision)), precision) + '%';
 	};
 	
 	app.jqBindInputGetSetter = function (funcName, func) {
