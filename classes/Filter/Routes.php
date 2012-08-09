@@ -81,9 +81,8 @@ class FilterRoutes implements Filter {
 	
 	public static function buildUrl (array $info, $relative = false, $useShortcuts = true) {
 		$Info = array();
-		if (isset($info['controller'])) {
-			$Info = $info;
-		} elseif (!empty($info)) {
+		$info = array_map('urlencode', $info);
+		if (!empty($info)) {
 			$Info['controller'] = array_shift($info);
 			if ($info) {
 				$Info['action'] = array_shift($info);
