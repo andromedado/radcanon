@@ -16,5 +16,3 @@ class ControllerPages extends ControllerApp {
 	}
 	
 }
-
-?>
