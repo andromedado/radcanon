@@ -2,18 +2,20 @@
 <html>
 	<head>
 {% block head %}
+	<base href="{{ basehref }}" />
 	{% block metas %}{{ metas }}{% endblock %}
 	{% block links %}
-<link rel="stylesheet" type="text/css" href="/css/suture.php{% set styleAmp = '?' %}{% for style in styles %}{{ styleAmp ~ style|url_encode }}{% set styleAmp = '&' %}{% endfor %}" />
+<link rel="stylesheet" type="text/css" href="css/suture.php{% set styleAmp = '?' %}{% for style in styles %}{{ styleAmp ~ style|url_encode }}{% set styleAmp = '&' %}{% endfor %}" />
 	{% endblock %}
 	{% block scripts %}
-<script type="text/javascript" src="/js/suture.php{% set scriptAmp = '?' %}{% for script in scripts %}{{ scriptAmp ~ script|url_encode }}{% set scriptAmp = '&' %}{% endfor %}"></script>
+<script type="text/javascript" src="js/suture.php{% set scriptAmp = '?' %}{% for script in scripts %}{{ scriptAmp ~ script|url_encode }}{% set scriptAmp = '&' %}{% endfor %}"></script>
 	{% endblock %}
 	<title>{% block title %}{{ title }}{% endblock %}</title>
 {% endblock %}
 	</head>
 	<body>
 {% block body %}
+	<div id="wrapper">
 	{% block notifications %} {% block errorNotifications %} {% for
 	error in errors %}
 	<h2 class="f_msg msg">{{ error|raw }}</h2>
@@ -21,9 +23,10 @@
 	notice in messages %}
 	<h2 class="s_msg msg">{{ notice|raw }}</h2>
 	{% endfor %} {% endblock %} {% endblock %}
-	{% block main %}
+	{% block mainContent %}
 		{{ content }}
 	{% endblock %}
+	</div>
 {% endblock %}
 <!--
 {{ dump(invocation)|raw }}-->
