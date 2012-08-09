@@ -36,7 +36,7 @@ class Response {
 		'title' => ' - RADCANON - ',
 		'content' => '',
 		'metas' => '',
-		'baseHref' => '/',
+		'baseHref' => BASE_URL,
 	);
 	protected $appVars = array();
 	protected $vars = array();
