@@ -2,8 +2,8 @@
 var App = (function ($) {
 	"use strict";
 	var app = {
-			subDir : '',
-			debugLevel : 1,
+			subDir : '<?php echo APP_SUB_DIR; ?>',
+			debugLevel : 0,
 		},
 		Body,
 		$body,
