@@ -1,9 +1,11 @@
 <?php
 
-abstract class Model {
+abstract class Model implements Iterator
+{
 	protected $valid;
 	protected $id;
 	protected $name;
+	protected $_position = null;
 	
 	protected $baseName;
 	protected $foundWith = NULL;
@@ -32,7 +34,48 @@ abstract class Model {
 	protected static $AllData = array();
 	
 	public function __construct ($id = 0) {
+		if (!empty($this->dbFields)) {
+			$this->_position = 0;
+		}
 		$this->loadAs($id);
+	}
+	
+	public function rewind()
+	{
+		if (!empty($this->dbFields)) {
+			$this->_position = 0;
+		} else {
+			$this->_position = null;
+		}
+	}
+	
+	public function current()
+	{
+		if (!empty($this->dbFields)) {
+			$var = $this->dbFields[$this->_position];
+			return $this->$var;
+		}
+		return null;
+	}
+	
+	public function key()
+	{
+		if (!empty($this->dbFields)) {
+			return $this->dbFields[$this->_position];
+		}
+		return null;
+	}
+	
+	public function next()
+	{
+		if (!empty($this->dbFields)) {
+			$this->_position += 1;
+		}
+	}
+	
+	public function valid()
+	{
+		return array_key_exists($this->_position, $this->dbFields);
 	}
 	
 	public function importFromCsv(
@@ -274,6 +317,7 @@ abstract class Model {
 	public function safeCreateWithVars (array $varsToVals, $performAllFollowUp = true) {
 		$fields = $this->dbFields;
 		array_shift($fields);
+		$this->preFilterVars($varsToVals, true);
 		$fin = UtilsArray::filterWithWhiteList($varsToVals, $fields, false);
 //		vdump($fin, $fields, $varsToVals);
 		foreach ($this->requiredFields as $field => $msg) {
@@ -281,7 +325,6 @@ abstract class Model {
 				throw new ExceptionValidation($msg);
 			}
 		}
-		$this->preFilterVars($fin, true);
 		return $this->createWithVars($fin, $performAllFollowUp);
 	}
 	
@@ -498,13 +541,13 @@ abstract class Model {
 		} else {
 			$fin = $fs;
 		}
+		$this->preFilterVars($vars, false);
 		$fin = UtilsArray::filterWithWhiteList($vars, $fin);
 		foreach ($this->requiredFields as $field => $msg) {
 			if (empty($fin[$field])) {
 				throw new ExceptionValidation($msg);
 			}
 		}
-		$this->preFilterVars($fin, false);
 		return $this->updateVars($fin);
 	}
 	
