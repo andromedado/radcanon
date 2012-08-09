@@ -793,21 +793,21 @@ abstract class Model implements Iterator
 	/**
 	 * @return Model
 	 */
-	public static function findOwner (Model $M) {
+	public static function findOwner (Model $M, $additionalOptions = array()) {
 		$idc = static::$IdCol;
-		return static::findOne(array(
+		return static::findOne(array_merge($additionalOptions, array(
 			'fields' => array(
 				$idc => $M->$idc,
 			),
-		));
+		)));
 	}
 	
-	public static function findAllBelongingTo (Model $Model) {
-		return static::findAll(array(
+	public static function findAllBelongingTo (Model $Model, $additionalOptions = array()) {
+		return static::findAll(array_merge($additionalOptions, array(
 			'fields' => array(
 				$Model->idCol => $Model->id,
 			),
-		));
+		)));
 	}
 	
 	/**
