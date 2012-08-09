@@ -20,3 +20,4 @@ if (!defined('RADCANON_CLASS_DIR')) define('RADCANON_CLASS_DIR', RADCANON_DIR . 
 if (!defined('RADCANON_TEMPLATES_DIR')) define('RADCANON_TEMPLATES_DIR', RADCANON_DIR . 'views' . DS);
 if (!defined('PaZsCA8p')) define('PaZsCA8p', 'hwllo');
 if (!defined('BASE_URL')) define('BASE_URL', 'http://radcanon.com/');
+if (!defined('DEFAULT_PAGE_TITLE')) define('DEFAULT_PAGE_TITLE', ' - RadCanon - ');
