@@ -122,6 +122,9 @@ abstract class Model implements Iterator
 	
 	public function getData () {
 		$d = static::$AllData[$this->id];
+		foreach ($this->genericallyAvailable as $f) {
+			$d[$f] = $this->$f;
+		}
 		if ($d === false) {
 			foreach ($this->dbFields as $f) {
 				$d[$f] = $this->$f;
@@ -130,7 +133,6 @@ abstract class Model implements Iterator
 		foreach ($this->readOnly as $f) {
 			$d[$f] = $this->$f;
 		}
-		$d['id'] = $this->id;
 		$d['isValid'] = $this->isValid();
 		$this->appendAdditionalData($d);
 		return $d;
