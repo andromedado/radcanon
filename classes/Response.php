@@ -64,7 +64,7 @@ class Response {
 	
 	public function __construct(Request $req) {
 		$this->request = $req;
-		$this->location = $req->post('_bounceBack', null);
+		$this->location = $req->post('_bounceBack', $req->server('REQUEST_URI', APP_SUB_DIR . '/'));
 		$this->set('currentUri', $this->request->getIniURI());
 		if (!isset($_SESSION['msg'])) $_SESSION['msg'] = array();
 		if (!isset($_SESSION['f_msg'])) $_SESSION['f_msg'] = array();
