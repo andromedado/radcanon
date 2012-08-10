@@ -41,9 +41,6 @@ class ModelLog extends Model {
 		);
 		if ($stmt) {
 			$O = new self(0);
-			if (is_array($content) || is_object($content)) {
-				$content = json_encode($content);
-			}
 			try {
 				$O->createWithVars($logInfo);
 				return $O->id;
