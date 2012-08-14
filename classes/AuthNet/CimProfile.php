@@ -23,6 +23,19 @@ class AuthNetCimProfile extends AuthNetCim {
 	}
 	
 	/**
+	 * @param String $id Unique Id to create profile for
+	 * @return String Customer Profile ID
+	 */
+	public function createWithCustomerIdAndEmail ($id, $email) {
+		$info = array('profile' => array('merchantCustomerId' => $this->formatId($id), 'email' => $email));
+		$R = $this->getAuthNetXMLRequest()->getAuthNetXMLResponse('createCustomerProfileRequest', $info);
+		if (!$R->isGood) {
+			throw new ExceptionAuthNet($this->getPublicError($R->code));
+		}
+		return strval($R->XML->customerProfileId);
+	}
+	
+	/**
 	 * Take the Given Id and format it for
 	 * use as `merchantCustomerId` with Authorize.net
 	 * 

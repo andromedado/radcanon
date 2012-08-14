@@ -70,19 +70,30 @@ class AuthNetCimPayProfile extends AuthNetCim {
 		if (isset($data['lineItems'])) {
 			$Arr['lineItems'] = array();
 			$c = 0;
-			$lineItemFields = array(
-				'itemId', 'name', 'description', 'quantity', 'unitPrice', 'taxable',
+			$lineItemFieldsAndLength = array(
+				'itemId' => 31,
+				'name' => 31,
+				'description' => 255,
+				'quantity' => null,
+				'unitPrice' => null,
+				'taxable' => null,
 			);
 			foreach ($data['lineItems'] as $ItemsArr) {
 				if ($c === 30) break;
-				$IA = new UtilsArray($ItemsArr);
 				$buildTo = array();
-				foreach ($lineItemFields as $f) {
+				foreach ($lineItemFieldsAndLength as $f => $maxLen) {
 					UtilsArray::ifKeyAddToThis($f, $ItemsArr, $buildTo);
 				}
 				if (isset($buildTo['unitPrice'])) $buildTo['unitPrice'] = round($buildTo['unitPrice'], 2);
-				$Arr['lineItems'][] = $buildTo;
-				$c++;
+				foreach ($lineItemFieldsAndLength as $f => $maxLen) {
+					if (isset($buildTo[$f]) && !is_null($maxLen) && strlen($buildTo[$f]) > $maxLen) {
+						$buildTo[$f] = substr($buildTo[$f], 0, $maxLen);
+					}
+				}
+				if (!empty($buildTo)) {
+					$Arr['lineItems'][] = $buildTo;
+					$c++;
+				}
 			}
 		}
 		$Arr['customerProfileId'] = $data['customerProfileId'];
@@ -125,15 +136,14 @@ class AuthNetCimPayProfile extends AuthNetCim {
 			$RequestData['extraOptions'] = $raw['extraOptions'];
 		}
 		$R = $this->getAuthNetXMLRequest()->getAuthNetXMLResponse('createCustomerProfileTransactionRequest', $RequestData);
-		/*/
-		if (!$R->isGood) {
+		$DirectResponse = strval($R->XML->directResponse);
+		if (!$R->isGood && empty($DirectResponse)) {
 			ModelLog::mkLog(array($R, $RequestData));
 			throw new ExceptionAuthNet($this->getPublicError($R->code));
 		}
-		/*/
-		$Response = new AuthNetAimResponse(strval($R->XML->directResponse));
+		$Response = new AuthNetAimResponse($DirectResponse);
 		if ($validateResponse && !$Response->isGood) {
-			ModelLog::mkLog($Response->getInfo(), 'cim_pp', 1);
+			ModelLog::mkLog(array($Response, $R), 'cim_pp', 1);
 			throw new ExceptionAuthNet(AuthNet::getPublicError($Response->code, 'aim'));
 		}
 		return $Response;
@@ -157,19 +167,34 @@ class AuthNetCimPayProfile extends AuthNetCim {
 				$raw[$field] = substr($raw[$field], 0, $maxLength);
 			}
 		}
+		$optionalsAndMaxLength = array(
+			'city' => 40,
+			'state' => 40,
+			'phoneNumber' => 25,
+		);
+		foreach ($optionalsAndMaxLength as $field => $maxLength) {
+			if (isset($raw[$field]) && !is_null($maxLength) && strlen($raw[$field]) > $maxLength) {
+				$raw[$field] = substr($raw[$field], 0, $maxLength);
+			}
+		}
 		$data = $raw;
+		
+		$billToArray = array(
+			'firstName' => $data['firstName'],
+			'lastName' => $data['lastName'],
+			'address' => $data['address'],
+		);
+		if (isset($data['city'])) $billToArray['city'] = $data['city'];
+		if (isset($data['state'])) $billToArray['state'] = $data['state'];
+		$billToArray['zip'] = $data['zip'];
+		$billToArray['country'] = isset($data['country']) ? $data['country'] : 'usa';
+		if (isset($data['phoneNumber'])) $billToArray['phoneNumber'] = $data['phoneNumber'];
 		
 		$PayProfileInfo = array(
 			'customerProfileId' => $data['customerProfileId'],
 			'paymentProfile' => array(
 				'customerType' => isset($data['customerType']) ? $data['customerType'] : 'individual',
-				'billTo' => array(
-					'firstName' => $data['firstName'],
-					'lastName' => $data['lastName'],
-					'address' => $data['address'],
-					'zip' => $data['zip'],
-					'country' => isset($data['country']) ? $data['country'] : 'usa',
-				),
+				'billTo' => $billToArray,
 				'payment' => array(
 					'creditCard' => array(
 						'cardNumber' => $data['cardNumber'],
@@ -178,11 +203,14 @@ class AuthNetCimPayProfile extends AuthNetCim {
 					),
 				),
 			),
-			'validationMode' => DEBUG ? 'testMode' : 'liveMode',
+			'validationMode' => DEBUG ? 'none' : 'liveMode',
 		);
 		
 		$R = $this->getAuthNetXMLRequest()->getAuthNetXMLResponse('createCustomerPaymentProfileRequest', $PayProfileInfo);
-		if (!$R->isGood) throw new ExceptionAuthNet($this->getPublicError($R->code));
+		if (!$R->isGood) {
+			ModelLog::mkLog(array($R, $PayProfileInfo), 'ANCIMPP');
+			throw new ExceptionAuthNet($this->getPublicError($R->code));
+		}
 		return strval($R->XML->customerPaymentProfileId);
 	}
 	
