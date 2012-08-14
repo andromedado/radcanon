@@ -33,10 +33,10 @@ class Response {
 	protected $defaultVars = array(
 		'styles' => array(),
 		'scripts' => array(),
-		'title' => ' - RADCANON - ',
+		'title' => DEFAULT_PAGE_TITLE,
 		'content' => '',
 		'metas' => '',
-		'baseHref' => '',
+		'baseHref' => BASE_URL,
 	);
 	protected $appVars = array();
 	protected $vars = array();
@@ -64,6 +64,7 @@ class Response {
 	
 	public function __construct(Request $req) {
 		$this->request = $req;
+		$this->location = $req->post('_bounceBack', $req->server('REQUEST_URI', APP_SUB_DIR . '/'));
 		$this->set('currentUri', $this->request->getIniURI());
 		if (!isset($_SESSION['msg'])) $_SESSION['msg'] = array();
 		if (!isset($_SESSION['f_msg'])) $_SESSION['f_msg'] = array();

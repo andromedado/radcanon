@@ -13,6 +13,16 @@ abstract class UtilsDate {
 	}
 	
 	/**
+	 * Do the given date/time strings occur in the same day?
+	 * @param String $date1
+	 * @param String $date2
+	 * @return Boolean
+	 */
+	public static function stringsSameDay($date1, $date2) {
+		return self::redoDateFormat($date1) === self::redoDateFormat($date2);
+	}
+	
+	/**
 	 * How many days were/are there in the month of the given Timestamp?
 	 * @param Int $timestamp
 	 * @param Const $calendar

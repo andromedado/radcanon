@@ -29,6 +29,9 @@ class ModelUser extends Model {
 		'tmp_expires',
 		'requires_password_change',
 	);
+	protected $readOnly = array(
+		'name',
+	);
 	protected $RowAttributes = array(
 		'*getManageLinkedName' => 'Name',
 		'email' => 'Email Address',

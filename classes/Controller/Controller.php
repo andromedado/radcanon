@@ -86,7 +86,7 @@ class Controller {
 			case "ajax": $rt = Response::TYPE_JSON; break;
 			case "xml": $rt = Response::TYPE_XML; break;
 			case "html":
-			default: $rt = Response::TYPE_HTML;
+			default: $rt = $Request->isPost() ? Response::TYPE_LOCATION : Response::TYPE_HTML;
 		}
 		$Response->type = $rt;
 	}

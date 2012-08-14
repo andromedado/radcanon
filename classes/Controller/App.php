@@ -11,6 +11,7 @@ abstract class ControllerApp {
 	public $model = NULL;
 	protected $modelName = NULL;
 	protected $TemplateDir = NULL;
+	protected $baseName = null;
 	
 	final public function __construct(Request $req, Response $res, User $user) {
 		$this->request = $req;
@@ -20,6 +21,7 @@ abstract class ControllerApp {
 			$c = $this->modelName;
 			$this->model = new $c;
 		}
+		$this->baseName = preg_replace('/^Controller/', '', get_class($this));
 		$this->load();
 	}
 	
@@ -65,7 +67,7 @@ abstract class ControllerApp {
 	
 	public function invoke ($method, array $arguments = array()) {
 		$this->prefilterInvocation($method, $arguments);
-		$this->response->set('invocation', array(get_called_class(), $method, $arguments));
+		$this->response->set('invocation', array(get_class($this), $method, $arguments));
 		if (!method_exists($this, $method)) throw new ExceptionBase('Invoke called on with invalid combo: ' . $method);
 		$template = $this->getTemplateDir() . DS . $method . '.html.twig';
 		if (file_exists(APP_TEMPLATES_DIR . $template) || file_exists(RADCANON_TEMPLATES_DIR . $template)) {
@@ -73,6 +75,18 @@ abstract class ControllerApp {
 		} elseif (DEBUG) {
 			$this->response->template = 'RadCanon' . DS . 'missingTemplate.html.twig';
 			$this->response->set('missingTemplate', $template);
+		}
+		if (file_exists(CSS_DIR . strtolower($this->baseName) . '.css')) {
+			$this->addStyle(strtolower($this->baseName));
+		}
+		if (file_exists(CSS_DIR . strtolower($this->baseName . '-' . $method) . '.css')) {
+			$this->addStyle(strtolower($this->baseName . '-' . $method));
+		}
+		if (file_exists(JS_DIR . strtolower($this->baseName) . '.js')) {
+			$this->addScript(strtolower($this->baseName));
+		}
+		if (file_exists(JS_DIR . strtolower($this->baseName . '-' . $method) . '.js')) {
+			$this->addScript(strtolower($this->baseName . '-' . $method));
 		}
 		$this->response->content = call_user_func_array(array($this, $method), $arguments);
 	}

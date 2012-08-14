@@ -1,9 +1,11 @@
 <?php
 
-abstract class Model {
+abstract class Model implements Iterator
+{
 	protected $valid;
 	protected $id;
 	protected $name;
+	protected $_position = null;
 	
 	protected $baseName;
 	protected $foundWith = NULL;
@@ -32,7 +34,48 @@ abstract class Model {
 	protected static $AllData = array();
 	
 	public function __construct ($id = 0) {
+		if (!empty($this->dbFields)) {
+			$this->_position = 0;
+		}
 		$this->loadAs($id);
+	}
+	
+	public function rewind()
+	{
+		if (!empty($this->dbFields)) {
+			$this->_position = 0;
+		} else {
+			$this->_position = null;
+		}
+	}
+	
+	public function current()
+	{
+		if (!empty($this->dbFields)) {
+			$var = $this->dbFields[$this->_position];
+			return $this->$var;
+		}
+		return null;
+	}
+	
+	public function key()
+	{
+		if (!empty($this->dbFields)) {
+			return $this->dbFields[$this->_position];
+		}
+		return null;
+	}
+	
+	public function next()
+	{
+		if (!empty($this->dbFields)) {
+			$this->_position += 1;
+		}
+	}
+	
+	public function valid()
+	{
+		return array_key_exists($this->_position, $this->dbFields);
 	}
 	
 	public function importFromCsv(
@@ -79,6 +122,9 @@ abstract class Model {
 	
 	public function getData () {
 		$d = static::$AllData[$this->id];
+		foreach ($this->genericallyAvailable as $f) {
+			$d[$f] = $this->$f;
+		}
 		if ($d === false) {
 			foreach ($this->dbFields as $f) {
 				$d[$f] = $this->$f;
@@ -87,7 +133,7 @@ abstract class Model {
 		foreach ($this->readOnly as $f) {
 			$d[$f] = $this->$f;
 		}
-		$d['id'] = $this->id;
+		$d['isValid'] = $this->isValid();
 		$this->appendAdditionalData($d);
 		return $d;
 	}
@@ -273,6 +319,7 @@ abstract class Model {
 	public function safeCreateWithVars (array $varsToVals, $performAllFollowUp = true) {
 		$fields = $this->dbFields;
 		array_shift($fields);
+		$this->preFilterVars($varsToVals, true);
 		$fin = UtilsArray::filterWithWhiteList($varsToVals, $fields, false);
 //		vdump($fin, $fields, $varsToVals);
 		foreach ($this->requiredFields as $field => $msg) {
@@ -280,7 +327,6 @@ abstract class Model {
 				throw new ExceptionValidation($msg);
 			}
 		}
-		$this->preFilterVars($fin, true);
 		return $this->createWithVars($fin, $performAllFollowUp);
 	}
 	
@@ -442,7 +488,7 @@ abstract class Model {
 	
 	protected static function updateCacheValue($id, $var, $val) {
 		if (!isset(static::$AllData[$id]) || !is_array(static::$AllData[$id])) static::$AllData[$id] = array();
-		return static::$AllData[$var] = $val;
+		return static::$AllData[$id][$var] = $val;
 	}
 	
 	protected static function updateCacheValues($id, array $varsToVals) {
@@ -497,13 +543,13 @@ abstract class Model {
 		} else {
 			$fin = $fs;
 		}
+		$this->preFilterVars($vars, false);
 		$fin = UtilsArray::filterWithWhiteList($vars, $fin);
 		foreach ($this->requiredFields as $field => $msg) {
 			if (empty($fin[$field])) {
 				throw new ExceptionValidation($msg);
 			}
 		}
-		$this->preFilterVars($fin, false);
 		return $this->updateVars($fin);
 	}
 	
@@ -651,11 +697,11 @@ abstract class Model {
 	}
 	
 	public static function getIDCol(){
-		return self::$IdCol;
+		return static::$IdCol;
 	}
 	
 	public static function getTable(){
-		return self::$Table;
+		return static::$Table;
 	}
 	
 	function whatAmI(){
@@ -723,6 +769,9 @@ abstract class Model {
 				$sql .= " ORDER BY {$options['sort']}";
 			}
 		}
+		if (isset($options['limit'])) {
+			$sql .= " LIMIT " . $options['limit'];
+		}
 		return array($sql, $args, $Class);
 	}
 	
@@ -744,21 +793,21 @@ abstract class Model {
 	/**
 	 * @return Model
 	 */
-	public static function findOwner (Model $M) {
+	public static function findOwner (Model $M, $additionalOptions = array()) {
 		$idc = static::$IdCol;
-		return static::findOne(array(
+		return static::findOne(array_merge($additionalOptions, array(
 			'fields' => array(
 				$idc => $M->$idc,
 			),
-		));
+		)));
 	}
 	
-	public static function findAllBelongingTo (Model $Model) {
-		return static::findAll(array(
+	public static function findAllBelongingTo (Model $Model, $additionalOptions = array()) {
+		return static::findAll(array_merge($additionalOptions, array(
 			'fields' => array(
 				$Model->idCol => $Model->id,
 			),
-		));
+		)));
 	}
 	
 	/**

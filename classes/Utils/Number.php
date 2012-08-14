@@ -128,24 +128,28 @@ abstract class UtilsNumber {
 		return (int)preg_replace('/[^\d'.($allowNegative ? '-' : '').']+/','',$str);
 	}
 
-	public static function timeFormatSeconds ($secs, $includeSeconds = false) {
-		$hrs=floor($secs/60/60);
-		if($includeSeconds){
-			$mins=floor(($secs%3600)/60);
-			$sec=($secs%3600)%60;
-			$Ss=$sec==1?'':'s';
-			$sec=' '.$sec.' second'.$Ss;
-		}else{
-			$mins=round(($secs%3600)/60);
-			$sec='';
+	public static function timeFormatSeconds ($secs, $includeSeconds = false)
+	{
+		$hrs = floor($secs / 60 / 60);
+		if ($includeSeconds) {
+			$mins = floor(($secs % 3600) / 60);
+			$sec = ($secs % 3600) % 60;
+			$Ss = $sec == 1 ? '' : 's';
+			$sec = ' ' . $sec . ' second' . $Ss;
+		} else {
+			$mins = round(($secs % 3600) / 60);
+			$sec = '';
 		}
-		$Hs=$hrs==1?'':'s';
-		if($hrs>0){$hrs=$hrs.' hr'.$Hs.'. ';}else{$hrs='';}
-		$Ms=$mins==1?'':'s';
-		$mins=$mins.' min'.$Ms.'.';
-		return $hrs.$mins.$sec;
+		$Hs = $hrs == 1 ? '' : 's';
+		if ($hrs > 0) {
+			 $hrs = $hrs . ' hr' . $Hs . '. ';
+		} else {
+			$hrs = '';
+		}
+		$Ms = $mins == 1 ? '' : 's';
+		$mins = $mins . ' min' . $Ms . '.';
+		return $hrs . $mins . $sec;
 	}
 
 }
 
-?>

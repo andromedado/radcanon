@@ -28,6 +28,9 @@ class ModelLog extends Model {
 	
 	public static function mkLog ($content, $category = 'misc', $criticality = '0', $file = '', $line = 0) {
 		$stmt = DBCFactory::rPDO()->prepare("SELECT * FROM " . self::$Table . " WHERE " . self::$IdCol . " = ?");
+		if (is_array($content) || is_object($content)) {
+			$content = json_encode($content);
+		}
 		$logInfo = array(
 			'content' => $content,
 			'category' => $category,
@@ -38,9 +41,6 @@ class ModelLog extends Model {
 		);
 		if ($stmt) {
 			$O = new self(0);
-			if (is_array($content) || is_object($content)) {
-				$content = json_encode($content);
-			}
 			try {
 				$O->createWithVars($logInfo);
 				return $O->id;
