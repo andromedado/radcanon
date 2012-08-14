@@ -1,6 +1,7 @@
 <?php
 
 abstract class FileOfModel {
+	const APPROPRIATE_DIR_PERMISSIONS = 0755;
 	public $validationPreg = NULL;
 	/** @var Model $Model */
 	protected $Model;
@@ -81,7 +82,7 @@ abstract class FileOfModel {
 			if (!empty($this->name)) {
 				$this->baseDir .= $this->name . DS;
 			}
-			if (!is_dir($this->baseDir) && !mkdir($this->baseDir, 0744, true)) {
+			if (!is_dir($this->baseDir) && !mkdir($this->baseDir, self::APPROPRIATE_DIR_PERMISSIONS, true)) {
 				throw new ExceptionBase('Unable to make dir ' . $this->baseDir);
 			}
 		}
@@ -91,7 +92,7 @@ abstract class FileOfModel {
 	public function getResizeDir () {
 		if (is_null($this->resizeDir)) {
 			$this->resizeDir = $this->getBaseDir() . 'resized' . DS;
-			if (!is_dir($this->resizeDir) && !mkdir($this->resizeDir, 0744, true)) {
+			if (!is_dir($this->resizeDir) && !mkdir($this->resizeDir, self::APPROPRIATE_DIR_PERMISSIONS, true)) {
 				throw new ExceptionBase('Unable to make dir '. $this->resizeDir);
 			}
 		}
