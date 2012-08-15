@@ -12,4 +12,3 @@ class FilterAdmin implements Filter {
 	
 }
 
-?>
