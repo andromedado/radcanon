@@ -139,7 +139,10 @@ class AuthNetCimPayProfile extends AuthNetCim {
 		$DirectResponse = strval($R->XML->directResponse);
 		if (!$R->isGood && empty($DirectResponse)) {
 			ModelLog::mkLog(array($R, $RequestData));
-			throw new ExceptionAuthNet($this->getPublicError($R->code));
+			if ($validateResponse) {
+				throw new ExceptionAuthNet($this->getPublicError($R->code));
+			}
+			return $R;
 		}
 		$Response = new AuthNetAimResponse($DirectResponse);
 		if ($validateResponse && !$Response->isGood) {
