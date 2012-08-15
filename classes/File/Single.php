@@ -7,6 +7,11 @@ class FileSingle extends FileOfModel {
 		return !empty($fs);
 	}
 	
+	public function getHref ()
+	{
+		return APP_SUB_DIR . str_replace(SERVER_PREFIX, '', $this->getBaseDir() . $this->getFilename());
+	}
+	
 	public function getFilename () {
 		if (!$this->hasFile()) return NULL;
 		return basename(array_shift($this->getFilesInBaseDir()));
@@ -31,5 +36,3 @@ class FileSingle extends FileOfModel {
 	}
 	
 }
-
-?>
