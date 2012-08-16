@@ -91,7 +91,7 @@ class AuthNetXMLRequest extends AuthNet {
 		$xml .= '<' . $type . ' xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">' . "\n";
 		$xml .= $this->xmlIfiy($info, $type);
 		$xml .= "\n" . '</' . $type . '>';
-		if (DEBUG) ModelLog::mkLog($xml, 'anXML');
+		if (DEBUG) ModelLog::mkLog($xml, 'anXML', '0', __FILE__, __LINE__);
 		return $xml;
 	}
 	

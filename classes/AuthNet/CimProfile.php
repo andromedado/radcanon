@@ -61,4 +61,3 @@ class AuthNetCimProfile extends AuthNetCim {
 	
 }
 
-?>
