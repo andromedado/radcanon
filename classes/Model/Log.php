@@ -49,6 +49,7 @@ class ModelLog extends Model {
 			}
 		}
 		if ($h = fopen(LOG_FILE, 'a+')) {
+			$logInfo['when'] = date('Y-m-d H:i:s');
 			fwrite($h, json_encode($logInfo) . "\n");
 			fclose($h);
 		}
