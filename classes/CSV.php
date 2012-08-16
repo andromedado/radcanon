@@ -1,6 +1,17 @@
 <?php
 
 class CSV {
+	const TYPE_SESSION = 0;
+	const NEW_LINE = "\n";
+	
+	protected $type;
+	protected $name;
+	protected $data;
+	protected $delimiter;
+	protected $quote;
+	protected $quoteReplaceWith;
+	protected $cellCount = 0;
+	protected $rowCount = 0;
 	
 	private static $InitCSV = false;
 	private static $CSVDelimiter = ',';
@@ -8,6 +19,74 @@ class CSV {
 	private static $CSVPermittedQuote = "'";
 	private static $Rows = 0;
 	private static $Cells = 0;
+	
+	public function __construct (
+		$name = 'data.csv',
+		$storeType = self::TYPE_SESSION,
+		$delimiter = ',',
+		$quote = '"'
+	) {
+		$this->name = $name;
+		$this->type = $storeType;
+		$this->delimiter = $delimiter;
+		$this->quote = $quote;
+		$this->quoteReplaceWith = $this->quote === '"' ? "'" : '"';
+		switch ($this->type) {
+			case self::TYPE_SESSION ://Intentional Fall-Thru
+			default:
+				if (!isset($_SESSION[__CLASS__])) $_SESSION[__CLASS__] = array();
+				if (!isset($_SESSION[__CLASS__][$this->name])) $_SESSION[__CLASS__][$this->name] = '';
+				$this->data =& $_SESSION[__CLASS__][$this->name];
+		}
+	}
+	
+	public function getData()
+	{
+		return $this->data;
+	}
+	
+	public function clearData()
+	{
+		$this->data = '';
+		return $this;
+	}
+	
+	public function addCell ($entry)
+	{
+		if ($this->cellCount > 0) $this->data .= $this->delimiter;
+		if (is_null($entry)) $entry = 'NULL';
+		if (is_object($entry) || is_array($entry)) $entry = json_encode($entry);
+		$this->data .= $this->quote . str_replace($this->quote, $this->quoteReplaceWith, $entry) . $this->quote;
+		if ($this->cellCount === 0) $this->rowCount++;
+		$this->cellCount++;
+		return $this;
+	}
+	
+	public function finishRow ()
+	{
+		$this->data .= self::NEW_LINE;
+		$this->cellCount = 0;
+		return $this;
+	}
+	
+	public function addRow (array $entries)
+	{
+		if ($this->cellCount > 0) {
+			$this->finishRow();
+		}
+		foreach ($entries as $entry) {
+			$this->addCell($entry);
+		}
+		return $this->finishRow();
+	}
+	
+	public function handleDownloadResponse (Response $Response)
+	{
+		$Response->type = Response::TYPE_RAW_ECHO;
+		$Response->contentType = 'text/csv';
+		$Response->addHeader('Content-disposition: attachment; filename="' . str_replace('"', '', $this->name) . '"');
+		return $this->data;
+	}
 	
 	public static function initCSV ($fname = 'report') {
 		$_SESSION['CSV']['title'] = $fname;
