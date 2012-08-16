@@ -14,6 +14,7 @@ class Response {
 	const TYPE_CSV = 4;
 	const TYPE_FILESTREAM = 5;
 	const TYPE_TEMPLATE_IN_JSON = 6;
+	const TYPE_RAW_ECHO = 7;
 	
 	/**@var Request $request */
 	protected $request = NULL;
@@ -289,10 +290,12 @@ class Response {
 				$echoContent = false;
 				$i = readfile($this->content);
 				break;
+			case self::TYPE_RAW_ECHO :
+				$echoContent = true;
+				break;
 		}
 		if ($echoContent) echo $content;
 	}
 	
 }
 
-?>
