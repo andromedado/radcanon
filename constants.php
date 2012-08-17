@@ -21,3 +21,5 @@ if (!defined('RADCANON_TEMPLATES_DIR')) define('RADCANON_TEMPLATES_DIR', RADCANO
 if (!defined('PaZsCA8p')) define('PaZsCA8p', 'hwllo');
 if (!defined('BASE_URL')) define('BASE_URL', 'http://radcanon.com/');
 if (!defined('DEFAULT_PAGE_TITLE')) define('DEFAULT_PAGE_TITLE', ' - RadCanon - ');
+if (!defined('RUNNING_AS_CLI')) define('RUNNING_AS_CLI', strtolower(substr(php_sapi_name(), 0, 3)) === 'cli');
+
