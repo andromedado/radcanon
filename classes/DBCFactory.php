@@ -70,7 +70,8 @@ abstract class DBCFactory {
 			default:
 				throw new ExceptionBase('Unknown DB Type: ' . $type);
 		}
-		return new PDO($dsn, $db_info['usr'], $db_info['pwd']);
+		$driverOptions = isset($db_info['driverOptions']) ? $db_info['driverOptions'] : array();
+		return new PDO($dsn, $db_info['usr'], $db_info['pwd'], $driverOptions);
 	}
 	
 	protected static function getDbFile()
