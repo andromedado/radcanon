@@ -579,7 +579,12 @@ abstract class Model implements Iterator
 		$stmt = DBCFactory::wPDO()->prepare($sql);
 		$r = $stmt->execute($vs);
 		if (!$r) {
-			if (DEBUG) var_dump($r, DBCFactory::wPDO()->errorInfo(), $sql, $vs);exit;
+			if (DEBUG) {
+				var_dump($r, $stmt->errorInfo(), $sql, $vs);
+				if (!RUNNING_AS_CLI) {
+					exit;
+				}
+			}
 			throw new ExceptionPDO($stmt, $sql . ', Class: ' . $this->c);
 		}
 		static::updateCacheValues($this->id, $varsToVals);
