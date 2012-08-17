@@ -25,7 +25,8 @@ abstract class UtilsImage {
 		$file=basename($store);
 		$storeDir=dirname($store);
 
-		if (!is_dir($storeDir) && !mkdir($storeDir, 0744, true)) {
+		if (!is_dir($storeDir) && !mkdir($storeDir, 0755, true)) {
+			if (RUNNING_AS_CLI) return false;
 			throw new ExceptionBase('Unable to make dir ' . $storeDir);
 		}		
 		if ($ext=="jpg" || $ext=="jpeg"){ $src_img=@imagecreatefromjpeg($filename); }

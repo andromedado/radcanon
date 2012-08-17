@@ -83,6 +83,7 @@ abstract class FileOfModel {
 				$this->baseDir .= $this->name . DS;
 			}
 			if (!is_dir($this->baseDir) && !mkdir($this->baseDir, self::APPROPRIATE_DIR_PERMISSIONS, true)) {
+				if (RUNNING_AS_CLI) return false;
 				throw new ExceptionBase('Unable to make dir ' . $this->baseDir);
 			}
 		}
@@ -93,6 +94,7 @@ abstract class FileOfModel {
 		if (is_null($this->resizeDir)) {
 			$this->resizeDir = $this->getBaseDir() . 'resized' . DS;
 			if (!is_dir($this->resizeDir) && !mkdir($this->resizeDir, self::APPROPRIATE_DIR_PERMISSIONS, true)) {
+				if (RUNNING_AS_CLI) return false;
 				throw new ExceptionBase('Unable to make dir '. $this->resizeDir);
 			}
 		}
