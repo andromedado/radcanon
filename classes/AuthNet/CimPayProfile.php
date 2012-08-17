@@ -149,6 +149,7 @@ class AuthNetCimPayProfile extends AuthNetCim {
 			ModelLog::mkLog(array($Response, $R), 'cim_pp', 1);
 			throw new ExceptionAuthNet(AuthNet::getPublicError($Response->code, 'aim'));
 		}
+		if (RUNNING_AS_CLI) ModelLog::mkLog($Response, 'authnet', '0', __FILE__, __LINE__);
 		return $Response;
 	}
 	
