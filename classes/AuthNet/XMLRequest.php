@@ -44,7 +44,10 @@ class AuthNetXMLRequest extends AuthNet {
 	 * @return string Response
 	 */
 	public function getResponse($requestType, array $information, $returnType = 'string') {
-		$Return = $this->cURL($this->buildRequest($requestType, $information));
+		$Request = $this->buildRequest($requestType, $information);
+		if (RUNNING_AS_CLI || DEBUG) ModelLog::mkLog($Request, 'authnet_request', '0', __FILE__, __LINE__);
+		$Return = $this->cURL($Request);
+		if (RUNNING_AS_CLI || DEBUG) ModelLog::mkLog($Return, 'authnet_response', '0', __FILE__, __LINE__);
 		switch ($returnType) {
 			case "xml":
 				$Return = @simplexml_load_string($Return);//->saveXML());
@@ -91,7 +94,6 @@ class AuthNetXMLRequest extends AuthNet {
 		$xml .= '<' . $type . ' xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">' . "\n";
 		$xml .= $this->xmlIfiy($info, $type);
 		$xml .= "\n" . '</' . $type . '>';
-		if (DEBUG) ModelLog::mkLog($xml, 'anXML', '0', __FILE__, __LINE__);
 		return $xml;
 	}
 	
