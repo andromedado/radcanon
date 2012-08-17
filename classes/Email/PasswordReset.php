@@ -15,7 +15,7 @@ class EmailPasswordReset extends EmailAdmin {
 		Html::n('p', '', 'Your login is:<br />' . $this->Admin->getEmail(), $this->body);
 		Html::n('p', '', 'and your temporary password is:<br />' . $this->temporaryPassword, $this->body);
 		Html::n('p', '', 'the temporary password will be valid until used or ' . date('m/d/Y g:ia T', $this->Admin->getTmpPasswordExpires()), $this->body);
-		Html::n('a', 'https://' . SITE_HOST . FilterRoutes::buildUrl(array('Admin', 'login')), '- RadCanon', $this->body);
+		Html::n('a', 'https://' . SITE_HOST . FilterRoutes::buildUrl(array('Admin', 'login')), '- ' . APP_NAME, $this->body);
 	}
 	
 }
