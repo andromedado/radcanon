@@ -97,4 +97,3 @@ abstract class ImageEdit extends AppObject {
 	
 }
 
-?>
