@@ -146,10 +146,11 @@ EOT;
 		
 		$m = mail($to, $subject, $mail_content, $headers);
 		if (defined('DEBUG') && DEBUG) {
-			mail('shad@stellaractive.com', '(' . $to . ') ' . $subject . ' ' . mb_detect_encoding($mail_content), $mail_content, $headers);
+			mail('shad@stellaractive.com', '(' . $to . ') ' . $subject, $mail_content, $headers);
 		}
 		
 		return $m;
 	}
 	
 }
+
