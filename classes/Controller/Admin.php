@@ -127,11 +127,10 @@ class ControllerAdmin extends ControllerAdminOnly {
 				$this->response->redirectTo(array('Admin'));
 				return;
 			} catch (ExceptionValidation $e) {
-				$errors[] = $e->getMessage();
+				$this->response->addMessage($e->getMessage(), true);
 			}
 		}
 		
-		$this->set('errors', $errors);
 		$this->set('modifier', $modifier);
 		$this->set('action', FilterRoutes::buildUrl(array('Admin', 'changePassword')));
 		return;
