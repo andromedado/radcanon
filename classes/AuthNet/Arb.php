@@ -39,7 +39,7 @@ class AuthNetArb extends AuthNetXmlAble {
 			'totalOccurrences' => $totalOccurrences,
 		);
 		UtilsArray::ifKeyAddToThis('trialOccurrences', $data, $info['subscription']['paymentSchedule']);
-		$info['subscription']['amount'] = $amount;
+		$info['subscription']['amount'] = round($amount, 2);
 		UtilsArray::ifKeyAddToThis('trialAmount', $data, $info['subscription']);
 		$info['subscription']['payment'] = array(
 			'creditCard' => array(
