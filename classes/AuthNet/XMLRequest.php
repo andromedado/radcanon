@@ -45,9 +45,15 @@ class AuthNetXMLRequest extends AuthNet {
 	 */
 	public function getResponse($requestType, array $information, $returnType = 'string') {
 		$Request = $this->buildRequest($requestType, $information);
-		if (RUNNING_AS_CLI || DEBUG) ModelLog::mkLog($Request, 'authnet_request', '0', __FILE__, __LINE__);
+		if (RUNNING_AS_CLI || DEBUG || LOTS_OF_LOGS) {
+			$r = preg_replace('/\d{4,}/', 'xxxx', json_encode($Request));
+			ModelLog::mkLog($r, 'authnet_request', '0', __FILE__, __LINE__);
+		}
 		$Return = $this->cURL($Request);
-		if (RUNNING_AS_CLI || DEBUG) ModelLog::mkLog($Return, 'authnet_response', '0', __FILE__, __LINE__);
+		if (RUNNING_AS_CLI || DEBUG || LOTS_OF_LOGS) {
+			$r = preg_replace('/\d{4,}/', 'xxxx', json_encode($Return));
+			ModelLog::mkLog($r, 'authnet_response', '0', __FILE__, __LINE__);
+		}
 		switch ($returnType) {
 			case "xml":
 				$Return = @simplexml_load_string($Return);//->saveXML());
