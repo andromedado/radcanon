@@ -1,5 +1,7 @@
 <?php
 if (!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
+if (!defined('DEBUG')) define('DEBUG', false);
+if (!defined('LOTS_OF_LOGS')) define('LOTS_OF_LOGS', false);
 if (!defined('LIB_DIR')) define('LIB_DIR', dirname(__DIR__) . DS);
 if (!defined('RADCANON_DIR')) define('RADCANON_DIR', __DIR__ . DS);
 if (!defined('RADCANON_CSS_DIR')) define('RADCANON_CSS_DIR', RADCANON_DIR . 'css' . DS);
