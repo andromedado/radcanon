@@ -80,7 +80,7 @@ class AuthNetArb extends AuthNetXmlAble {
 			if (DEBUG) ModelLog::mkLog(array($R, $info), 'arb', '0', __FILE__, __LINE__);
 			throw new ExceptionAuthNet($this->getPublicError($R->code));
 		}
-		return strval($R->XML->customerProfileId);
+		return strval($R->XML->subscriptionId);
 	}
 	
 }
