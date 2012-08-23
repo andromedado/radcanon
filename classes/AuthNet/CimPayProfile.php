@@ -1,6 +1,7 @@
 <?php
 
-class AuthNetCimPayProfile extends AuthNetCim {
+class AuthNetCimPayProfile extends AuthNetCim
+{
 	protected static $permissibleTransactionTypes = array(
 		'profileTransAuthOnly',
 		'profileTransAuthCapture',
@@ -10,7 +11,8 @@ class AuthNetCimPayProfile extends AuthNetCim {
 		'profileTransVoid',
 	);
 	
-	public function buildProfileTransVoidRequestArray (array $raw) {
+	public function buildProfileTransVoidRequestArray (array $raw)
+	{
 		$reqsAndMaxLength = array(
 			'customerProfileId' => NULL,
 			'transId' => NULL,
@@ -30,14 +32,16 @@ class AuthNetCimPayProfile extends AuthNetCim {
 		return $fin;
 	}
 	
-	public function buildProfileTransPriorAuthCaptureRequestArray (array $raw) {
+	public function buildProfileTransPriorAuthCaptureRequestArray (array $raw)
+	{
 		$data = $this->buildProfileTransAuthOnlyRequestArray($raw);
 		if (!isset($raw['transId'])) throw new ExceptionAuthNet('Transaction ID is required');
 		$data['transId'] = $raw['transId'];
 		return $data;
 	}
 	
-	public function buildProfileTransAuthOnlyRequestArray (array $raw) {
+	public function buildProfileTransAuthOnlyRequestArray (array $raw)
+	{
 		$reqsAndMaxLength = array(
 			'amount' => NULL,
 			'customerProfileId' => NULL,
@@ -115,7 +119,8 @@ class AuthNetCimPayProfile extends AuthNetCim {
 	 * @param Array $raw
 	 * @return AuthNetAimResponse
 	 */
-	public function createTransaction (array $raw, $validateResponse = true) {
+	public function createTransaction (array $raw, $validateResponse = true)
+	{
 		if (!$this->isValid()) {
 			throw new ExceptionAuthNet('Invalid Pay Profile');
 		}
@@ -153,7 +158,8 @@ class AuthNetCimPayProfile extends AuthNetCim {
 		return $Response;
 	}
 	
-	public function createPayProfile (array $raw) {
+	public function createPayProfile (array $raw)
+	{
 		$reqsAndMaxLength = array(
 			'customerProfileId' => NULL,
 			'firstName' => 50,

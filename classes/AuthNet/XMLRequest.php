@@ -7,7 +7,8 @@
  * @author Shad Downey
  * @version 1.1
  */
-class AuthNetXMLRequest extends AuthNet {
+class AuthNetXMLRequest extends AuthNet
+{
 	protected $MultiInstancesPermissible = array(
 		'lineItems',
 	);
@@ -15,13 +16,14 @@ class AuthNetXMLRequest extends AuthNet {
 		'extraOptions',
 	);
 	
-	public function __construct ($login_id = NULL, $transaction_key = NULL) {
+	public function __construct ($login_id = NULL, $transaction_key = NULL)
+	{
 		$this->login_id = is_null($login_id) ? AuthNet::$default_login_id : $login_id;
 		$this->transaction_key = is_null($transaction_key) ? AuthNet::$default_transaction_key : $transaction_key;
 	}
 	
 	/**
-	 * Get an stdClass wrapped XML Response
+	 * Get an AuthNetXMLResponse
 	 * The Wrapper has standardized attributes
 	 * ->isGood bool Was the resultCode 'Ok'?
 	 * ->code string The Response Code
@@ -32,7 +34,8 @@ class AuthNetXMLRequest extends AuthNet {
 	 * @param array $info The info to put into the request
 	 * @return AuthNetXMLResponse
 	 */
-	public function getAuthNetXMLResponse($requestType, array $information) {
+	public function getAuthNetXMLResponse($requestType, array $information)
+	{
 		return new AuthNetXMLResponse($this->getResponse($requestType, $information, 'xml'), array($requestType, $information));
 	}
 	
@@ -43,7 +46,8 @@ class AuthNetXMLRequest extends AuthNet {
 	 * @param string $returnType How the Respons should be returned
 	 * @return string Response
 	 */
-	public function getResponse($requestType, array $information, $returnType = 'string') {
+	public function getResponse($requestType, array $information, $returnType = 'string')
+	{
 		$Request = $this->buildRequest($requestType, $information);
 		if (RUNNING_AS_CLI || DEBUG || LOTS_OF_LOGS) {
 			$r = preg_replace('/\d{4,}/', 'xxxx', json_encode($Request));
@@ -72,7 +76,8 @@ class AuthNetXMLRequest extends AuthNet {
 	 * @param string $xml XML of the Request
 	 * @return string XML Response
 	 */
-	protected function cURL($xml) {
+	protected function cURL($xml)
+	{
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, self::REQUEST_URL);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -94,7 +99,8 @@ class AuthNetXMLRequest extends AuthNet {
 	 * @param array $info The info to put into the request
 	 * @return string XML formatted request
 	 */
-	protected function buildRequest($type, array $info) {
+	protected function buildRequest($type, array $info)
+	{
 		$info = array_merge(array('merchantAuthentication' => array('name' => $this->login_id, 'transactionKey' => $this->transaction_key)), $info);
 		$xml = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
 		$xml .= '<' . $type . ' xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">' . "\n";
@@ -111,7 +117,8 @@ class AuthNetXMLRequest extends AuthNet {
 	 * @param String $parentNode
 	 * @return string XML
 	 */
-	protected function xmlIfiy($info, $parentNode, $ignoreParent = false) {
+	protected function xmlIfiy($info, $parentNode, $ignoreParent = false)
+	{
 		$xml = '';
 		if (is_array($info) || is_object($info)) {
 			foreach ($info as $key => $val) {
@@ -148,3 +155,4 @@ class AuthNetXMLRequest extends AuthNet {
 	}
 	
 }
+

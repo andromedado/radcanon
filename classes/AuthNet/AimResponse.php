@@ -1,6 +1,7 @@
 <?php
 
-class AuthNetAimResponse extends AuthNetResponse {
+class AuthNetAimResponse extends AuthNetResponse
+{
 	protected $raw;
 	protected $rawArray;
 	protected $aimArray;
@@ -52,7 +53,8 @@ class AuthNetAimResponse extends AuthNetResponse {
 		'Balance On Card',
 	);
 	
-	public function __construct ($csv, $delimiter = ',') {
+	public function __construct ($csv, $delimiter = ',')
+	{
 		$this->raw = $csv;
 		$this->rawArray = explode($delimiter, $csv);
 		$this->aimArray = array();
@@ -65,15 +67,16 @@ class AuthNetAimResponse extends AuthNetResponse {
 		$this->text = isset($this->rawArray[3]) ? $this->rawArray[3] : NULL;
 	}
 	
-	public function override (array $withInfo) {
+	public function override (array $withInfo)
+	{
 		$this->aimArray = array_merge($this->aimArray, $withInfo);
 		return $this;
 	}
 	
-	public function getInfo () {
+	public function getInfo ()
+	{
 		return $this->aimArray;
 	}
 	
 }
 
-?>
