@@ -1,16 +1,32 @@
 <?php
 
-class AuthNetArb extends AuthNetXmlAble {
+class AuthNetArb extends AuthNetXmlAble
+{
 	
-	public function getPublicError ($code, $type = 'arb') {
+	public function getPublicError ($code, $type = 'arb')
+	{
 		return parent::getPublicError($code, $type);
+	}
+	
+	/**
+	 * @return AuthNetXMLResponse
+	 */
+	public function cancel ()
+	{
+		if (!$this->isValid()) {
+			throw new ExceptionAuthNet('Invalid Subscription');
+		}
+		return $this->getAuthNetXMLRequest()->getAuthNetXMLResponse('ARBCancelSubscriptionRequest', array(
+			'subscriptionId' => $this->id,
+		));
 	}
 	
 	/**
 	 * @throws ExceptionAuthNet
 	 * @param Array $data
 	 */
-	public function create (array $data) {
+	public function create (array $data)
+	{
 		$mustNotBeEmpty = array(
 			'length',
 			'unit',
