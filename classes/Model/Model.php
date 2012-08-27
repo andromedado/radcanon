@@ -851,6 +851,16 @@ abstract class Model implements Iterator
 		return $Os;
 	}
 	
+	public static function translateIdsIntoModels (array $ids)
+	{
+		$Models = array();
+		$class = get_called_class();
+		foreach ($ids as $id) {
+			$Models[$id] = new $class($id);
+		}
+		return $Models;
+	}
+	
 }
 
 ?>
