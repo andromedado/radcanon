@@ -98,6 +98,7 @@ abstract class ControllerApp {
 	
 	public function notPermitted()
 	{
+		$this->response->addHeader('Forbidden', true, 403);
 		$this->response->template = 'Pages' . DS . 'notPermitted.html.twig';
 	}
 	
