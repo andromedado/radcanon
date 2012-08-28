@@ -221,6 +221,10 @@ class Response {
 	}
 	
 	public function addMessage ($msg, $bad = false) {
+		if (is_object($msg) && is_a($msg, 'ExceptionBase')) {
+			$msg = $msg->getMessage();
+			$bad = true;
+		}
 		$k = $bad ? 'f_msg' : 'msg';
 		$_SESSION[$k][] = $msg;
 	}
