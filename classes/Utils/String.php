@@ -1,10 +1,13 @@
 <?php
-defined('PaZsCA8p') or exit;
 
 abstract class UtilsString {
 	const IMAGE_FILENAME_REGEXP = '/\.(gif|jpg|jpeg|png)$/i';
 	const EMAIL_REGEXP = '/[A-Z]+[A-Z\d_\.]*@[^\.]+\.[^\.]+/i';
 	const DOMAIN_REGEXP = '/[A-Z\d-]+\.[A-Z]{2,}/i';
+	
+	public static function isHex($str = '', $caseSensitive = false) {
+		return preg_match('/[A-F\d]+/' . ($caseSensitive ? '' : 'i'), $str);
+	}
 	
 	public static function isDomain ($str = '') {
 		return preg_match(self::DOMAIN_REGEXP, $str);
@@ -64,4 +67,3 @@ abstract class UtilsString {
 	
 }
 
-?>
