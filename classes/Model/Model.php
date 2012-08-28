@@ -121,11 +121,11 @@ abstract class Model implements Iterator
 	}
 	
 	public function getData () {
-		$d = static::$AllData[$this->id];
+		$d = isset(static::$AllData[$this->id]) ? static::$AllData[$this->id] : array();
 		foreach ($this->genericallyAvailable as $f) {
 			$d[$f] = $this->$f;
 		}
-		if ($d === false) {
+		if (empty(static::$AllData[$this->id])) {
 			foreach ($this->dbFields as $f) {
 				$d[$f] = $this->$f;
 			}
