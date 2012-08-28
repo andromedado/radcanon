@@ -17,6 +17,9 @@ abstract class UtilsHtm {
 		return $i->value($val);
 	}
 	
+	/**
+	 * @return Html
+	 */
 	public static function select(array $array, $info, $sel = 'yahoo', $selectOne = NULL){
 		$O = Html::n('select', $info);
 		if (!is_null($selectOne)) {
