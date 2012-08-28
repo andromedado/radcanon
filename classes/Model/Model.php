@@ -31,6 +31,7 @@ abstract class Model implements Iterator
 	protected static $WhatIAm;
 	protected static $Table;
 	protected static $IdCol;
+	protected static $sortField = null;
 	protected static $AllData = array();
 	
 	public function __construct ($id = 0) {
@@ -826,6 +827,11 @@ abstract class Model implements Iterator
 	}
 	
 	public static function findAll (array $options = array(), $Class = NULL) {
+		if (!is_null(static::$sortField)) {
+			$options = array_merge(array(
+				'sort' => static::$sortField . ' ASC',
+			), $options);
+		}
 		list($sql, $args, $Class) = static::buildQueryFromOptions($options, $Class);
 		$Os = UtilsPDO::fetchIdsIntoInstances($sql, $args, $Class);
 		foreach ($Os as $O) {
@@ -851,12 +857,14 @@ abstract class Model implements Iterator
 		return $Os;
 	}
 	
-	public static function translateIdsIntoModels (array $ids)
+	public static function translateIdsIntoModels (array $ids, $useIdForKey = true)
 	{
 		$Models = array();
 		$class = get_called_class();
-		foreach ($ids as $id) {
-			$Models[$id] = new $class($id);
+		$i = 0;
+		foreach ($ids as $k => $id) {
+			$key = $useIdForKey ? $id : $k;
+			$Models[$key] = new $class($id);
 		}
 		return $Models;
 	}
