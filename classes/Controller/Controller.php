@@ -81,7 +81,7 @@ class Controller {
 	 * @return string Appropriate Response Type
 	 */
 	public static function determineResponseType(Request $Request, Response $Response) {
-		switch ($Request->get('requestType', 'html')) {
+		switch ($Request->get('requestType', $Request->post('requestType', 'html'))) {
 			case "api":
 			case "ajax": $rt = Response::TYPE_JSON; break;
 			case "xml": $rt = Response::TYPE_XML; break;
