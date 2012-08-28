@@ -96,6 +96,11 @@ abstract class ControllerApp {
 		$this->response->template = 'Pages' . DS . 'notFound.html.twig';
 	}
 	
+	public function notPermitted()
+	{
+		$this->response->template = 'Pages' . DS . 'notPermitted.html.twig';
+	}
+	
 	public function index () {
 		if (DEBUG) return get_called_class() . ' index';
 		$this->response->redirectTo(APP_SUB_DIR . '/');
