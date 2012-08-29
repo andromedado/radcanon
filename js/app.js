@@ -182,7 +182,7 @@ var App = (function ($) {
 
 	app.percentageFormat = function (str, precision) {
 		var perc, sign;
-		precision = Number(precision) || 1;
+		precision = isFinite(Number(precision)) ? Number(precision) : 1;
 		perc = app.parseFloat(str) || 0;
 		sign = perc + 0.01 > 0 ? '' : '-';
 		return sign + app.round(Math.abs((Math.round(perc * Math.pow(10, precision))) / Math.pow(10, precision)), precision) + '%';
@@ -214,6 +214,13 @@ var App = (function ($) {
 		return this.each(function (i, E) {
 			var $e = $(E);
 			$e.val(app.cashFormat($e.val()));
+		});
+	};
+	
+	$.fn.percentageFormat = function (precision) {
+		return this.each(function (i, E) {
+			var $e = $(E);
+			$e.val(app.percentageFormat($e.val(), precision));
 		});
 	};
 	
