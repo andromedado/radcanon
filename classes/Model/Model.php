@@ -896,5 +896,10 @@ abstract class Model implements Iterator
 		return UtilsArray::callOnAll($Models, 'getData');
 	}
 	
+	public static function getAllData (array $options = array())
+	{
+		return static::extractDataFromArray(static::findAll($options));
+	}
+	
 }
 
