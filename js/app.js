@@ -135,7 +135,7 @@ var App = (function ($) {
 	app.round = function (number, significantDigits) {
 		var pow = Math.pow(10, Number(significantDigits) || 0);
 		number = Number(number) || 0;
-		return Math.round(number * pow) / pow;
+		return Number(Math.round(number * pow) / pow).toFixed(significantDigits);
 	};
 	
 	app.parseInt = function (str){
