@@ -1,0 +1,12 @@
+<form action="{{ action }}" method="post">
+	<table class="autoT">
+		<tbody>
+		{% block tbody %}{% endblock %}
+		</tbody>
+	</table>
+	{% block submitButton %}
+	<div align="center">
+		<input type="submit" value="Submit" />
+	</div>
+	{% endblock %}
+</form>
