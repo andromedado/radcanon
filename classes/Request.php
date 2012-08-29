@@ -39,6 +39,20 @@ class Request {
 		return parent::__call($func, $args);
 	}
 	
+	public function amalgamatePostArrays()
+	{
+		$arrays = func_get_args();
+		if (count($arrays) === 1 && is_array(current($arrays))) $arrays = current($arrays);
+		return UtilsArray::amalgamateArrays($this->post, $arrays);
+	}
+	
+	public function amalgamateGetArrays()
+	{
+		$arrays = func_get_args();
+		if (count($arrays) === 1 && is_array(current($arrays))) $arrays = current($arrays);
+		return UtilsArray::amalgamateArrays($this->get, $arrays);
+	}
+	
 	public function postFieldEmpty () {
 		$args = func_get_args();
 		return UtilsArray::checkEmptiness($this->post, $args);
