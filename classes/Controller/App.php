@@ -110,30 +110,31 @@ abstract class ControllerApp {
 	
 	/**
 	 * Most common update action
-	 * @param Int $id Model Id
-	 * @param String $modelName
-	 * @param String $successMessage
-	 * @param mixed $destination afer update
-	 * @param String $templateModelName var name for the model data in the template
+	 * @param Int|Model $id Model Id
+	 * @param Array $settings
+	 * @index modelName {String}
+	 * @index successMessage {String}
+	 * @index destination {mixed} afer update
+	 * @index templateModelName {String} var name for the model data in the template
 	 */
-	protected function _update(
-		$id,
-		$modelName = null,
-		$successMessage = null,
-		$desitnation = null,
-		$templateModelName = null
-	) {
-		if (is_null($modelName)) $modelName = $this->modelName;
-		$Model = new $modelName($id);
+	protected function _update($id, array $settings = array())
+	{
+		if (is_a($id, 'Model')) {
+			$Model = $id;
+			$id = $Model->id;
+		} else {
+			if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
+			$Model = new $settings['modelName']($id);
+		}
 		if (!$Model->isValid()) return $this->notFound();
 		
 		if ($this->request->isPost()) {
 			try {
 				$Model->safeUpdateVars($this->request->post());
-				if (is_null($successMessage)) $successMessage = $Model->whatAmI() . ' Updated';
-				$this->response->addMessage($successMessage);
-				if (!is_null($desitnation)) {
-					$this->response->redirectTo($desitnation);
+				if (!isset($settings['successMessage'])) $settings['successMessage'] = $Model->whatAmI() . ' Updated';
+				$this->response->addMessage($settings['successMessage']);
+				if (isset($settings['destination'])) {
+					$this->response->redirectTo($settings['destination']);
 				}
 				return;
 			} catch (ExceptionValidation $e) {
@@ -141,32 +142,29 @@ abstract class ControllerApp {
 			}
 		}
 		
-		$this->set(is_null($templateModelName) ? $this->templateModelName : $templateModelName, $Model->getData());
+		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $Model->getData());
 	}
 	
 	/**
 	 * Most common create action
-	 * @param String $modelName
-	 * @param String $successMessage
-	 * @param mixed $destination afer update
-	 * @param String $templateModelName var name for the model data in the template
+	 * @param Array $settings
+	 * @index modelName {String}
+	 * @index successMessage {String}
+	 * @index destination {mixed} afer update
+	 * @index templateModelName {String} var name for the model data in the template
 	 */
-	protected function _create(
-		$modelName = null,
-		$successMessage = null,
-		$desitnation = null,
-		$templateModelName = null
-	) {
-		if (is_null($modelName)) $modelName = $this->modelName;
-		$Model = new $modelName;
+	protected function _create(array $settings = array())
+	{
+		if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
+		$Model = new $settings['modelName'];
 		
 		if ($this->request->isPost()) {
 			try {
 				$Model->safeCreateWithVars($this->request->post());
-				if (is_null($successMessage)) $successMessage = $Model->whatAmI() . ' Created';
-				$this->response->addMessage($successMessage);
-				if (!is_null($desitnation)) {
-					$this->response->redirectTo($desitnation);
+				if (!isset($settings['successMessage'])) $settings['successMessage'] = $Model->whatAmI() . ' Created';
+				$this->response->addMessage($settings['successMessage']);
+				if (isset($settings['destination'])) {
+					$this->response->redirectTo($settings['destination']);
 				}
 				return;
 			} catch (ExceptionValidation $e) {
@@ -174,7 +172,20 @@ abstract class ControllerApp {
 			}
 		}
 		
-		$this->set(is_null($templateModelName) ? $this->templateModelName : $templateModelName, $Model->getData());
+		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $Model->getData());
+	}
+	
+	protected function _review($id, array $settings = array())
+	{
+		if (is_a($id, 'Model')) {
+			$Model = $id;
+			$id = $Model->id;
+		} else {
+			if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
+			$Model = new $settings['modelName']($id);
+		}
+		if (!$Model->isValid()) return $this->notFound();
+		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $Model->getData());
 	}
 	
 }
