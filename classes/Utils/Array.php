@@ -381,6 +381,40 @@ class UtilsArray {
 		return array_sum(self::callWithEach($ArgsArr, $Class, $Method));
 	}
 	
+	/**
+	 * Given an Array of independent arrays with similar indices, return an array 
+	 * with just the shared indices and the array values associated with those
+	 * indices collapsed together. e.g.
+	 * param1 - array('hat' => array(0 => 'baseball-hat', 1 => 'top-hat'), 'gloves' => array(0 => 'catchers-mit', 1 => 'silk-gloves'))
+	 * param2 - array('hat', 'gloves')
+	 * returns - array(0 => array('hat' => 'baseball-hat', 'gloves' => 'cathers-mit'), 1 => array('hat' => 'top-hat', 'gloves' => 'silk-gloves'))
+	 * @param Array $baseArray
+	 * @param Array $arraysToAmalgamate
+	 * @return Array
+	 */
+	public static function amalgamateArrays(array $baseArray, array $arraysToAmalgamate)
+	{
+		$amalgam = array();
+		$key = current($arraysToAmalgamate);
+		while ($key !== false && (!array_key_exists($key, $baseArray) || !is_array($baseArray[$key]))) {
+			$key = next($arraysToAmalgamate);
+		}
+		reset($arraysToAmalgamate);
+		if ($key !== false) {
+			foreach ($baseArray[$key] as $index => $val) {
+				$elem = array();
+				foreach ($arraysToAmalgamate as $array) {
+					if (!is_array($baseArray[$array]) || !array_key_exists($index, $baseArray[$array])) {
+						$elem[$array] = null;
+					} else {
+						$elem[$array] = $baseArray[$array][$index];
+					}
+				}
+				$amalgam[$index] = $elem;
+			}
+		}
+		return $amalgam;
+	}
+	
 }
 
-?>
