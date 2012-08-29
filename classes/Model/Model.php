@@ -821,6 +821,11 @@ abstract class Model implements Iterator
 	}
 	
 	public static function findAllBelongingTo (Model $Model, $additionalOptions = array()) {
+		if (!is_null(static::$sortField)) {
+			$additionalOptions = array_merge(array(
+				'sort' => static::$sortField . ' ASC',
+			), $additionalOptions);
+		}
 		return static::findAll(array_merge($additionalOptions, array(
 			'fields' => array(
 				$Model->idCol => $Model->id,
@@ -879,6 +884,16 @@ abstract class Model implements Iterator
 			$Models[$key] = new $class($id);
 		}
 		return $Models;
+	}
+	
+	/**
+	 * Get data from each Model in the given array
+	 * @param Array $Models
+	 * @return Array Data
+	 */
+	public static function extractDataFromArray (array $Models)
+	{
+		return UtilsArray::callOnAll($Models, 'getData');
 	}
 	
 }
