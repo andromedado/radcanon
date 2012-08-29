@@ -12,6 +12,7 @@ abstract class ControllerApp {
 	protected $modelName = NULL;
 	protected $TemplateDir = NULL;
 	protected $baseName = null;
+	protected $templateModelName = 'modelData';
 	
 	final public function __construct(Request $req, Response $res, User $user) {
 		$this->request = $req;
@@ -107,6 +108,74 @@ abstract class ControllerApp {
 		$this->response->redirectTo(APP_SUB_DIR . '/');
 	}
 	
+	/**
+	 * Most common update action
+	 * @param Int $id Model Id
+	 * @param String $modelName
+	 * @param String $successMessage
+	 * @param mixed $destination afer update
+	 * @param String $templateModelName var name for the model data in the template
+	 */
+	protected function _update(
+		$id,
+		$modelName = null,
+		$successMessage = null,
+		$desitnation = null,
+		$templateModelName = null
+	) {
+		if (is_null($modelName)) $modelName = $this->modelName;
+		$Model = new $modelName($id);
+		if (!$Model->isValid()) return $this->notFound();
+		
+		if ($this->request->isPost()) {
+			try {
+				$Model->safeUpdateVars($this->request->post());
+				if (is_null($successMessage)) $successMessage = $Model->whatAmI() . ' Updated';
+				$this->response->addMessage($successMessage);
+				if (!is_null($desitnation)) {
+					$this->response->redirectTo($desitnation);
+				}
+				return;
+			} catch (ExceptionValidation $e) {
+				$this->response->addMessage($e);
+			}
+		}
+		
+		$this->set(is_null($templateModelName) ? $this->templateModelName : $templateModelName, $Model->getData());
+	}
+	
+	/**
+	 * Most common create action
+	 * @param String $modelName
+	 * @param String $successMessage
+	 * @param mixed $destination afer update
+	 * @param String $templateModelName var name for the model data in the template
+	 */
+	protected function _create(
+		$modelName = null,
+		$successMessage = null,
+		$desitnation = null,
+		$templateModelName = null
+	) {
+		if (is_null($modelName)) $modelName = $this->modelName;
+		$Model = new $modelName;
+		
+		if ($this->request->isPost()) {
+			try {
+				$Model->safeCreateWithVars($this->request->post());
+				if (is_null($successMessage)) $successMessage = $Model->whatAmI() . ' Created';
+				$this->response->addMessage($successMessage);
+				if (!is_null($desitnation)) {
+					$this->response->redirectTo($desitnation);
+				}
+				return;
+			} catch (ExceptionValidation $e) {
+				$this->response->addMessage($e);
+			}
+		}
+		
+		$this->set(is_null($templateModelName) ? $this->templateModelName : $templateModelName, $Model->getData());
+	}
+	
 }
 
-?>
