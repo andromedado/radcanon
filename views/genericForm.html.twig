@@ -1,5 +1,7 @@
 <form action="{{ action }}" method="post">
-	<table class="autoT">
+{% block tableTag %}
+	<table class="{% block tableClass %}autoT{% endblock %}">
+{% endblock %}
 		<tbody>
 		{% block tbody %}{% endblock %}
 		</tbody>
