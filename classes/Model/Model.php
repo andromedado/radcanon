@@ -528,10 +528,21 @@ abstract class Model implements Iterator
 		return true;
 	}
 	
+	/**
+	 * @throws ExceptionValidation
+	 * @param Array $vars passed by reference
+	 * @param Boolean $creating are these vars being used to create a new entry?
+	 * @return void
+	 */
 	protected function preFilterVars (array &$vars, $creating) {
 		
 	}
 	
+	/**
+	 * @throws ExceptionValidation
+	 * @param Array $vars Key=>Val var=>val used to update this entry
+	 * @return Boolean
+	 */
 	public function safeUpdateVars (array $vars) {
 		$fs = $this->dbFields;
 		array_shift($fs);
@@ -557,11 +568,12 @@ abstract class Model implements Iterator
 	/**
 	 * Update the given properties on this object, and in the database
 	 * 
-	 * @throws ExceptionMySQL
+	 * @throws ExceptionPDO
 	 * @param array $varsToVals
 	 * @return bool
 	 */
-	public function updateVars($varsToVals) {
+	public function updateVars(array $varsToVals)
+	{
 		$sets = $comma = '';
 		$vs = array();
 		foreach ($varsToVals as $var => $val) {
@@ -871,4 +883,3 @@ abstract class Model implements Iterator
 	
 }
 
-?>
