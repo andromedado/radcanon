@@ -53,6 +53,37 @@ class Request {
 		return UtilsArray::amalgamateArrays($this->get, $arrays);
 	}
 	
+	public function unsetKeys($keys, &$array)
+	{
+		foreach ($keys as $key) {
+			unset($array[$key]);
+		}
+	}
+	
+	public function unsetPostKeys()
+	{
+		$keys = func_get_args();
+		$this->unsetKey($keys, $this->post);
+	}
+	
+	public function unsetGetKeys()
+	{
+		$keys = func_get_args();
+		$this->unsetKey($keys, $this->get);
+	}
+	
+	public function unsetCookieKeys()
+	{
+		$keys = func_get_args();
+		$this->unsetKey($keys, $this->cookie);
+	}
+	
+	public function unsetServerKeys()
+	{
+		$keys = func_get_args();
+		$this->unsetKey($keys, $this->server);
+	}
+	
 	public function postFieldEmpty () {
 		$args = func_get_args();
 		return UtilsArray::checkEmptiness($this->post, $args);
