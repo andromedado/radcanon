@@ -120,6 +120,15 @@ abstract class Model implements Iterator
 			$r = $stmt->execute($values);
 		}
 	}
+
+	public function getRawData()
+	{
+		$d = array();
+		foreach ($this->dbFields as $f) {
+			$d[$f] = $this->$f;
+		}
+		return $d;
+	}
 	
 	public function getData () {
 		$d = isset(static::$AllData[$this->id]) ? static::$AllData[$this->id] : array();
@@ -127,9 +136,7 @@ abstract class Model implements Iterator
 			$d[$f] = $this->$f;
 		}
 		if (empty(static::$AllData[$this->id])) {
-			foreach ($this->dbFields as $f) {
-				$d[$f] = $this->$f;
-			}
+			$d = array_merge($d, $this->getRawData());
 		}
 		foreach ($this->readOnly as $f) {
 			$d[$f] = $this->$f;
@@ -146,6 +153,13 @@ abstract class Model implements Iterator
 	public function __get ($property) {
 		if ((in_array($property, $this->dbFields) || in_array($property, $this->genericallyAvailable) || in_array($property, $this->readOnly)) && isset($this->$property)) return $this->$property;
 		return NULL;
+	}
+	
+	public function __set ($var, $val) {
+		if (DEBUG) {
+			return $this->$var = $val;
+		}
+		return false;
 	}
 	
 	public function loadAs($id) {
@@ -850,6 +864,7 @@ abstract class Model implements Iterator
 			), $options);
 		}
 		list($sql, $args, $Class) = static::buildQueryFromOptions($options, $Class);
+		//var_dump($sql, $args);
 		$Os = UtilsPDO::fetchIdsIntoInstances($sql, $args, $Class);
 		foreach ($Os as $O) {
 			$O->foundWith = $options;
