@@ -36,7 +36,10 @@ class Request {
 			}
 			return $this->abstractedGet($key, $this->$func, $default, $cast);
 		}
-		return parent::__call($func, $args);
+		if (DEBUG || LOTS_OF_LOGS) {
+			ModelLog::mkLog('failed method call: ' . $func . ' : ' . json_encode($args), '0', __FILE__, __LINE__);
+		}
+		return null;//parent::__call($func, $args);
 	}
 	
 	public function amalgamatePostArrays()
@@ -63,25 +66,25 @@ class Request {
 	public function unsetPostKeys()
 	{
 		$keys = func_get_args();
-		$this->unsetKey($keys, $this->post);
+		$this->unsetKeys($keys, $this->post);
 	}
 	
 	public function unsetGetKeys()
 	{
 		$keys = func_get_args();
-		$this->unsetKey($keys, $this->get);
+		$this->unsetKeys($keys, $this->get);
 	}
 	
 	public function unsetCookieKeys()
 	{
 		$keys = func_get_args();
-		$this->unsetKey($keys, $this->cookie);
+		$this->unsetKeys($keys, $this->cookie);
 	}
 	
 	public function unsetServerKeys()
 	{
 		$keys = func_get_args();
-		$this->unsetKey($keys, $this->server);
+		$this->unsetKeys($keys, $this->server);
 	}
 	
 	public function postFieldEmpty () {
