@@ -219,7 +219,8 @@ class UtilsArray {
 	 * Filters the given array of objects by the given Method
 	 * If the returned value from the method call is truthy,
 	 * the Object Makes it onto the final array
-	 * You can optionally pass arguements to the method
+	 * You can optionally pass arguements to the method,
+	 * and/or invert the logic of the test
 	 * 
 	 * @param Array $Os
 	 * @param String $Method
@@ -227,7 +228,12 @@ class UtilsArray {
 	 * @param Boolean $invert Invert the test?
 	 * @return Array
 	 */
-	public static function filterWithMethod(array $Os, $Method, array $Arguments = array(), $invert = false) {
+	public static function filterWithMethod(
+		array $Os,
+		$Method,
+		array $Arguments = array(),
+		$invert = false
+	) {
 		$Fin = array();
 		foreach ($Os as $oid => $O) {
 			$test = call_user_func_array(array($O, $Method), $Arguments);
@@ -267,17 +273,19 @@ class UtilsArray {
 	 * @param array $array
 	 * @return string
 	 */
-	public static function concat(array $array){
-		$str='';
-		foreach($array as $v){
-			if(is_array($v)) $v=self::concat($v);
-			$str.=$v;
+	public static function concat(array $array)
+	{
+		$str = '';
+		foreach ($array as $v) {
+			if (is_array($v)) $v = self::concat($v);
+			$str .= $v;
 		}
 		return $str;
 	}
 	
 	/**
 	 * Builds an Html `<select>` from the given data
+	 * @deprecated
 	 * @param array $data The data to build the `<select>` from
 	 * @param string|int $selected The option to preselect (Strict Comparison is used)
 	 * @param string $name name attribute for the `<select>`
@@ -289,6 +297,7 @@ class UtilsArray {
 		foreach ($data as $v=>$I) {
 			$s->a(HtmlE::n('option')->value($v)->a($I)->selected($v===$selected));
 		}
+		ModelLog::mkLog('deprecated function call: ' . __METHOD__, 'deprecated', '1', __FILE__, __LINE__);
 		return $s;
 	}
 	
@@ -299,7 +308,8 @@ class UtilsArray {
 	 * @param string $Method Method to be called on the $Class
 	 * @return array Array of the results from the calls
 	 */
-	public static function callWithEach(array $ArgsArr, $Class, $Method){
+	public static function callWithEach(array $ArgsArr, $Class, $Method)
+	{
 		$r=array();
 		foreach($ArgsArr as $k=>$Arguments){
 			$r[$k] = NULL;
@@ -321,7 +331,8 @@ class UtilsArray {
 	 * @param string|array $Arguments either one argument or an array of arguments to be passed to the method
 	 * @return array Array of the results of the calls
 	 */
-	public static function callOnAll(array $Os, $Method, $Arguments = array()){
+	public static function callOnAll(array $Os, $Method, $Arguments = array())
+	{
 		$r = array();
 		foreach($Os as $k => $Class){
 			$r[$k] = NULL;
@@ -344,7 +355,8 @@ class UtilsArray {
 	 * @param string|array $Arguments either one argument or an array of arguments to be passed to the method
 	 * @return array Array of the results of the calls
 	 */
-	public static function mergeCallOnAll(array $Os, $Method, array $Arguments = array()) {
+	public static function mergeCallOnAll(array $Os, $Method, array $Arguments = array())
+	{
 		$Oss = self::callOnAll($Os, $Method, $Arguments);
 //		vdump($Oss);
 		$Os = array();
@@ -365,7 +377,8 @@ class UtilsArray {
 	 * @param string|array $Arguments either one argument or an array of arguments to be passed to the method
 	 * @return Float
 	 */
-	public static function sumCallOnAll(array $Os, $Method, array $Arguments = array()) {
+	public static function sumCallOnAll(array $Os, $Method, array $Arguments = array())
+	{
 		return array_sum(self::callOnAll($Os, $Method, $Arguments));
 	}
 	
@@ -377,12 +390,13 @@ class UtilsArray {
 	 * @param string $Method Method to be called on the $Class
 	 * @return Float
 	 */
-	public static function sumCallWithEach(array $ArgsArr, $Class, $Method){
+	public static function sumCallWithEach(array $ArgsArr, $Class, $Method)
+	{
 		return array_sum(self::callWithEach($ArgsArr, $Class, $Method));
 	}
 	
 	/**
-	 * Given an Array of independent arrays with similar indices, return an array 
+	 * Given an Array of independent arrays with similar/same indices, return an array 
 	 * with just the shared indices and the array values associated with those
 	 * indices collapsed together. e.g.
 	 * param1 - array('hat' => array(0 => 'baseball-hat', 1 => 'top-hat'), 'gloves' => array(0 => 'catchers-mit', 1 => 'silk-gloves'))
