@@ -142,6 +142,7 @@ abstract class Model implements Iterator
 			$d[$f] = $this->$f;
 		}
 		$d['isValid'] = $this->isValid();
+		if (!isset($d['href'])) $d['href'] = FilterRoutes::buildUrl(array($this->baseName, 'review', $this->id));
 		$this->appendAdditionalData($d);
 		return $d;
 	}
