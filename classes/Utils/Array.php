@@ -4,6 +4,7 @@ class UtilsArray {
 	public $whenNotFound;
 	/** @var Array $base */
 	protected $base;
+	protected $whiteList = null;
 	protected static $CompareMethod = '__toString';
 	protected static $CompareArguments = array();
 	protected static $CompareInvert = false;
@@ -13,14 +14,22 @@ class UtilsArray {
 		$this->whenNotFound = $whenNotFound;
 	}
 	
-	public function get ($key, $otherwise = NULL) {
+	public function get ($key = null, $overridingOtherwise = 'this shall not be used') {
+		if (is_null($key)) return $this->base;
 		if (array_key_exists($key, $this->base)) return $this->base[$key];
-		if (!is_null($otherwise)) return $otherwise;
+		if ($overridingOtherwise !== 'this shall not be used') return $overridingOtherwise;
 		return $this->whenNotFound;
+	}
+	
+	public function setWhitelist (array $whiteList)
+	{
+		$this->whiteList = $whiteList;
+		return $this;
 	}
 	
 	public function __set($key, $val)
 	{
+		if (!is_null($this->whiteList) && !in_array($key, $this->whiteList)) return null;
 		return $this->base[$key] = $val;
 	}
 	
