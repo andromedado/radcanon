@@ -19,6 +19,11 @@ class UtilsArray {
 		return $this->whenNotFound;
 	}
 	
+	public function __set($key, $val)
+	{
+		return $this->base[$key] = $val;
+	}
+	
 	public function __get($key) {
 		if (array_key_exists($key, $this->base)) return $this->base[$key];
 		return $this->whenNotFound;
@@ -47,7 +52,29 @@ class UtilsArray {
 		return self::redoKeysWithMethod($Models, 'getID');
 	}
 	
-	public static function checkEmptiness (array $tested, array $testWith) {
+	/**
+	 * Given any combination/qty of Models and Arrays of Models,
+	 * return an array of unique models
+	 * Models presumed to have mutually exclusive ids
+	 * @param mixed
+	 * @return Array
+	 */
+	public static function getUniqueModels ()
+	{
+		$args = func_get_args();
+		$Models = array();
+		foreach ($args as $arg) {
+			if (!is_array($arg)) {
+				if (!is_a($arg, 'Model')) throw new ExceptionBase('Invalid argument, only models and arrays of models permitted');
+				$arg = array($arg);
+			}
+			$Models = array_merge($Models, $arg);
+		}
+		return self::useModelIdForKey($Models);
+	}
+	
+	public static function checkEmptiness (array $tested, array $testWith)
+	{
 		$empty = false;
 		foreach ($testWith as $key) {
 			$empty = $empty || empty($tested[$key]);
