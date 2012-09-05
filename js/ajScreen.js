@@ -111,7 +111,7 @@ new App.Module(function ($) {
 	};
 	
 	$(function () {
-		$wrapper = $('body > div');
+		$wrapper = $('body > div').filter(':first');
 		$('body').delegate('#ajScreen, #ajScreenClose, .ajScreenClose', 'click', Module.hide);
 	});
 	
