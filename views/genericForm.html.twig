@@ -1,11 +1,13 @@
 <form action="{{ action }}" method="post">
-{% block tableTag %}
+	{% block beforeTable %}{% endblock %}
+	{% block tableTag %}
 	<table class="{% block tableClass %}autoT{% endblock %}">
-{% endblock %}
+	{% endblock %}
 		<tbody>
 		{% block tbody %}{% endblock %}
 		</tbody>
 	</table>
+	{% block afterTable %}{% endblock %}
 	{% block submitButton %}
 	<div align="center">
 		<input type="submit" value="Submit" />
