@@ -147,7 +147,8 @@ abstract class ControllerApp {
 			}
 		}
 		$this->prepForForm();
-		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $Model->getData());
+		$modelData = isset($settings['modelData']) ? $settings['modelData'] : $Model->getData();
+		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $modelData);
 	}
 	
 	/**
@@ -160,8 +161,12 @@ abstract class ControllerApp {
 	 */
 	protected function _create(array $settings = array())
 	{
-		if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
-		$Model = new $settings['modelName'];
+		if (isset($settings['Model'])) {
+			$Model = $settings['Model'];
+		} else {
+			if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
+			$Model = new $settings['modelName'];
+		}
 		
 		if ($this->request->isPost()) {
 			try {
@@ -177,7 +182,8 @@ abstract class ControllerApp {
 			}
 		}
 		$this->prepForForm();
-		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $Model->getData());
+		$modelData = isset($settings['modelData']) ? $settings['modelData'] : $Model->getData();
+		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $modelData);
 	}
 	
 	protected function _review($id, array $settings = array())
@@ -190,7 +196,8 @@ abstract class ControllerApp {
 			$Model = new $settings['modelName']($id);
 		}
 		if (!$Model->isValid()) return $this->notFound();
-		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $Model->getData());
+		$modelData = isset($settings['modelData']) ? $settings['modelData'] : $Model->getData();
+		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $modelData);
 	}
 	
 }
