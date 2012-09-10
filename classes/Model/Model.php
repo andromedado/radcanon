@@ -753,6 +753,17 @@ abstract class Model implements Iterator
 		return false;
 	}
 	
+	public static function getMaxFieldValue($field)
+	{
+		$sql = "SELECT MAX(" . DBCFactory::quote($field) . ") FROM " . DBCFactory::quote(static::$Table);
+		$stmt = DBCFactory::rPDO()->prepare($sql);
+		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
+		$r = $stmt->execute($params);
+		if (!$r) throw new ExceptionPDO($stmt, 'attempted field: ' . $field);
+		list($value) = $stmt->fetch(PDO::FETCH_NUM);
+		return $value;
+	}
+	
 	protected static function buildQueryFromOptions (array $options, $Class = NULL, $type = 'SELECT') {
 		$c = get_called_class();
 		if (is_null($Class)) $Class = $c;
@@ -870,7 +881,7 @@ abstract class Model implements Iterator
 			} else {
 				$sort = static::$sortField . ' ASC';
 			}
-			$additionalOptions = array_merge(array(
+			$options = array_merge(array(
 				'sort' => $sort,
 			), $options);
 		}
