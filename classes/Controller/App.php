@@ -108,6 +108,11 @@ abstract class ControllerApp {
 		$this->response->redirectTo(APP_SUB_DIR . '/');
 	}
 	
+	protected function prepForForm()
+	{
+		
+	}
+
 	/**
 	 * Most common update action
 	 * @param Int|Model $id Model Id
@@ -141,7 +146,7 @@ abstract class ControllerApp {
 				$this->response->addMessage($e);
 			}
 		}
-		
+		$this->prepForForm();
 		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $Model->getData());
 	}
 	
@@ -171,7 +176,7 @@ abstract class ControllerApp {
 				$this->response->addMessage($e);
 			}
 		}
-		
+		$this->prepForForm();
 		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $Model->getData());
 	}
 	
