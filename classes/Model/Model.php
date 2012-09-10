@@ -837,8 +837,13 @@ abstract class Model implements Iterator
 	
 	public static function findAllBelongingTo (Model $Model, $additionalOptions = array()) {
 		if (!is_null(static::$sortField)) {
+			if (is_array(static::$sortField)) {
+				$sort = implode(' ASC, ', static::$sortField) . ' ASC';
+			} else {
+				$sort = static::$sortField . ' ASC';
+			}
 			$additionalOptions = array_merge(array(
-				'sort' => static::$sortField . ' ASC',
+				'sort' => $sort,
 			), $additionalOptions);
 		}
 		return static::findAll(array_merge($additionalOptions, array(
@@ -860,8 +865,13 @@ abstract class Model implements Iterator
 	
 	public static function findAll (array $options = array(), $Class = NULL) {
 		if (!is_null(static::$sortField)) {
-			$options = array_merge(array(
-				'sort' => static::$sortField . ' ASC',
+			if (is_array(static::$sortField)) {
+				$sort = implode(' ASC, ', static::$sortField) . ' ASC';
+			} else {
+				$sort = static::$sortField . ' ASC';
+			}
+			$additionalOptions = array_merge(array(
+				'sort' => $sort,
 			), $options);
 		}
 		list($sql, $args, $Class) = static::buildQueryFromOptions($options, $Class);
