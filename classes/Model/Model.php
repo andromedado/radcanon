@@ -911,6 +911,12 @@ abstract class Model implements Iterator
 		return $Os;
 	}
 	
+	/**
+	 * Given an array of Model Ids, return an array of the corresponding models
+	 * @param Array $ids Model Ids
+	 * @param Boolean $useIdForKey
+	 * @return Array
+	 */
 	public static function translateIdsIntoModels (array $ids, $useIdForKey = true)
 	{
 		$Models = array();
