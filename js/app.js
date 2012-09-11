@@ -343,13 +343,17 @@ var App = (function ($) {
 			};
 		}
 		obj.success = obj.success || function(data){
-			if (data.html && obj.recip) obj.recip.html(data.html);
-			if (data.js) {
-				try {
-					eval(data.js);
-				} catch (e) {
-					if (window.console && window.console.log) {
-						window.console.log(e);
+			if (data) {
+				if (data.html && obj.recip) {
+					obj.recip.html(data.html);
+				}
+				if (data.js) {
+					try {
+						eval(data.js);
+					} catch (e) {
+						if (window.console && window.console.log) {
+							window.console.log(e);
+						}
 					}
 				}
 			}
