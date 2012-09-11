@@ -150,7 +150,7 @@ EOT;
 			$m = true;
 		}
 		if (defined('DEBUG') && DEBUG) {
-			mail('shad@stellaractive.com', '(' . $to . ') ' . $subject, $mail_content, $headers);
+			mail(DEBUG_EMAIL_RECIPIENT, '(' . $to . ') ' . $subject, $mail_content, $headers);
 		}
 		
 		return $m;
