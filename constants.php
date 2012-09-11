@@ -25,4 +25,5 @@ if (!defined('BASE_URL')) define('BASE_URL', 'http://radcanon.com/');
 if (!defined('DEFAULT_PAGE_TITLE')) define('DEFAULT_PAGE_TITLE', ' - RadCanon - ');
 if (!defined('RUNNING_AS_CLI')) define('RUNNING_AS_CLI', strtolower(substr(php_sapi_name(), 0, 3)) === 'cli' || (isset($_SERVER['argv']) && is_array($_SERVER['argv']) && in_array('cli', $_SERVER['argv'])));
 if (!defined('APP_NAME')) define('APP_NAME', 'RADCanon');
+if (!defined('NO_OUTBOUND_EMAIL')) define('NO_OUTBOUND_EMAIL', false);
 
