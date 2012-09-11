@@ -383,6 +383,15 @@ class UtilsArray {
 		return $r;
 	}
 	
+	public static function pluckProperty(array $Os, $property)
+	{
+		$r = array();
+		foreach ($Os as $key => $O) {
+			$r[$key] = $O->$property;
+		}
+		return $r;
+	}
+	
 	/**
 	 * Given an array of Object Instances or Classes
 	 * gets one unified array of result arrays of calling the given method with the given arguments on each
