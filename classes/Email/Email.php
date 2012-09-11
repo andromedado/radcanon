@@ -144,7 +144,11 @@ EOT;
 		$mail_content .="--" . $nl . $nl;
 		$mail_content = preg_replace('/CHARSET_GOES_HERE/', mb_detect_encoding($mail_content), $mail_content);
 		
-		$m = mail($to, $subject, $mail_content, $headers);
+		if (!defined('NO_OUTBOUND_EMAIL') || !NO_OUTBOUND_EMAIL) {
+			$m = mail($to, $subject, $mail_content, $headers);
+		} else {
+			$m = true;
+		}
 		if (defined('DEBUG') && DEBUG) {
 			mail('shad@stellaractive.com', '(' . $to . ') ' . $subject, $mail_content, $headers);
 		}
