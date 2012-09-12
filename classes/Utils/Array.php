@@ -383,7 +383,7 @@ class UtilsArray {
 		return $r;
 	}
 	
-	public static function pluckProperty(array $Os, $property)
+	public static function pluckPropertyFromObjects(array $Os, $property)
 	{
 		$r = array();
 		foreach ($Os as $key => $O) {
@@ -473,6 +473,25 @@ class UtilsArray {
 			}
 		}
 		return $amalgam;
+	}
+	
+	/**
+	 * Using the given array, concat all values with the
+	 * given normalJoin, but the final two elements will
+	 * be joined with a special string
+	 * e.g. Red`, `Blue`, `Green` and `Yellow
+	 * @param Array $Array to be joined
+	 * @param String $normalJoin
+	 * @param String $finalJoin
+	 * @return String
+	 */
+	public static function implodeWithFinalDifferent(array $Array, $normalJoin = ', ', $finalJoin = ' and ')
+	{
+		if (count($Array) > 1) {
+			$fin = array_pop($Array);
+			$Array = array(implode($normalJoin, $Array), $fin);
+		}
+		return implode($finalJoin, $Array);
 	}
 	
 }
