@@ -218,7 +218,6 @@ class AuthNetCimPayProfile extends AuthNetCim
 		
 		$R = $this->getAuthNetXMLRequest()->getAuthNetXMLResponse('createCustomerPaymentProfileRequest', $PayProfileInfo);
 		if (!$R->isGood) {
-			ModelLog::mkLog(array($R, $PayProfileInfo), 'ANCIMPP');
 			throw new ExceptionAuthNet($this->getPublicError($R->code));
 		}
 		return strval($R->XML->customerPaymentProfileId);
