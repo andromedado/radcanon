@@ -9,6 +9,15 @@ class ModelLog extends Model {
 	protected $file='';
 	protected $line=0;
 	
+	protected $dbFields = array(
+		'log_id',
+		'category',
+		'criticality',
+		'content',
+		'when',
+		'file',
+		'line',
+	);
 	protected $whatIAm='Log';
 	protected $table='logs';
 	protected $idCol='log_id';
