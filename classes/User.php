@@ -3,7 +3,8 @@
 /**
  * Base class for people interacting with the site
  */
-class User {
+class User
+{
 	protected $valid = false;
 	
 	public function __construct() {
@@ -15,4 +16,3 @@ class User {
 	}
 }
 
-?>
