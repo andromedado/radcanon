@@ -32,6 +32,7 @@ abstract class Model implements Iterator
 	protected static $Table;
 	protected static $IdCol;
 	protected static $sortField = null;
+	protected static $sortDirection = 'ASC';
 	protected static $AllData = array();
 	
 	public function __construct ($id = 0) {
@@ -848,16 +849,7 @@ abstract class Model implements Iterator
 	}
 	
 	public static function findAllBelongingTo (Model $Model, $additionalOptions = array()) {
-		if (!is_null(static::$sortField)) {
-			if (is_array(static::$sortField)) {
-				$sort = implode(' ASC, ', static::$sortField) . ' ASC';
-			} else {
-				$sort = static::$sortField . ' ASC';
-			}
-			$additionalOptions = array_merge(array(
-				'sort' => $sort,
-			), $additionalOptions);
-		}
+		static::attachDefaultSort($additionalOptions);
 		return static::findAll(array_merge($additionalOptions, array(
 			'fields' => array(
 				$Model->idCol => $Model->id,
@@ -875,17 +867,32 @@ abstract class Model implements Iterator
 		return $O;
 	}
 	
-	public static function findAll (array $options = array(), $Class = NULL) {
+	protected static function attachDefaultSort(array &$options)
+	{
 		if (!is_null(static::$sortField)) {
 			if (is_array(static::$sortField)) {
-				$sort = implode(' ASC, ', static::$sortField) . ' ASC';
+				$Arr = is_array(static::$sortDirection);
+				$concat = $sort = '';
+				foreach (static::$sortField as $k => $field) {
+					$sort .= $concat . DBCFactory::quote($field) . ' ';
+					if ($Arr) {
+						$sort .= isset(static::$sortDirection[$k]) ? static::$sortDirection[$k] : 'ASC';
+					} else {
+						$sort .= static::$sortDirection;
+					}
+					$concat = ', ';
+				}
 			} else {
-				$sort = static::$sortField . ' ASC';
+				$sort = DBCFactory::quote(static::$sortField) . ' ' . static::$sortDirection;
 			}
 			$options = array_merge(array(
 				'sort' => $sort,
 			), $options);
 		}
+	}
+	
+	public static function findAll (array $options = array(), $Class = NULL) {
+		static::attachDefaultSort($options);
 		list($sql, $args, $Class) = static::buildQueryFromOptions($options, $Class);
 		//var_dump($sql, $args);
 		$Os = UtilsPDO::fetchIdsIntoInstances($sql, $args, $Class);
