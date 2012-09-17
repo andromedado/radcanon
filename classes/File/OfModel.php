@@ -38,6 +38,10 @@ abstract class FileOfModel {
 		return $has;
 	}
 	
+	/**
+	 * @throws ExceptionValidation
+	 * @return void
+	 */
 	public function checkForUploadErrors () {
 		if (!isset($_FILES[$this->name])) {
 			throw new ExceptionValidation('No file uploaded');
