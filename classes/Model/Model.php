@@ -144,6 +144,7 @@ abstract class Model implements Iterator
 		}
 		$d['isValid'] = $this->isValid();
 		if (!isset($d['href'])) $d['href'] = FilterRoutes::buildUrl(array($this->baseName, 'review', $this->id));
+		if (!isset($d['updateHref'])) $d['updateHref'] = FilterRoutes::buildUrl(array($this->baseName, 'update', $this->id));
 		if (!isset($d['deleteAction'])) $d['deleteAction'] = FilterRoutes::buildUrl(array($this->baseName, 'delete', $this->id));
 		$this->appendAdditionalData($d);
 		return $d;
