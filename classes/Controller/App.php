@@ -144,6 +144,12 @@ abstract class ControllerApp {
 				return;
 			} catch (ExceptionValidation $e) {
 				$this->response->addMessage($e);
+			} catch (ExceptionPDO $e) {
+				if (strpos($e->getInternalMessage(), 'Duplicate entry') !== false) {
+					$this->response->addMessage('Duplicate entry for unique field', true);
+				} else {
+					$this->response->addMessage($e);
+				}
 			}
 		}
 		$this->prepForForm();
@@ -179,6 +185,12 @@ abstract class ControllerApp {
 				return;
 			} catch (ExceptionValidation $e) {
 				$this->response->addMessage($e);
+			} catch (ExceptionPDO $e) {
+				if (strpos($e->getInternalMessage(), 'Duplicate entry') !== false) {
+					$this->response->addMessage('Duplicate entry for unique field', true);
+				} else {
+					$this->response->addMessage($e);
+				}
 			}
 		}
 		$this->prepForForm();
