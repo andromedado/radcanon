@@ -506,6 +506,12 @@ abstract class Model implements Iterator
 	}
 	
 	protected static function updateCacheValue($id, $var, $val) {
+		if (is_null($id)) {
+			foreach (static::$AllData as &$data) {
+				$data[$var] = $val;
+			}
+			return true;
+		}
 		if (!isset(static::$AllData[$id]) || !is_array(static::$AllData[$id])) static::$AllData[$id] = array();
 		return static::$AllData[$id][$var] = $val;
 	}
@@ -624,6 +630,28 @@ abstract class Model implements Iterator
 		}
 		$this->updateFollowUp(array_keys($varsToVals));
 		return true;
+	}
+	
+	public static function updateAll(array $varsToVals)
+	{
+		if (!empty($varsToVals)) {
+			$sets = $comma = '';
+			$args = array_values($varsToVals);
+			foreach ($varsToVals as $field => $value) {
+				$sets .= $comma . DBCFactory::quote($field) . " = ?";
+				$comma = ', ';
+			}
+			$sql = "UPDATE " . DBCFactory::quote(static::$Table) . " " .
+			"SET " . $sets;
+			$stmt = DBCFactory::wPDO()->prepare($sql);
+			if (!$stmt) {
+				throw new ExceptionBase(DBCFactory::wPDO()->errorInfo(), '1');
+			}
+			if (!$stmt->execute($args)) {
+				throw new ExceptionPDO($stmt, $sql, '1');
+			}
+			static::updateCacheValues(null, $varsToVals);
+		}
 	}
 	
 	/**
