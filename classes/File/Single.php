@@ -1,6 +1,7 @@
 <?php
 
-class FileSingle extends FileOfModel {
+class FileSingle extends FileOfModel
+{
 	
 	public function hasFile () {
 		$fs = $this->getFilesInBaseDir();
@@ -36,3 +37,4 @@ class FileSingle extends FileOfModel {
 	}
 	
 }
+

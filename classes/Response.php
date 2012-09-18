@@ -17,19 +17,21 @@ class Response {
 	const TYPE_RAW_ECHO = 7;
 	
 	/**@var Request $request */
-	protected $request = NULL;
+	protected $request = null;
 	protected $type = 0;
 	protected $error = false;
 	protected $headers = array();
 	protected $tplDirs = array();
 	/** @var Exception $exception */
-	protected $exception = NULL;
-	protected $location = NULL;
+	protected $exception = null;
+	protected $location = null;
 	protected $redirectCode = 302;
-	protected $contentType = NULL;
-	protected $content = NULL;
-	protected $invocation = NULL;
-	protected $filename = NULL;
+	protected $contentType = null;
+	protected $content = null;
+	protected $invocation = null;
+	protected $filename = null;
+	/** @var Twig_Environment */
+	protected $TwigEnvironment = null;
 	protected $template = 'base.html.twig';
 	protected $defaultVars = array(
 		'styles' => array(),
@@ -59,7 +61,7 @@ class Response {
 		'text/html',
 		'text/json',
 		'text/xml',
-		NULL,
+		null,
 		'text/csv',
 	);
 	
@@ -117,7 +119,7 @@ class Response {
 	 */
 	public function __get($what) {
 		if (in_array($what, $this->public) || in_array($what, $this->viewable)) return $this->$what;
-		return NULL;
+		return null;
 	}
 	
 	public function addS () {
@@ -188,7 +190,7 @@ class Response {
 	 * @param Int $code Redirect status code
 	 * @return Response
 	 */
-	public function redirectTo($location, $code = NULL) {
+	public function redirectTo($location, $code = null) {
 		if (is_array($location)) {
 			$this->location = FilterRoutes::buildUrl($location);
 		} else {
@@ -229,18 +231,32 @@ class Response {
 		$_SESSION[$k][] = $msg;
 	}
 	
+	/**
+	 * @return Twig_Environment
+	 */
+	public function getTwigEnvironment($bypassCache = false)
+	{
+		if (is_null($this->TwigEnvironment) || $bypassCache) {
+			$this->TwigEnvironment = new Twig_Environment(new Twig_Loader_Filesystem($this->tplDirs), $this->getTwigOptions());
+			$this->TwigEnvironment->addExtension(new Twig_Extension_Debug());
+		}
+		return $this->TwigEnvironment;
+	}
+	
+	public function getBasicTemplateVars()
+	{
+		return array_merge($this->defaultVars, $this->appVars);
+	}
+	
 	public function renderFromTemplate($template, $consumeMessages = false)
 	{
 		try {
-			$twigLoader = new Twig_Loader_Filesystem($this->tplDirs);
-			$twigEnv = new Twig_Environment($twigLoader, $this->getTwigOptions());
-			$twigEnv->addExtension(new Twig_Extension_Debug());
 			$msgs = array();
 			if ($consumeMessages) {
 				$msgs = array('messages' => $_SESSION['msg'], 'errors' => $_SESSION['f_msg']);
 				$_SESSION['f_msg'] = $_SESSION['msg'] = array();
 			}
-			$content = $twigEnv->render($template, array_merge($msgs, $this->defaultVars, $this->appVars, $this->vars));
+			$content = $this->getTwigEnvironment()->render($template, array_merge($msgs, $this->getBasicTemplateVars(), $this->vars));
 		} catch (Twig_Error $e) {
 			if (DEBUG) {
 				$content = $e->getMessage();

@@ -1,6 +1,7 @@
 <?php
 
-class FileSingleImage extends FileSingle {
+class FileSingleImage extends FileSingle
+{
 	public $validationPreg = UtilsString::IMAGE_FILENAME_REGEXP;
 	
 	public function getFileMimeType () {
