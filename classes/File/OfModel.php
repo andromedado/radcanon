@@ -1,6 +1,7 @@
 <?php
 
-abstract class FileOfModel {
+abstract class FileOfModel
+{
 	const APPROPRIATE_DIR_PERMISSIONS = 0755;
 	public $validationPreg = NULL;
 	/** @var Model $Model */
@@ -23,10 +24,35 @@ abstract class FileOfModel {
 		4 => 'No file was uploaded',
 	);
 	
-	public function __construct (Model $M, $name = '', $validationPreg = NULL) {
+	public function __construct (Model $M, $name = '', $validationPreg = null)
+	{
 		$this->Model = $M;
 		$this->name = $name;
 		if (!is_null($validationPreg)) $this->validationPreg = $validationPreg;
+		$this->load();
+	}
+	
+	public function load()
+	{
+		
+	}
+	
+	/**
+	 * Create a file of the given name, with the given content
+	 * @throws ExceptionFile
+	 * @param String $name **Directory Separators are stripped out
+	 * @param String $content
+	 * @return FileOfModel
+	 */
+	public function saveFile($name, $content = '')
+	{
+		$dest = $this->getBaseDir() . str_replace(DIRECTORY_SEPARATOR, '_', $name);
+		$h = fopen($dest, 'c');
+		if (!$h) throw new ExceptionFile('Unable to open ' . $dest . ' for writing');
+		$b = fwrite($h, $content);
+		fclose($h);
+		if (!empty($content) && empty($b)) throw new ExceptionFile('Unable to write to ' . $dest);
+		return $this;
 	}
 	
 	public function hasFile ($name) {
@@ -38,6 +64,10 @@ abstract class FileOfModel {
 		return $has;
 	}
 	
+	/**
+	 * @throws ExceptionValidation
+	 * @return void
+	 */
 	public function checkForUploadErrors () {
 		if (!isset($_FILES[$this->name])) {
 			throw new ExceptionValidation('No file uploaded');
@@ -118,12 +148,31 @@ abstract class FileOfModel {
 		}
 	}
 	
+	/**
+	 * For the given dir, removed any cached scan
+	 * @param String $dir
+	 * @return FileOfModel
+	 */
+	protected function clearCacheForDir($dir)
+	{
+		if (isset($this->cachedScan[$dir])) {
+			unset($this->cachedScan[$dir]);
+		}
+		return $this;
+	}
+	
+	/**
+	 * Get an array of the files in the given dir
+	 * @param String $dir
+	 * @param Boolean $noCache
+	 * @return Array
+	 */
 	public function getFilesInDir ($dir, $noCache = false) {
 		if (!isset($this->cachedScan[$dir]) || $noCache) {
 			$this->cachedScan[$dir] = glob($dir . '*.*');
 		}
 		return $this->cachedScan[$dir];
 	}
-	
-	
+
 }
+
