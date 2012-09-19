@@ -62,7 +62,7 @@ class Email {
 	}
 	
 	public function send() {
-		$r = self::sendMail($this->to, $this->subject, strval($this->body), $this->from, '', $this->attachements);
+		$r = self::sendMail($this->to, $this->subject, strval($this->body), $this->from, '', $this->attachments);
 		if (class_exists('ModelLog') && ((defined('DEBUG') && DEBUG) || $r !== true)) {
 			ModelLog::mkLog('Mail Delivery' . ($r !== true ? ' Failure' : '') . ': ' . json_encode(array($this->to, $this->subject, strval($this->body), $this->from, '', $this->attachements)), 'email', 1);
 		}
