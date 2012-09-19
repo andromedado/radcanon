@@ -252,6 +252,25 @@ class UtilsArray {
 	}
 	
 	/**
+	 * Filter the given single-dimension array of strings with the given Regular Expression
+	 * Optionally invert the regexp test
+	 * @param Array $array
+	 * @param String $regexp
+	 * @param Boolean $invert
+	 * @return Array
+	 */
+	public static function filterWithRegexp (array $array, $regexp, $invert = false)
+	{
+		$fin = array();
+		foreach ($array as $key => $value) {
+			if ((bool)preg_match($regexp, strval($value)) !== (bool)$invert) {
+				$fin[$key] = $value;
+			}
+		}
+		return $fin;
+	}
+	
+	/**
 	 * Filters the given array of objects by the given Method
 	 * If the returned value from the method call is truthy,
 	 * the Object Makes it onto the final array
