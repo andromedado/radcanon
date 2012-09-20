@@ -23,6 +23,9 @@ abstract class FileOfModel
 		1 => 'The uploaded file is too big',
 		4 => 'No file was uploaded',
 	);
+	protected static $FileKeys = array(
+		'name', 'type', 'tmp_name', 'error', 'size',
+	);
 	
 	public function __construct (Model $M, $name = '', $validationPreg = null)
 	{
@@ -64,6 +67,17 @@ abstract class FileOfModel
 		return $has;
 	}
 	
+	public function checkForUploadErrorsByInfo(array $info)
+	{
+		$this->checkError($info['error']);
+		if ($info['size'] < 1) {
+			throw new ExceptionValidation('Empty File Uploaded');
+		}
+		if (!is_null($this->validationPreg) && !preg_match($this->validationPreg, $info['name'])) {
+			throw new ExceptionValidation('Invalid FileType');
+		}
+	}
+	
 	/**
 	 * @throws ExceptionValidation
 	 * @return void
@@ -73,23 +87,12 @@ abstract class FileOfModel
 			throw new ExceptionValidation('No file uploaded');
 		}
 		if (is_array($_FILES[$this->name]['error'])) {
-			foreach ($_FILES[$this->name]['error'] as $k => $error) {
-				$this->checkError($error);
-				if ($_FILES[$this->name]['size'][$k] < 1) {
-					throw new ExceptionValidation('Empty File Uploaded');
-				}
-				if (!is_null($this->validationPreg) && !preg_match($this->validationPreg, $_FILES[$this->name]['name'][$k])) {
-					throw new ExceptionValidation('Invalid FileType');
-				}
+			$infos = UtilsArray::amalgamateArrays($_FILES[$this->name], static::$FileKeys);
+			foreach ($infos as $info) {
+				$this->checkForUploadErrorsByInfo($info);
 			}
 		} else {
-			$this->checkError($_FILES[$this->name]['error']);
-			if ($_FILES[$this->name]['size'] < 1) {
-				throw new ExceptionValidation('Empty File Uploaded');
-			}
-			if (!is_null($this->validationPreg) && !preg_match($this->validationPreg, $_FILES[$this->name]['name'])) {
-				throw new ExceptionValidation('Invalid FileType');
-			}
+			$this->checkForUploadErrorsByInfo($_FILES[$this->name]);
 		}
 	}
 	
@@ -105,13 +108,19 @@ abstract class FileOfModel
 		}
 	}
 	
+	protected function determineBaseDir()
+	{
+		$k = strval(floor($this->Model->id / 1000)) . 'k';
+		$baseDir = UPDIR_ROOT . $this->Model->baseName . DS . $k . DS . $this->Model->id . DS;
+		if (!empty($this->name)) {
+			$baseDir .= $this->name . DS;
+		}
+		return $baseDir;
+	}
+	
 	public function getBaseDir () {
 		if (is_null($this->baseDir)) {
-			$k = strval(floor($this->Model->id / 1000)) . 'k';
-			$this->baseDir = UPDIR_ROOT . $this->Model->baseName . DS . $k . DS . $this->Model->id . DS;
-			if (!empty($this->name)) {
-				$this->baseDir .= $this->name . DS;
-			}
+			$this->baseDir = $this->determineBaseDir();
 			if (!is_dir($this->baseDir) && !mkdir($this->baseDir, self::APPROPRIATE_DIR_PERMISSIONS, true)) {
 				if (RUNNING_AS_CLI) return false;
 				throw new ExceptionBase('Unable to make dir ' . $this->baseDir);
@@ -172,6 +181,11 @@ abstract class FileOfModel
 			$this->cachedScan[$dir] = glob($dir . '*.*');
 		}
 		return $this->cachedScan[$dir];
+	}
+	
+	public static function getFileKeys()
+	{
+		return static::$FileKeys;
 	}
 
 }
