@@ -7,8 +7,8 @@ abstract class Model implements Iterator
 	protected $name;
 	protected $_position = null;
 	
-	protected $baseName;
-	protected $foundWith = NULL;
+	protected $baseName = null;
+	protected $foundWith = null;
 	protected $dbFields = array();
 	protected $dontUpdate = array();
 	protected $genericallyAvailable = array(
@@ -187,7 +187,9 @@ abstract class Model implements Iterator
 		$this->id = abs((int)$id);
 		$this->valid = $this->loadFromCache() || $this->loadFromTable();
 		$this->c = get_called_class();
-		$this->baseName = preg_replace('/^Model/', '', $this->c);
+		if (is_null($this->baseName)) {
+			$this->baseName = preg_replace('/^Model/', '', $this->c);
+		}
 		$this->load();
 	}
 	
