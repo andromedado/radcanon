@@ -13,9 +13,16 @@ class FileSingle extends FileOfModel
 		return APP_SUB_DIR . str_replace(SERVER_PREFIX, '', $this->getBaseDir() . $this->getFilename());
 	}
 	
+	public function getFilePath()
+	{
+		$files = $this->getFilesInBaseDir();
+		if (empty($files)) return '';
+		return array_pop($files);
+	}
+	
 	public function getFilename () {
 		if (!$this->hasFile()) return NULL;
-		return basename(array_shift($this->getFilesInBaseDir()));
+		return basename($this->getFilePath());
 	}
 	
 	public function getFileExtension () {
