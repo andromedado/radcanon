@@ -36,5 +36,17 @@ class FileSingle extends FileOfModel
 		}
 	}
 	
+	public function acceptUploadByInfo(array $info)
+	{
+		$this->checkForUploadErrorsByInfo($info);
+		if ($this->hasFile()) {
+			$this->deleteFilesInBaseDir();
+		}
+		$dest = $this->getBaseDir() . UtilsString::urlSafe($info['name'], true);
+		if (!move_uploaded_file($info['tmp_name'], $dest)) {
+			throw new ExceptionBase('Couldnt move from ' . $info['tmp_name'] . ' to ' . $dest);
+		}
+	}
+	
 }
 
