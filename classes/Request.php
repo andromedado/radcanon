@@ -1,23 +1,53 @@
 <?php
 
-class Request {
+/**
+ * RAD-Canon Request Abstraction
+ * Primarily wraps the super-globals for more convenient access
+ * @author Shad Downey
+ */
+class Request
+{
 	protected $server;
 	protected $iniServer;
 	protected $get;
 	protected $iniGet;
 	protected $post;
 	protected $iniPost;
+	protected $files;
+	protected $iniFiles;
 	protected $cookie;
 	protected $iniCookie;
 	
-	protected $Accessable = array('get', 'server', 'post', 'cookie');
-	protected $Abstracted = array('get', 'server', 'post', 'cookie');
+	protected $Accessable = array('get', 'server', 'post', 'cookie', 'files');
+	protected $Abstracted = array('get', 'server', 'post', 'cookie', 'files');
 	
-	public function __construct(array $_server, array $_get, array $_post, array $_cookie) {
+	public function __construct(
+		array $_server = null,
+		array $_get = null,
+		array $_post = null,
+		array $_cookie = null,
+		array $_files = null
+	) {
+		if (is_null($_server)) {
+			$_server = $_SERVER;
+		}
 		$this->iniServer = $this->server = $_server;
+		if (is_null($_get)) {
+			$_get = $_GET;
+		}
 		$this->iniGet = $this->get = $_get;
+		if (is_null($_post)) {
+			$_post = $_POST;
+		}
 		$this->iniPost = $this->post = $_post;
+		if (is_null($_cookie)) {
+			$_cookie = $_COOKIE;
+		}
 		$this->iniCookie = $this->cookie = $_cookie;
+		if (is_null($_files)) {
+			$_files = $_FILES;
+		}
+		$this->iniFiles = $this->files = $_files;
 	}
 	
 	public function __call($func, $args) {
@@ -250,4 +280,3 @@ class Request {
 	
 }
 
-?>
