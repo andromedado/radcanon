@@ -154,11 +154,28 @@ abstract class Model implements Iterator
 		
 	}
 	
+	/**
+	 * Models expose their dbFields, genericallyAvailable, and readOnly vars as Readonly
+	 */
+	protected function getable ($property)
+	{
+		return (in_array($property, $this->dbFields) || in_array($property, $this->genericallyAvailable) || in_array($property, $this->readOnly)) && isset($this->$property);
+	}
+	
+	/**
+	 * Models expose several sets of protected properties as Readonly
+	 * @see Model::getable
+	 */
 	public function __get ($property) {
-		if ((in_array($property, $this->dbFields) || in_array($property, $this->genericallyAvailable) || in_array($property, $this->readOnly)) && isset($this->$property)) return $this->$property;
+		if ($this->getable($property)) return $this->$property;
 		return NULL;
 	}
 	
+	/**
+	 * This is defined as a convenience for when working under development conditions
+	 * @FrameworkPrinciple Models do not expose their properties for `set`ting directly,
+	 * those operations should be performed by updateVar/updateVars
+	 */
 	public function __set ($var, $val) {
 		if (DEBUG) {
 			return $this->$var = $val;
@@ -781,6 +798,9 @@ abstract class Model implements Iterator
 	}
 	
 	function __call($function, $args){
+		if (preg_match('/get_([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/', $function, $m)) {
+			return $this->__get($m[1]);
+		}
 		return false;
 	}
 	
