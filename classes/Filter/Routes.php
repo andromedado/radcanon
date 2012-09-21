@@ -1,6 +1,7 @@
 <?php
 
-class FilterRoutes implements Filter {
+class FilterRoutes implements Filter
+{
 	const CACHED_ROUTES_KEY = 'cached_routes';
 	protected static $DeniedRoutes = array(
 	);
@@ -132,4 +133,3 @@ class FilterRoutes implements Filter {
 	
 }
 
-?>
