@@ -3,7 +3,7 @@
 /**
  * Email Base Class
  * @author Shad Downey
- * @version 1.3
+ * @version 1.4
  */
 class Email {
 	protected $to;
@@ -22,10 +22,12 @@ class Email {
 	 * @param String $body
 	 * @param String $from
 	 */
-	public function __construct($to = '', $subject = '', Html $body = NULL, $from = '') {
+	public function __construct($to = '', $subject = '', $body = '', $from = '') {
 		$this->to = $to;
 		$this->subject = $subject;
-		if (is_null($body)) $body = new HtmlC;
+		if (!is_a($body, 'HtmlC')) {
+			$body = new HtmlC($body);
+		}
 		$this->body = $body;
 		$this->from = $from;
 		$this->load();
@@ -61,10 +63,16 @@ class Email {
 		return NULL;
 	}
 	
-	public function send() {
-		$r = self::sendMail($this->to, $this->subject, strval($this->body), $this->from, '', $this->attachments);
+	public function send()
+	{
+		return $this->sendTo($this->to);
+	}
+	
+	public function sendTo($recipient)
+	{
+		$r = self::sendMail($recipient, $this->subject, strval($this->body), $this->from, '', $this->attachments);
 		if (class_exists('ModelLog') && ((defined('DEBUG') && DEBUG) || $r !== true)) {
-			ModelLog::mkLog('Mail Delivery' . ($r !== true ? ' Failure' : '') . ': ' . json_encode(array($this->to, $this->subject, strval($this->body), $this->from, '', $this->attachements)), 'email', 1);
+			ModelLog::mkLog('Mail Delivery' . ($r !== true ? ' Failure' : '') . ': ' . json_encode(array($recipient, $this->subject, strval($this->body), $this->from, '', $this->attachements)), 'email', 1);
 		}
 		return $r;
 	}
