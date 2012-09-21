@@ -1,0 +1,6 @@
+<h1>{% if model.newHref %}<a href="{{ model.newHref }}" class="fr">new</a>{% endif %}Review {{ model.whatIAms }}</h1>
+<ul>
+{% for model in models %}
+	<li><a href="{{ model.href }}">{{ model.name }}</a></li>
+{% endfor %}
+</ul>
