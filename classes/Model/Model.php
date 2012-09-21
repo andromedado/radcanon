@@ -6,6 +6,7 @@ abstract class Model implements Iterator
 	protected $id;
 	protected $name;
 	protected $_position = null;
+	protected $c;
 	
 	protected $baseName = null;
 	protected $foundWith = null;
@@ -41,6 +42,10 @@ abstract class Model implements Iterator
 			$this->_position = 0;
 		}
 		if (is_null($this->whatIAms) && isset($this->whatIAm)) $this->whatIAms = $this->whatIAm . 's';
+		$this->c = get_class($this);
+		if (empty($this->baseName)) {
+			$this->baseName = preg_replace('/^Model/', '', $this->c);
+		}
 		$this->loadAs($id);
 	}
 	
@@ -189,10 +194,6 @@ abstract class Model implements Iterator
 	public function loadAs($id) {
 		$this->id = abs((int)$id);
 		$this->valid = $this->loadFromCache() || $this->loadFromTable();
-		$this->c = get_called_class();
-		if (is_null($this->baseName)) {
-			$this->baseName = preg_replace('/^Model/', '', $this->c);
-		}
 		$this->load();
 	}
 	
