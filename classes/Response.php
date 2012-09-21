@@ -157,7 +157,13 @@ class Response {
 				$toWhat = (array)$toWhat;
 			}
 		}
-		$this->vars[$what] = $toWhat;
+		if (is_array($what)) {
+			foreach ($what as $key) {
+				$this->vars[$key] = $toWhat;
+			}
+		} else {
+			$this->vars[$what] = $toWhat;
+		}
 		return $this;
 	}
 	
