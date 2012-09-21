@@ -3,15 +3,15 @@
 abstract class ControllerBase
 {
 	/** @var Request $request */
-	public $request = NULL;
+	public $request = null;
 	/** @var Response $request */
-	public $response = NULL;
+	public $response = null;
 	/** @var User $user */
-	public $user = NULL;
+	public $user = null;
 	/** @var Model $model */
-	public $model = NULL;
-	protected $modelName = NULL;
-	protected $TemplateDir = NULL;
+	public $model = null;
+	protected $modelName = null;
+	protected $TemplateDir = null;
 	protected $baseName = null;
 	protected $templateModelName = 'modelData';
 	
@@ -19,11 +19,14 @@ abstract class ControllerBase
 		$this->request = $req;
 		$this->response = $res;
 		$this->user = $user;
-		if (!is_null($this->modelName)) {
-			$c = $this->modelName;
+		$this->baseName = preg_replace('/^Controller/', '', get_class($this));
+		if (is_null($this->modelName)) {
+			$this->modelName = 'Model' . $this->baseName;
+		}
+		$c = $this->modelName;
+		if (class_exists($c)) {
 			$this->model = new $c;
 		}
-		$this->baseName = preg_replace('/^Controller/', '', get_class($this));
 		$this->load();
 	}
 	
@@ -123,6 +126,18 @@ abstract class ControllerBase
 	protected function prepForForm()
 	{
 		
+	}
+	
+	/**
+	 * Most common index action
+	 * Review all models
+	 */
+	protected function _index(array $settings = array())
+	{
+		if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
+		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
+		$this->set('model', new $this->modelName);
+		$this->set(array($settings['templateModelName'] . 's', 'models'), call_user_func(array($settings['modelName'], 'getAllData')));
 	}
 
 	/**
