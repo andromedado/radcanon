@@ -12,7 +12,7 @@ abstract class Model implements Iterator
 	protected $dbFields = array();
 	protected $dontUpdate = array();
 	protected $genericallyAvailable = array(
-		'id', 'idCol', 'table', 'whatIAm', 'baseName',
+		'id', 'idCol', 'table', 'whatIAm', 'baseName', 'whatIAms',
 	);
 	protected $readOnly = array(
 	);
@@ -26,6 +26,7 @@ abstract class Model implements Iterator
 	protected $canSee = false;
 	protected $canEdit = false;
 	protected $whatIAm;
+	protected $whatIAms = null;
 	protected $table;
 	protected $idCol;
 	protected static $WhatIAm;
@@ -39,6 +40,7 @@ abstract class Model implements Iterator
 		if (!empty($this->dbFields)) {
 			$this->_position = 0;
 		}
+		if (is_null($this->whatIAms) && isset($this->whatIAm)) $this->whatIAms = $this->whatIAm . 's';
 		$this->loadAs($id);
 	}
 	
@@ -146,6 +148,7 @@ abstract class Model implements Iterator
 		if (!isset($d['href'])) $d['href'] = FilterRoutes::buildUrl(array($this->baseName, 'review', $this->id));
 		if (!isset($d['updateHref'])) $d['updateHref'] = FilterRoutes::buildUrl(array($this->baseName, 'update', $this->id));
 		if (!isset($d['deleteAction'])) $d['deleteAction'] = FilterRoutes::buildUrl(array($this->baseName, 'delete', $this->id));
+		if (!isset($d['newHref'])) $d['newHref'] = FilterRoutes::buildUrl(array($this->baseName, 'create'));
 		$this->appendAdditionalData($d);
 		return $d;
 	}
