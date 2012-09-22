@@ -6,7 +6,8 @@
  * @package RAD-Canon
  * @author Shad Downey
  */
-class FilterSubDir implements Filter {
+class FilterSubDir implements Filter
+{
 	/**
 	 * @return void
 	 */
@@ -20,4 +21,3 @@ class FilterSubDir implements Filter {
 	
 }
 
-?>
