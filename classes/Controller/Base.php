@@ -140,6 +140,11 @@ abstract class ControllerBase
 		$this->set(array($settings['templateModelName'] . 's', 'models'), call_user_func(array($settings['modelName'], 'getAllData')));
 	}
 
+	protected function afterSave(Model $M, $creating = false)
+	{
+		
+	}
+
 	/**
 	 * Most common update action
 	 * @param Int|Model $id Model Id
@@ -163,6 +168,7 @@ abstract class ControllerBase
 		if ($this->request->isPost()) {
 			try {
 				$Model->safeUpdateVars($this->request->post());
+				$this->afterSave($Model);
 				if (!isset($settings['successMessage'])) $settings['successMessage'] = $Model->whatAmI() . ' Updated';
 				$this->response->addMessage($settings['successMessage']);
 				if (isset($settings['destination'])) {
@@ -198,12 +204,14 @@ abstract class ControllerBase
 			$Model = $settings['Model'];
 		} else {
 			if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
+			if (!class_exists($settings['modelName'])) throw new ExceptionBase('Class Not Found: ' . $settings['modelName']);
 			$Model = new $settings['modelName'];
 		}
 		
 		if ($this->request->isPost()) {
 			try {
 				$Model->safeCreateWithVars($this->request->post());
+				$this->afterSave($Model, true);
 				if (!isset($settings['successMessage'])) $settings['successMessage'] = $Model->whatAmI() . ' Created';
 				$this->response->addMessage($settings['successMessage']);
 				if (isset($settings['destination'])) {
