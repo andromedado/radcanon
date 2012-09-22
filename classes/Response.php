@@ -40,6 +40,7 @@ class Response {
 		'content' => '',
 		'metas' => '',
 		'baseHref' => BASE_URL,
+		'app_sub_dir' => APP_SUB_DIR,
 	);
 	protected $appVars = array();
 	protected $vars = array();
@@ -254,6 +255,9 @@ class Response {
 		return array_merge($this->defaultVars, $this->appVars);
 	}
 	
+	/**
+	 * @return String
+	 */
 	public function renderFromTemplate($template, $consumeMessages = false)
 	{
 		try {
