@@ -344,8 +344,12 @@ var App = (function ($) {
 		}
 		obj.success = obj.success || function(data){
 			if (data) {
-				if (data.html && obj.recip) {
-					obj.recip.html(data.html);
+				if (obj.recip) {
+					if (data.html) {
+						obj.recip.html(data.html);
+					} else if (data.html === '' && obj.emptyMessage) {
+						obj.recip.html(obj.emptyMessage);
+					}
 				}
 				if (data.js) {
 					try {
