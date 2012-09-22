@@ -3,7 +3,8 @@
 /**
  * Class representing Admins interacting with the application
  */
-class Admin extends AuthUser {
+class Admin extends AuthUser
+{
 //	const SESSION_KEY = '_admin_login_id';
 	const MODEL_CLASS = 'ModelAdmin';
 	/** @var ModelAdmin $Model */
@@ -40,4 +41,3 @@ class Admin extends AuthUser {
 	
 }
 
-?>
