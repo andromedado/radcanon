@@ -17,3 +17,4 @@ class ModelExt extends Model
 	protected static $AllData = array();
 
 }
+
