@@ -3,6 +3,8 @@ if (!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 if (!defined('DEBUG')) define('DEBUG', false);
 if (!defined('LOTS_OF_LOGS')) define('LOTS_OF_LOGS', false);
 if (!defined('LIB_DIR')) define('LIB_DIR', dirname(__DIR__) . DS);
+if (!defined('SERVER_PREFIX')) define('SERVER_PREFIX', preg_replace('/^(.*)(public_html|httpdocs)(.*)$/i', '$1$2', LIB_DIR));
+if (!defined('APP_SUB_DIR')) define('APP_SUB_DIR', '');
 if (!defined('RADCANON_DIR')) define('RADCANON_DIR', __DIR__ . DS);
 if (!defined('RADCANON_CSS_DIR')) define('RADCANON_CSS_DIR', RADCANON_DIR . 'css' . DS);
 if (!defined('CSS_DIR')) define('CSS_DIR', RADCANON_CSS_DIR);
