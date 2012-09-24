@@ -10,6 +10,7 @@ if (!defined('RADCANON_JS_DIR')) define('RADCANON_JS_DIR', RADCANON_DIR . 'js' .
 if (!defined('JS_DIR')) define('JS_DIR', RADCANON_JS_DIR);
 if (!defined('RADCANON_CACHE_DIR')) define('RADCANON_CACHE_DIR', RADCANON_DIR . 'cache' . DS);
 if (!defined('CACHE_DIR')) define('CACHE_DIR', RADCANON_CACHE_DIR);
+if (!defined('UPDIR_ROOT')) define('UPDIR_ROOT', CACHE_DIR . 'uploads' . DS);
 if (!defined('LOG_FILE')) define('LOG_FILE', CACHE_DIR . 'rc.log');
 if (!defined('MAIL_FROM')) define('MAIL_FROM', 'Info <info@radcanon.com>');
 if (!defined('USE_HTACCESS')) define('USE_HTACCESS', true);
