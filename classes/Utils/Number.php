@@ -114,8 +114,16 @@ abstract class UtilsNumber {
 	}
 	
 	public static function ctn($str,$fp=false){return self::cashToNum($str,$fp);}
-	public static function cashToNum($str,$forcePositive=false){
-		return round((float)preg_replace('/[^\d\.'.($forcePositive?'':'-').']+/','',$str),2);
+	
+	/**
+	 * Take the given String Formatted Cash Value and convert to a valid float
+	 * @param String $str
+	 * @param Boolean $forcePositive
+	 * @return Float
+	 */
+	public static function cashToNum($str, $forcePositive = false)
+	{
+		return round((float)preg_replace('/[^\d\.' . ($forcePositive ? '' : '-') . ']+/', '', $str), 2);
 	}
 	
 	public static function pf($str,$an=true){return self::parseFloat($str,$an);}
