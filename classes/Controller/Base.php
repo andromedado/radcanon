@@ -156,13 +156,7 @@ abstract class ControllerBase
 	 */
 	protected function _update($id, array $settings = array())
 	{
-		if (is_a($id, 'Model')) {
-			$Model = $id;
-			$id = $Model->id;
-		} else {
-			if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
-			$Model = new $settings['modelName']($id);
-		}
+		$Model = $this->getModelMagically($id, $settings);
 		if (!$Model->isValid()) return $this->notFound();
 		
 		if ($this->request->isPost()) {
@@ -200,13 +194,7 @@ abstract class ControllerBase
 	 */
 	protected function _create(array $settings = array())
 	{
-		if (isset($settings['Model'])) {
-			$Model = $settings['Model'];
-		} else {
-			if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
-			if (!class_exists($settings['modelName'])) throw new ExceptionBase('Class Not Found: ' . $settings['modelName']);
-			$Model = new $settings['modelName'];
-		}
+		$Model = $this->getModelMagically(null, $settings);
 		
 		if ($this->request->isPost()) {
 			try {
@@ -232,16 +220,53 @@ abstract class ControllerBase
 		$modelData = isset($settings['modelData']) ? $settings['modelData'] : $Model->getData();
 		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $modelData);
 	}
+
+	protected function _delete($id, $settings = array())
+	{
+		if (!$this->request->isPost()) {
+			return $this->notFound();
+		}
+		$Model = $this->getModelMagically($id, $settings);
+		if (!$Model->isValid()) {
+			return $this->notFound();
+		}
+		try {
+			$Model->delete();
+			if (!isset($settings['successMessage'])) {
+				$settings['successMessage'] = $Model->whatAmI() . ' Deleted';
+			}
+			$this->response->addMessage($settings['successMessage']);
+		} catch (ExceptionValidation $e) {
+			$this->response->addMessage($e);
+		}
+		if (!isset($settings['destination'])) {
+			$settings['destination'] = array($Model->baseName);
+		}
+		$this->response->redirectTo($settings['destination']);
+		return;
+	}
 	
-	protected function _review($id, array $settings = array())
+	/**
+	 * @param mixed $id Either Model Id, or a Model Instance
+	 * @param Array $settings
+	 * @return Model
+	 */
+	protected function getModelMagically($id = null, array $settings)
 	{
 		if (is_a($id, 'Model')) {
 			$Model = $id;
 			$id = $Model->id;
 		} else {
 			if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
+			if (!class_exists($settings['modelName'])) throw new ExceptionBase('Class Not Found: ' . $settings['modelName']);
 			$Model = new $settings['modelName']($id);
 		}
+		return $Model;
+	}
+	
+	protected function _review($id, array $settings = array())
+	{
+		$Model = $this->getModelMagically($id, $settings);
 		if (!$Model->isValid()) return $this->notFound();
 		$modelData = isset($settings['modelData']) ? $settings['modelData'] : $Model->getData();
 		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $modelData);
