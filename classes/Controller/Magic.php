@@ -8,9 +8,9 @@ class ControllerMagic extends ControllerApp
 		return $this->_create(array('destination' => array($this->baseName)));
 	}
 	
-	public function index()
+	public function review($id = null)
 	{
-		return $this->_index();
+		return $this->_review($id);
 	}
 	
 	public function update($id = null)
@@ -18,9 +18,14 @@ class ControllerMagic extends ControllerApp
 		return $this->_update($id, array('destination' => array($this->baseName, 'review', $id)));
 	}
 	
-	public function review($id = null)
+	public function delete($id = null)
 	{
-		return $this->_review($id);
+		return $this->_delete($id, array('destination' => array($this->baseName)));
+	}
+	
+	public function index()
+	{
+		return $this->_index();
 	}
 	
 }
