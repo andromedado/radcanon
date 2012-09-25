@@ -896,6 +896,10 @@ abstract class Model implements Iterator
 	 */
 	public static function findOwner (Model $M, $additionalOptions = array()) {
 		$idc = static::$IdCol;
+		if (empty($options)) {
+			$c = get_called_class();
+			return new $c($M->$idc);
+		}
 		return static::findOne(array_merge($additionalOptions, array(
 			'fields' => array(
 				$idc => $M->$idc,
