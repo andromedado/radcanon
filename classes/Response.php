@@ -254,15 +254,20 @@ class Response {
 		return array_merge($this->defaultVars, $this->appVars);
 	}
 	
+	protected function getAllTemplateVars($consumeMessages = false)
+	{
+		$msgs = array();
+		if ($consumeMessages) {
+			$msgs = array('messages' => $_SESSION['msg'], 'errors' => $_SESSION['f_msg']);
+			$_SESSION['f_msg'] = $_SESSION['msg'] = array();
+		}
+		return array_merge($msgs, $this->getBasicTemplateVars(), $this->vars);
+	}
+	
 	public function renderFromTemplate($template, $consumeMessages = false)
 	{
 		try {
-			$msgs = array();
-			if ($consumeMessages) {
-				$msgs = array('messages' => $_SESSION['msg'], 'errors' => $_SESSION['f_msg']);
-				$_SESSION['f_msg'] = $_SESSION['msg'] = array();
-			}
-			$content = $this->getTwigEnvironment()->render($template, array_merge($msgs, $this->getBasicTemplateVars(), $this->vars));
+			$content = $this->getTwigEnvironment()->render($template, $this->getAllTemplateVars($consumeMessages));
 		} catch (Twig_Error $e) {
 			if (DEBUG) {
 				$content = $e->getMessage();
@@ -302,7 +307,9 @@ class Response {
 				return;
 				break;
 			case self::TYPE_TEMPLATE_IN_JSON :
-				$content = json_encode(array('html' => $this->renderFromTemplate($this->template, false)));
+				$array = array('html' => $this->renderFromTemplate($this->template, false));
+				UtilsArray::ifKeyAddToThis('js', $this->getAllTemplateVars(), $array);
+				$content = json_encode($array);
 				break;
 			case self::TYPE_HTML :
 				$content = $this->renderFromTemplate($this->template, true);
