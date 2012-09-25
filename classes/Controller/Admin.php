@@ -1,6 +1,7 @@
 <?php
 
-class ControllerAdmin extends ControllerAdminOnly {
+class ControllerAdmin extends ControllerAdminOnly
+{
 	protected $permittedMethods = array(
 		'login', 'forgotPassword', 'resetSent', 'notFound',
 	);
@@ -225,4 +226,3 @@ class ControllerAdmin extends ControllerAdminOnly {
 	
 }
 
-?>

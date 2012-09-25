@@ -2,7 +2,7 @@
 <html>
 	<head>
 {% block head %}
-	<base href="{{ basehref }}" />
+	<base href="{{ baseHref }}" />
 	{% block metas %}{{ metas }}{% endblock %}
 	{% block links %}
 <link rel="stylesheet" type="text/css" href="css/suture.php{% set styleAmp = '?' %}{% for style in styles %}{{ styleAmp ~ style|url_encode }}{% set styleAmp = '&' %}{% endfor %}" />

@@ -1,6 +1,7 @@
 <?php
 
-class ControllerPages extends ControllerApp {
+class ControllerPages extends ControllerApp
+{
 	
 	public function catchAll () {
 		$m = preg_replace('#[^A-Z\d_-]#i', '', func_get_arg(0));
@@ -16,3 +17,4 @@ class ControllerPages extends ControllerApp {
 	}
 
 }
+

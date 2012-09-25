@@ -1,7 +1,7 @@
 <?php
 
-class AppResponse extends Response {
+class AppResponse extends Response
+{
 	
 }
 
-?>

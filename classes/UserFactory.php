@@ -1,6 +1,7 @@
 <?php
 
-abstract class UserFactory {
+abstract class UserFactory
+{
 	private static $Hierarchy = array(
 //		'SuperAdmin',
 //		'Admin',
@@ -25,4 +26,3 @@ abstract class UserFactory {
 	
 }
 
-?>
