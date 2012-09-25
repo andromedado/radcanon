@@ -1,4 +1,4 @@
-<form action="{{ action }}" method="post">
+{% block formTag %}<form action="{{ action }}" method="post"{% block additionalFormAttributes %}{% endblock %}>{% endblock %}
 	{% block beforeTable %}{% endblock %}
 	{% block tableTag %}
 	<table class="{% block tableClass %}autoT{% endblock %}">
