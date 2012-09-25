@@ -66,6 +66,9 @@ class Request
 			}
 			return $this->abstractedGet($key, $this->$func, $default, $cast);
 		}
+		if (count($args) === 2 && preg_match('/^set_([A-Za-z]+)$/', $func, $m) && in_array($m[1], $this->Abstracted)) {
+			return $this->{$m[1]}[$args[0]] = $args[1];
+		}
 		if (DEBUG || LOTS_OF_LOGS) {
 			ModelLog::mkLog('failed method call: ' . $func . ' : ' . json_encode($args), '0', __FILE__, __LINE__);
 		}
