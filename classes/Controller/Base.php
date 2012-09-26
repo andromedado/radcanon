@@ -27,6 +27,7 @@ abstract class ControllerBase
 		if (class_exists($c)) {
 			$this->model = new $c;
 		}
+		$this->set('templateDir', $this->getTemplateDir());
 		$this->load();
 	}
 	
@@ -136,7 +137,7 @@ abstract class ControllerBase
 	{
 		if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
 		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
-		$this->set('model', new $this->modelName);
+		$this->set(array('model', $settings['templateModelName']), new $this->modelName);
 		$this->set(array($settings['templateModelName'] . 's', 'models'), call_user_func(array($settings['modelName'], 'getAllData')));
 	}
 
@@ -180,8 +181,9 @@ abstract class ControllerBase
 			}
 		}
 		$this->prepForForm();
-		$modelData = isset($settings['modelData']) ? $settings['modelData'] : $Model->getData();
-		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $modelData);
+		if (!isset($settings['modelData'])) $settings['modelData'] = $Model->getData();
+		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
+		$this->set(array($settings['templateModelName'], 'model'), $settings['modelData']);
 	}
 	
 	/**
@@ -217,8 +219,9 @@ abstract class ControllerBase
 			}
 		}
 		$this->prepForForm();
-		$modelData = isset($settings['modelData']) ? $settings['modelData'] : $Model->getData();
-		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $modelData);
+		if (!isset($settings['modelData'])) $settings['modelData'] = $Model->getData();
+		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
+		$this->set(array($settings['templateModelName'], 'model'), $settings['modelData']);
 	}
 
 	protected function _delete($id, $settings = array())
@@ -268,8 +271,9 @@ abstract class ControllerBase
 	{
 		$Model = $this->getModelMagically($id, $settings);
 		if (!$Model->isValid()) return $this->notFound();
-		$modelData = isset($settings['modelData']) ? $settings['modelData'] : $Model->getData();
-		$this->set(!isset($settings['templateModelName']) ? $this->templateModelName : $settings['templateModelName'], $modelData);
+		if (!isset($settings['modelData'])) $settings['modelData'] = $Model->getData();
+		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
+		$this->set(array($settings['templateModelName'], 'model'), $settings['modelData']);
 	}
 	
 }
