@@ -78,6 +78,9 @@ class ControllerMagic extends ControllerApp
 		$args = func_get_args();
 		list($permitted, $return) = $this->mayProceed(__FUNCTION__, $args);
 		if (!$permitted) return $return;
+		if (!file_exists(APP_TEMPLATES_DIR . $this->getTemplateDir() . DS . 'index.html.twig')) {
+			$this->response->template = 'Model' . DS . 'index.html.twig';
+		}
 		return $this->_index();
 	}
 	
