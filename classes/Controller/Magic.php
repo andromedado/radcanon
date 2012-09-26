@@ -40,6 +40,9 @@ class ControllerMagic extends ControllerApp
 		$args = func_get_args();
 		list($permitted, $return) = $this->mayProceed(__FUNCTION__, $args);
 		if (!$permitted) return $return;
+		if (!file_exists(APP_TEMPLATES_DIR . $this->getTemplateDir() . DS . 'create.html.twig')) {
+			$this->response->template = 'Model' . DS . 'create.html.twig';
+		}
 		return $this->_create(array('destination' => $this->determineDestination(__FUNCTION__, $args)));
 	}
 	
@@ -56,6 +59,9 @@ class ControllerMagic extends ControllerApp
 		$args = func_get_args();
 		list($permitted, $return) = $this->mayProceed(__FUNCTION__, $args);
 		if (!$permitted) return $return;
+		if (!file_exists(APP_TEMPLATES_DIR . $this->getTemplateDir() . DS . 'update.html.twig')) {
+			$this->response->template = 'Model' . DS . 'update.html.twig';
+		}
 		return $this->_update($id, array('destination' => $this->determineDestination(__FUNCTION__, $args)));
 	}
 	
