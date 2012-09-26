@@ -58,13 +58,40 @@ abstract class FileOfModel
 		return $this;
 	}
 	
-	public function hasFile ($name) {
-		$fs = $this->getFilesInBaseDir();
-		$has = false;
-		foreach ($fs as $file) {
-			$has = $has || basename($file) === $name;
+	public function getFilePaths()
+	{
+		return $this->getFilesInBaseDir();
+	}
+	
+	public function getFilenames () {
+		$names = array();
+		$Ps = $this->getFilePaths();
+		foreach ($Ps as $P) {
+			$names[] = basename($P);
 		}
-		return $has;
+		return $names;
+	}
+	
+	public function hasFile ($name) {
+		return in_array($name, $this->getFilenames());
+	}
+	
+	public function deleteFile($filename)
+	{
+		$fPath = $this->getBaseDir() . self::sanitizeFilename($filename);
+		if (!file_exists($fPath)) {
+			return false;
+		}
+		if (!unlink($fPath)) {
+			throw new ExceptionFile('Could not unlink: "' . $fPath . '"');
+		}
+		return true;
+	}
+	
+	public function hasAFile()
+	{
+		$fs = $this->getFilesInBaseDir();
+		return !empty($fs);
 	}
 	
 	public function checkForUploadErrorsByInfo(array $info)
@@ -179,6 +206,9 @@ abstract class FileOfModel
 	public function getFilesInDir ($dir, $noCache = false) {
 		if (!isset($this->cachedScan[$dir]) || $noCache) {
 			$this->cachedScan[$dir] = glob($dir . '*.*');
+			if (!is_array($this->cachedScan[$dir])) {
+				$this->cachedScan[$dir] = array();
+			}
 		}
 		return $this->cachedScan[$dir];
 	}
@@ -186,6 +216,11 @@ abstract class FileOfModel
 	public static function getFileKeys()
 	{
 		return static::$FileKeys;
+	}
+	
+	public static function sanitizeFilename($filename)
+	{
+		return str_replace(array("\0", DIRECTORY_SEPARATOR), array('', ''), $filename);
 	}
 
 }

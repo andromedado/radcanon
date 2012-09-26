@@ -4,8 +4,7 @@ class FileSingle extends FileOfModel
 {
 	
 	public function hasFile () {
-		$fs = $this->getFilesInBaseDir();
-		return !empty($fs);
+		return $this->hasAFile();
 	}
 	
 	public function getHref ()
