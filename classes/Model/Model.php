@@ -926,6 +926,18 @@ abstract class Model implements Iterator
 		return $O;
 	}
 	
+	/**
+	 * @return Model
+	 */
+	public static function findOneByField ($fieldName, $fieldValue)
+	{
+		return static::findOne(array(
+			'fields' => array(
+				$fieldName => $fieldValue,
+			),
+		));
+	}
+	
 	protected static function attachDefaultSort(array &$options)
 	{
 		if (!is_null(static::$sortField)) {
