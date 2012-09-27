@@ -314,6 +314,14 @@ abstract class Model implements Iterator
 		return true;
 	}
 	
+	public function safeSaveData(array $data)
+	{
+		if ($this->isValid()) {
+			return $this->safeUpdateVars($data);
+		}
+		return $this->safeCreateWithVars($data);
+	}
+	
 	/**
 	 * Save the given data
 	 * if this is valid, update, else create
