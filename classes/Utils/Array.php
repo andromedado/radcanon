@@ -482,7 +482,7 @@ class UtilsArray {
 			foreach ($baseArray[$key] as $index => $val) {
 				$elem = array();
 				foreach ($arraysToAmalgamate as $array) {
-					if (!is_array($baseArray[$array]) || !array_key_exists($index, $baseArray[$array])) {
+					if (!array_key_exists($array, $baseArray) || !is_array($baseArray[$array]) || !array_key_exists($index, $baseArray[$array])) {
 						$elem[$array] = null;
 					} else {
 						$elem[$array] = $baseArray[$array][$index];
