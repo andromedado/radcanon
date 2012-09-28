@@ -9,6 +9,9 @@ class ControllerMagic extends ControllerApp
 	{
 		$permitted = $return = true;
 		foreach ($this->GateKeeperMethods as $method => $methodOnFailure) {
+			if (!method_exists($this, $method)) {
+				throw new ExceptionBase('Invalid Method offered by `GetKeeperMethods`: ' . $method);
+			}
 			if (call_user_func(array($this, $method), $invoked, $args) !== true) {
 				$permitted = false;
 				if (is_null($methodOnFailure)) {
