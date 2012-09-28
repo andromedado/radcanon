@@ -157,7 +157,7 @@ abstract class ControllerBase
 	 */
 	protected function _update($id, array $settings = array())
 	{
-		$Model = $this->getModelMagically($id, $settings);
+		$this->model = $Model = $this->getModelMagically($id, $settings);
 		if (!$Model->isValid()) return $this->notFound();
 		
 		if ($this->request->isPost()) {
@@ -196,7 +196,7 @@ abstract class ControllerBase
 	 */
 	protected function _create(array $settings = array())
 	{
-		$Model = $this->getModelMagically(null, $settings);
+		$this->model = $Model = $this->getModelMagically(null, $settings);
 		
 		if ($this->request->isPost()) {
 			try {
@@ -229,7 +229,7 @@ abstract class ControllerBase
 		if (!$this->request->isPost()) {
 			return $this->notFound();
 		}
-		$Model = $this->getModelMagically($id, $settings);
+		$this->model = $Model = $this->getModelMagically($id, $settings);
 		if (!$Model->isValid()) {
 			return $this->notFound();
 		}
@@ -259,6 +259,8 @@ abstract class ControllerBase
 		if (is_a($id, 'Model')) {
 			$Model = $id;
 			$id = $Model->id;
+		} elseif (isset($settings['Model'])) {
+			$Model = $settings['Model'];
 		} else {
 			if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
 			if (!class_exists($settings['modelName'])) throw new ExceptionBase('Class Not Found: ' . $settings['modelName']);
@@ -269,7 +271,7 @@ abstract class ControllerBase
 	
 	protected function _review($id, array $settings = array())
 	{
-		$Model = $this->getModelMagically($id, $settings);
+		$this->model = $Model = $this->getModelMagically($id, $settings);
 		if (!$Model->isValid()) return $this->notFound();
 		if (!isset($settings['modelData'])) $settings['modelData'] = $Model->getData();
 		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
