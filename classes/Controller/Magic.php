@@ -5,6 +5,16 @@ class ControllerMagic extends ControllerApp
 	protected $GateKeeperMethods = array(
 	);
 	
+	protected function isAdmin()
+	{
+		return is_a($this->user, 'Admin');
+	}
+	
+	protected function isAuthUser()
+	{
+		return is_a($this->user, 'AuthUser');
+	}
+	
 	protected function mayProceed($invoked, array $args)
 	{
 		$permitted = $return = true;
