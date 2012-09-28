@@ -4,4 +4,3 @@ class AppRequest extends Request {
 	
 }
 
-?>

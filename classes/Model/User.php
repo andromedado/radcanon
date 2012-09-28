@@ -192,4 +192,3 @@ class ModelUser extends Model {
 	
 }
 
-?>
