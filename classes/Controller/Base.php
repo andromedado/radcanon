@@ -180,7 +180,8 @@ abstract class ControllerBase
 				}
 			}
 		}
-		$this->prepForForm();
+		if (!isset($settings['prepForFormArgs'])) $settings['prepForFormArgs'] = array();
+		call_user_func_array(array($this, 'prepForForm'), $settings['prepForFormArgs']);
 		if (!isset($settings['modelData'])) $settings['modelData'] = $Model->getData();
 		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
 		$this->set(array($settings['templateModelName'], 'model'), $settings['modelData']);
@@ -218,7 +219,9 @@ abstract class ControllerBase
 				}
 			}
 		}
-		$this->prepForForm();
+		
+		if (!isset($settings['prepForFormArgs'])) $settings['prepForFormArgs'] = array();
+		call_user_func_array(array($this, 'prepForForm'), $settings['prepForFormArgs']);
 		if (!isset($settings['modelData'])) $settings['modelData'] = $Model->getData();
 		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
 		$this->set(array($settings['templateModelName'], 'model'), $settings['modelData']);
