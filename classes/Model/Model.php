@@ -812,8 +812,24 @@ abstract class Model implements Iterator
 	}
 	
 	function __call($function, $args){
-		if (preg_match('/get_([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/', $function, $m)) {
+		/**
+		 * You can call `$Model->get_VARIABLE()` on any Model
+		 * and it will try to be resolved as $Model->VARIABLE
+		 */
+		if (preg_match('/^get_([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)$/', $function, $m)) {
 			return $this->__get($m[1]);
+		}
+		/**
+		 * You can call `$Model->VAIRABLE_is(TEST_AGAINST)` on any Model
+		 * and the Model will check to see if `$Model->VARIABLE === TEST_AGAINST`
+		 * *Optionally non-strict test (pass `false` as second parameter)
+		 */
+		if (preg_match('/^([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)_is$/', $function, $m)) {
+			$val = isset($args[0]) ? $args[0] : null;
+			if (isset($args[1]) && $args[1] === false) {//Non-Strict Test
+				return $this->__get($m[1]) == $val;
+			}
+			return $this->__get($m[1]) === $val;
 		}
 		return false;
 	}
@@ -940,6 +956,18 @@ abstract class Model implements Iterator
 	public static function findOneByField ($fieldName, $fieldValue)
 	{
 		return static::findOne(array(
+			'fields' => array(
+				$fieldName => $fieldValue,
+			),
+		));
+	}
+	
+	/**
+	 * @return Array
+	 */
+	public static function findAllByField($fieldName, $fieldValue)
+	{
+		return static::findAll(array(
 			'fields' => array(
 				$fieldName => $fieldValue,
 			),
