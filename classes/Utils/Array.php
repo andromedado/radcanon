@@ -389,17 +389,56 @@ class UtilsArray {
 	public static function callOnAll(array $Os, $Method, $Arguments = array())
 	{
 		$r = array();
-		foreach($Os as $k => $Class){
+		foreach ($Os as $k => $Class) {
 			$r[$k] = NULL;
-			if(is_callable(array($Class, $Method))){
-				if(is_array($Arguments)){
+			if (is_callable(array($Class, $Method))) {
+				if (is_array($Arguments)) {
 					$r[$k] = call_user_func_array(array($Class, $Method), $Arguments);
-				}else{
+				} else {
 					$r[$k] = call_user_func(array($Class, $Method), $Arguments);
+					//Ergh... I don't like this overloading...
+					//The idea was that you could pass a non-array wrapped single argument
+					//to the method, but if that first parameter was intended to be an array,
+					//it then needs to be wrapped in an array~ seems inconsistent
+					ModelLog::mkLog('UtilsArray::callOnAll called with a non-array third parameter. This will probably be deprecated at some point', 'deprecated', '1', __FILE__, __LINE__);
 				}
 			}
 		}
 		return $r;
+	}
+	
+	/**
+	 * Similar to UtilsArray::callOnAll except more strict, and that the returned value
+	 * from the method call MUST be a Model, and they are aggregated, and duplicates
+	 * ignored. (returned array's keys are used to this effect)
+	 */
+	public static function getDistinctReturnedModels (
+		array $Os,
+		$Method,
+		array $Arguments = array()
+	) {
+		$r = array();
+		foreach ($Os as $Class) {
+			if (!is_callable(array($Class, $Method))) {
+				throw new ExceptionBase('Can\'t call "' . $Method . '" on given class');
+			}
+			self::addModelToArrayIfNotAlreadyThere(call_user_func_array(array($Class, $Method), $Arguments), $r);
+		}
+		return $r;
+	}
+	
+	protected static function addModelToArrayIfNotAlreadyThere ($Model, array &$array)
+	{
+		if (is_array($Model)) {
+			foreach ($Model as $model) {
+				self::addModelToArrayIfNotAlreadyThere($model, $array);
+			}
+			return;
+		}
+		if (!is_a($Model, 'Model')) {
+			throw new ExceptionBase('Not A Model! : ' . $Model);
+		}
+		$r[get_class($Model) . $Model->id] = $Model;
 	}
 	
 	public static function pluckPropertyFromObjects(array $Os, $property)
