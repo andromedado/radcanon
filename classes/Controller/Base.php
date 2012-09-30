@@ -141,6 +141,11 @@ abstract class ControllerBase
 		$this->set(array($settings['templateModelName'] . 's', 'models'), call_user_func(array($settings['modelName'], 'getAllData')));
 	}
 
+	protected function beforeSave(Model $M, $creating = false)
+	{
+		
+	}
+
 	protected function afterSave(Model $M, $creating = false)
 	{
 		
@@ -162,8 +167,9 @@ abstract class ControllerBase
 		
 		if ($this->request->isPost()) {
 			try {
+				$this->beforeSave($Model, false);
 				$Model->safeUpdateVars($this->request->post());
-				$this->afterSave($Model);
+				$this->afterSave($Model, false);
 				if (!isset($settings['successMessage'])) $settings['successMessage'] = $Model->whatAmI() . ' Updated';
 				$this->response->addMessage($settings['successMessage']);
 				if (isset($settings['destination'])) {
@@ -201,6 +207,7 @@ abstract class ControllerBase
 		
 		if ($this->request->isPost()) {
 			try {
+				$this->beforeSave($Model, true);
 				$Model->safeCreateWithVars($this->request->post());
 				$this->afterSave($Model, true);
 				if (!isset($settings['successMessage'])) $settings['successMessage'] = $Model->whatAmI() . ' Created';
