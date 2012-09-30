@@ -48,6 +48,20 @@ class ControllerMagic extends ControllerApp
 		return $dest;
 	}
 	
+	protected function determineSettings($invoked, array $args)
+	{
+		$settings = array();
+		switch($invoked) {
+			case 'delete':
+			case 'update':
+			case 'create':
+				$settings['destination'] = $this->determineDestination($invoked, $args);
+				break;
+			
+		}
+		return $settings;
+	}
+	
 	public function create()
 	{
 		$args = func_get_args();
@@ -56,7 +70,7 @@ class ControllerMagic extends ControllerApp
 		if (!file_exists(APP_TEMPLATES_DIR . $this->getTemplateDir() . DS . 'create.html.twig')) {
 			$this->response->template = 'Model' . DS . 'create.html.twig';
 		}
-		return $this->_create(array('destination' => $this->determineDestination(__FUNCTION__, $args)));
+		return $this->_create($this->determineSettings(__FUNCTION__, $args));
 	}
 	
 	public function review($id = null)
@@ -67,7 +81,7 @@ class ControllerMagic extends ControllerApp
 		if (!file_exists(APP_TEMPLATES_DIR . $this->getTemplateDir() . DS . 'review.html.twig')) {
 			$this->response->template = 'Model' . DS . 'review.html.twig';
 		}
-		return $this->_review($id);
+		return $this->_review($id, $this->determineSettings(__FUNCTION__, $args));
 	}
 	
 	public function update($id = null)
@@ -78,7 +92,7 @@ class ControllerMagic extends ControllerApp
 		if (!file_exists(APP_TEMPLATES_DIR . $this->getTemplateDir() . DS . 'update.html.twig')) {
 			$this->response->template = 'Model' . DS . 'update.html.twig';
 		}
-		return $this->_update($id, array('destination' => $this->determineDestination(__FUNCTION__, $args)));
+		return $this->_update($id, $this->determineSettings(__FUNCTION__, $args));
 	}
 	
 	public function delete($id = null)
@@ -86,7 +100,7 @@ class ControllerMagic extends ControllerApp
 		$args = func_get_args();
 		list($permitted, $return) = $this->mayProceed(__FUNCTION__, $args);
 		if (!$permitted) return $return;
-		return $this->_delete($id, array('destination' => $this->determineDestination(__FUNCTION__, $args)));
+		return $this->_delete($id, $this->determineSettings(__FUNCTION__, $args));
 	}
 	
 	public function index()
@@ -97,7 +111,7 @@ class ControllerMagic extends ControllerApp
 		if (!file_exists(APP_TEMPLATES_DIR . $this->getTemplateDir() . DS . 'index.html.twig')) {
 			$this->response->template = 'Model' . DS . 'index.html.twig';
 		}
-		return $this->_index();
+		return $this->_index($this->determineSettings(__FUNCTION__, $args));
 	}
 	
 }
