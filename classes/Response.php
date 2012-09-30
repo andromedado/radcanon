@@ -238,6 +238,16 @@ class Response {
 		$_SESSION[$k][] = $msg;
 	}
 	
+	public function clearMessages ($bad = null)
+	{
+		if (is_null($bad) || $bad) {
+			$_SESSION['f_msg'] = array();
+		}
+		if (is_null($bad) || !$bad) {
+			$_SESSION['msg'] = array();
+		}
+	}
+	
 	/**
 	 * @return Twig_Environment
 	 */
