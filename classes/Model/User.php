@@ -1,6 +1,7 @@
 <?php
 
-class ModelUser extends Model {
+class ModelUser extends Model
+{
 	const MIN_VALID_LEVEL = 0;
 	const TMP_PASS_VALID_FOR = '+12 hours';
 	protected $uid;
@@ -188,6 +189,18 @@ class ModelUser extends Model {
 			}
 		}
 		return false;
+	}
+	
+	public static function findAll()
+	{
+		return static::findAll(array(
+			'conditions' => array(
+				'sql' => DBCFactory::quote('level') . " >= ?",
+				'args' => array(
+					static::MIN_VALID_LEVEL,
+				),
+			),
+		));
 	}
 	
 }
