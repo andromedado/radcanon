@@ -182,6 +182,18 @@ abstract class UtilsDate {
 		return array($begin, $end);
 	}
 	
+	/**
+	 * Given two dates, is the first one an earlier day than the second?
+	 * @param String $this
+	 * @param String $that
+	 * @return Boolean
+	 */
+	public static function thisDayIsBeforeThatDay($this, $that)
+	{
+		$thisTs = (int)strtotime($this);
+		$thatTs = (int)strtotime($that);
+		return $thisTs < $thatTs && date('Y-m-d', $thisTs) !== date('Y-m-d', $thatTs);
+	}
+	
 }
 
-?>
