@@ -422,7 +422,8 @@ class UtilsArray {
 			if (!is_callable(array($Class, $Method))) {
 				throw new ExceptionBase('Can\'t call "' . $Method . '" on given class');
 			}
-			self::addModelToArrayIfNotAlreadyThere(call_user_func_array(array($Class, $Method), $Arguments), $r);
+			$Return = call_user_func_array(array($Class, $Method), $Arguments);
+			self::addModelToArrayIfNotAlreadyThere($Return, $r);
 		}
 		return $r;
 	}
@@ -438,7 +439,7 @@ class UtilsArray {
 		if (!is_a($Model, 'Model')) {
 			throw new ExceptionBase('Not A Model! : ' . $Model);
 		}
-		$r[get_class($Model) . $Model->id] = $Model;
+		$array[get_class($Model) . $Model->id] = $Model;
 	}
 	
 	public static function pluckPropertyFromObjects(array $Os, $property)
