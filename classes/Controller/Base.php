@@ -77,6 +77,14 @@ abstract class ControllerBase
 		return $this;
 	}
 	
+	/**
+	 * Get Template var
+	 */
+	public function get ($what, $default = null)
+	{
+		return $this->response->get($what, $default);
+	}
+	
 	public function getTemplateDir () {
 		if (!is_null($this->TemplateDir)) return $this->TemplateDir;
 		return preg_replace('/^Controller/', '', get_class($this));
@@ -139,6 +147,7 @@ abstract class ControllerBase
 		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
 		$this->set(array('model', $settings['templateModelName']), new $this->modelName);
 		$this->set(array($settings['templateModelName'] . 's', 'models'), call_user_func(array($settings['modelName'], 'getAllData')));
+		$this->magicFinished(__FUNCTION__, func_get_args());
 	}
 
 	protected function beforeSave(Model $M, $creating = false)
@@ -147,6 +156,11 @@ abstract class ControllerBase
 	}
 
 	protected function afterSave(Model $M, $creating = false)
+	{
+		
+	}
+	
+	protected function magicFinished ($method, $arguments)
 	{
 		
 	}
@@ -191,6 +205,7 @@ abstract class ControllerBase
 		if (!isset($settings['modelData'])) $settings['modelData'] = $Model->getData();
 		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
 		$this->set(array($settings['templateModelName'], 'model'), $settings['modelData']);
+		$this->magicFinished(__FUNCTION__, func_get_args());
 	}
 	
 	/**
@@ -232,6 +247,7 @@ abstract class ControllerBase
 		if (!isset($settings['modelData'])) $settings['modelData'] = $Model->getData();
 		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
 		$this->set(array($settings['templateModelName'], 'model'), $settings['modelData']);
+		$this->magicFinished(__FUNCTION__, func_get_args());
 	}
 
 	protected function _delete($id, $settings = array())
@@ -256,6 +272,7 @@ abstract class ControllerBase
 			$settings['destination'] = array($Model->baseName);
 		}
 		$this->response->redirectTo($settings['destination']);
+		$this->magicFinished(__FUNCTION__, func_get_args());
 		return;
 	}
 	
@@ -286,6 +303,7 @@ abstract class ControllerBase
 		if (!isset($settings['modelData'])) $settings['modelData'] = $Model->getData();
 		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
 		$this->set(array($settings['templateModelName'], 'model'), $settings['modelData']);
+		$this->magicFinished(__FUNCTION__, func_get_args());
 	}
 	
 }
