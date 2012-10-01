@@ -169,6 +169,18 @@ class Response {
 	}
 	
 	/**
+	 * Get the current template value for the given var
+	 * @param String $what
+	 * @param mixed $default What to return if not found
+	 */
+	public function get ($what, $default = null)
+	{
+		$All = $this->getAllTemplateVars(false);
+		if (!array_key_exists($what, $All)) return $default;
+		return $All[$what];
+	}
+	
+	/**
 	 * 
 	 */
 	public function __set($what, $val) {
