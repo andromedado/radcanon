@@ -503,9 +503,27 @@ class UtilsArray {
 	 * Given an Array of independent arrays with similar/same indices, return an array 
 	 * with just the shared indices and the array values associated with those
 	 * indices collapsed together. e.g.
-	 * param1 - array('hat' => array(0 => 'baseball-hat', 1 => 'top-hat'), 'gloves' => array(0 => 'catchers-mit', 1 => 'silk-gloves'))
-	 * param2 - array('hat', 'gloves')
-	 * returns - array(0 => array('hat' => 'baseball-hat', 'gloves' => 'cathers-mit'), 1 => array('hat' => 'top-hat', 'gloves' => 'silk-gloves'))
+	 * param1 - ['hat' => ['baseball-hat', 'top-hat'],
+	 * 				'gloves' => ['catchers-mit', 'silk-gloves']]
+	 * returns - [['hat' => 'baseball-hat', 'gloves' => 'cathers-mit'],
+	 * 				['hat' => 'top-hat', 'gloves' => 'silk-gloves']]
+	 * @param Array $baseArray
+	 * @return Array
+	 */
+	public static function autoAmalgamateArrays(array $Arrays)
+	{
+		return self::amalgamateArrays($Arrays, array_keys($Arrays));
+	}
+	
+	/**
+	 * Given an Array of independent arrays with similar/same indices, return an array 
+	 * with just the shared indices and the array values associated with those
+	 * indices collapsed together. e.g.
+	 * param1 - ['hat' => ['baseball-hat', 'top-hat'],
+	 * 				'gloves' => ['catchers-mit', 'silk-gloves']]
+	 * param2 - ['hat', 'gloves']
+	 * returns - [['hat' => 'baseball-hat', 'gloves' => 'cathers-mit'],
+	 * 				['hat' => 'top-hat', 'gloves' => 'silk-gloves']]
 	 * @param Array $baseArray
 	 * @param Array $arraysToAmalgamate
 	 * @return Array
