@@ -1,6 +1,7 @@
 <?php
 
-class ExceptionPDO extends ExceptionBase {
+class ExceptionPDO extends ExceptionBase
+{
 	
 	public function __construct(
 		PDOStatement $stmt = NULL,
