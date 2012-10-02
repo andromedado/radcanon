@@ -1,11 +1,37 @@
 <?php
 
-abstract class UtilsPDO {
+abstract class UtilsPDO
+{
 	
-	public static function writeExecute($sql, $args = array()) {
+	public static function writeExecute($sql, $args = array())
+	{
 		$stmt = DBCFactory::wPDO()->prepare($sql);
 		if (!$stmt) throw new ExceptionBase(DBCFactory::wPDO()->errorInfo());
 		return $stmt->execute($args);
+	}
+	
+	public static function getResultSetColumns($sql, array $params = array())
+	{
+		$Columns = array();
+		$stmt = DBCFactory::rPDO()->prepare($sql);
+		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
+		$r = $stmt->execute($params);
+		if (!$r) throw new ExceptionPDO($stmt);
+		$Columns = UtilsArray::autoAmalgamateArrays($stmt->fetchAll(PDO::FETCH_NUM));
+		return $Columns;
+	}
+	
+	public static function getResultSetColumn(
+		$column,
+		$sql,
+		array $params = array()
+	) {
+		$R = array();
+		$Columns = self::getResultSetColumns($sql, $params);
+		if (array_key_exists($column, $Columns)) {
+			$R = $Columns[$column];
+		}
+		return $R;
 	}
 	
 	/**
@@ -15,7 +41,8 @@ abstract class UtilsPDO {
 	 * @param String|Array $Class ClassName or Array Argument for call_user_func to generate Object
 	 * @return Array
 	 */
-	public static function fetchIdsIntoInstances($sql, array $params, $Class) {
+	public static function fetchIdsIntoInstances($sql, array $params = array(), $Class)
+	{
 		$Os = array();
 		$stmt = DBCFactory::rPDO()->prepare($sql);
 		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
@@ -40,7 +67,8 @@ abstract class UtilsPDO {
 	 * @param String|Array $Class ClassName or Array Argument for call_user_func to generate Object
 	 * @return stdClass
 	 */
-	public static function fetchIdIntoInstance($sql, array $params, $Class) {
+	public static function fetchIdIntoInstance($sql, array $params = array(), $Class)
+	{
 		$id = 0;
 		$stmt = DBCFactory::rPDO()->prepare($sql);
 		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
@@ -58,4 +86,3 @@ abstract class UtilsPDO {
 	
 }
 
-?>
