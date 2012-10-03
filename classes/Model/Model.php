@@ -845,15 +845,29 @@ abstract class Model implements Iterator
 		return $value;
 	}
 	
-	protected static function buildQueryFromOptions (array $options, $Class = NULL, $type = 'SELECT') {
+	protected static function buildQueryFromOptions (
+		array $options,
+		$Class = NULL,
+		$type = 'SELECT'
+	) {
 		$c = get_called_class();
 		if (is_null($Class)) $Class = $c;
 		switch ($type) {
 			case "DELETE":
 				$sql = "DELETE";
 			break;
+			case "SELECT":
 			default:
-				$sql = "SELECT " . DBCFactory::quote($c::$IdCol);
+				if (!empty($options['columns']) && is_array($options['columns'])) {
+					$sql = "SELECT ";
+					$comma = '';
+					foreach ($options['columns'] as $column) {
+						$sql .= $comma . DBCFactory::quote($column);
+						$comma = ', ';
+					}
+				} else {
+					$sql = "SELECT " . DBCFactory::quote($c::$IdCol);
+				}
 		}
 		$sql .= " FROM " . DBCFactory::quote($c::$Table);
 		$args = array();
@@ -998,10 +1012,28 @@ abstract class Model implements Iterator
 		}
 	}
 	
-	public static function findAll (array $options = array(), $Class = NULL) {
+	public static function fetchColumn ($column, array $options = array(), $Class = null)
+	{
+		$Result = array();
+		$result = self::fetchColumns(array($column), $options, $Class);
+		if (array_key_exists($column, $result)) {
+			$Result = $result[$column];
+		}
+		return $Result;
+	}
+	
+	public static function fetchColumns (array $columns, $options = array(), $Class = null)
+	{
+		$options['columns'] = $columns;
 		static::attachDefaultSort($options);
 		list($sql, $args, $Class) = static::buildQueryFromOptions($options, $Class);
-		//var_dump($sql, $args);
+		return UtilsPDO::getResultSetColumns($sql, $args, PDO::FETCH_ASSOC);
+	}
+	
+	public static function findAll (array $options = array(), $Class = null)
+	{
+		static::attachDefaultSort($options);
+		list($sql, $args, $Class) = static::buildQueryFromOptions($options, $Class);
 		$Os = UtilsPDO::fetchIdsIntoInstances($sql, $args, $Class);
 		foreach ($Os as $O) {
 			$O->foundWith = $options;
@@ -1054,10 +1086,70 @@ abstract class Model implements Iterator
 		return UtilsArray::callOnAll($Models, 'getData');
 	}
 	
+	/**
+	 * Get data from each Model associated with each id in the given array
+	 * @param Array $ids
+	 * @return Array
+	 */
+	public static function getDataForIds (array $ids)
+	{
+		return static::extractDataFromArray(static::translateIdsIntoModels($ids));
+	}
+	
 	public static function getAllData (array $options = array())
 	{
 		return static::extractDataFromArray(static::findAll($options));
 	}
 	
+	/**
+	 * Takes the given search criteria and appropriately modifies the other
+	 * parameters provided
+	 * @overwrite
+	 * @param UtilsArray $SearchCriteria
+	 * @param String $sql
+	 * @param Array $args
+	 * @param Array $wheres
+	 * @param Array $groupBy
+	 * @return void
+	 */
+	protected static function handleSearchCriteria(
+		UtilsArray $SearchCriteria,
+		&$sql,
+		array &$args,
+		array &$wheres,
+		array &$groupBy
+	) {
+		
+	}
+	
+	/**
+	 * Fetch all instances of this model where the given columns value
+	 * is an acceptable value, and which match the given search criteria
+	 * @param String $column
+	 * @param Array $acceptableValues
+	 * @param UtilsArray $SearchCriteria
+	 * @return Array
+	 */
+	public static function findWhereColumnInAndSearchCriteria(
+		$column,
+		array $acceptableValues,
+		UtilsArray $SearchCriteria
+	) {
+		$mIdc = DBCFactory::quote(static::$IdCol);
+		$groupBy = array();
+		$args = array();
+		$sql = "SELECT `mt`.{$mIdc} FROM " . DBCFactory::quote(static::$Table) . " AS `mt` ";
+		$wheres = array(
+			"`mt`." . DBCFactory::quote($column) . " IN (" . implode(', ', $acceptableValues) . ")",
+		);
+		static::handleSearchCriteria($SearchCriteria, $sql, $args, $wheres, $groupBy);
+		$sql .= " WHERE (" . implode(') AND (', $wheres) . ")";
+		if (!empty($groupBy)) {
+			$sql .= " GROUP BY " . implode(', ', $groupBy);
+		}
+//		vdump($sql);
+		return UtilsPDO::fetchIdsIntoInstances($sql, $args, get_called_class());
+	}
+
 }
 
