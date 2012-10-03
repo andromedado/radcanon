@@ -1,6 +1,8 @@
 <?php
 
-class UtilsArray {
+class UtilsArray
+{
+	const UNIQUE_STRING = 'this shall not be used';
 	public $whenNotFound;
 	/** @var Array $base */
 	protected $base;
@@ -14,10 +16,10 @@ class UtilsArray {
 		$this->whenNotFound = $whenNotFound;
 	}
 	
-	public function get ($key = null, $overridingOtherwise = 'this shall not be used') {
+	public function get ($key = null, $overridingOtherwise = self::UNIQUE_STRING) {
 		if (is_null($key)) return $this->base;
 		if (array_key_exists($key, $this->base)) return $this->base[$key];
-		if ($overridingOtherwise !== 'this shall not be used') return $overridingOtherwise;
+		if ($overridingOtherwise !== self::UNIQUE_STRING) return $overridingOtherwise;
 		return $this->whenNotFound;
 	}
 	
