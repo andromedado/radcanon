@@ -1,6 +1,6 @@
 <?php
 
-class ModelExt extends Model
+class ModelExt extends ModelApp
 {
 	protected $dbFields = array(
 	);

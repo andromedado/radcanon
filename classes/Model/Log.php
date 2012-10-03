@@ -1,6 +1,7 @@
 <?php
 
-class ModelLog extends Model {
+class ModelLog extends ModelApp
+{
 	protected $log_id;
 	protected $category='misc';
 	protected $criticality='0';
@@ -100,4 +101,3 @@ FROM `logs`
 WHERE `criticality` > 1 AND `addressed` = _utf8'0';
  */
 
-?>

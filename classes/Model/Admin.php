@@ -1,6 +1,7 @@
 <?php
 
-class ModelAdmin extends Model {
+class ModelAdmin extends ModelApp
+{
 	const MIN_VALID_LEVEL = 0;
 	const TMP_PASS_VALID_FOR = '+12 hours';
 	protected $adid;
@@ -222,4 +223,3 @@ CREATE TABLE admins (
 
  */
 
-?>

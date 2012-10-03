@@ -1,6 +1,7 @@
 <?php
 
-class ModelIpLog extends Model {
+class ModelIpLog extends ModelApp
+{
 	protected $ip;
 	protected $pip;
 	protected $user_agent = '';

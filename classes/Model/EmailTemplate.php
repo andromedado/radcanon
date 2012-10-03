@@ -1,6 +1,7 @@
 <?php
 
-class ModelEmailTemplate extends Model {
+class ModelEmailTemplate extends ModelApp
+{
 	const TYPE_BASIC = '0';
 	const TYPE_APPOINTMENT = '1';
 	
@@ -107,4 +108,3 @@ CREATE TABLE email_templates (
  body TEXT NOT NULL );
  */
 
-?>

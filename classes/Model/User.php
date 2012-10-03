@@ -1,6 +1,6 @@
 <?php
 
-class ModelUser extends Model
+class ModelUser extends ModelApp
 {
 	const MIN_VALID_LEVEL = 0;
 	const TMP_PASS_VALID_FOR = '+12 hours';
