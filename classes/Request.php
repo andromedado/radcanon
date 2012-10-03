@@ -178,6 +178,9 @@ class Request
 		$value = isset($array[$key]) ? $array[$key] : $default;
 		if (!is_null($cast)) {
 			switch ($cast) {
+				case 'UtilsArray' :
+					$value = new UtilsArray((array)$value, $default);
+					break;
 				case 'array' :
 					$value = (array)$value;
 					break;
