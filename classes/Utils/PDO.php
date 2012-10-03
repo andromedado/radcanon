@@ -10,24 +10,29 @@ abstract class UtilsPDO
 		return $stmt->execute($args);
 	}
 	
-	public static function getResultSetColumns($sql, array $params = array())
-	{
+	public static function getResultSetColumns(
+		$sql,
+		array $params = array(),
+		$fetch_style = PDO::FETCH_BOTH
+	) {
 		$Columns = array();
 		$stmt = DBCFactory::rPDO()->prepare($sql);
 		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
 		$r = $stmt->execute($params);
 		if (!$r) throw new ExceptionPDO($stmt);
-		$Columns = UtilsArray::autoAmalgamateArrays($stmt->fetchAll(PDO::FETCH_NUM));
+		$Result = $stmt->fetchAll($fetch_style);
+		$Columns = UtilsArray::autoAmalgamateArrays($Result);
 		return $Columns;
 	}
 	
 	public static function getResultSetColumn(
 		$column,
 		$sql,
-		array $params = array()
+		array $params = array(),
+		$fetch_style = PDO::FETCH_BOTH
 	) {
 		$R = array();
-		$Columns = self::getResultSetColumns($sql, $params);
+		$Columns = self::getResultSetColumns($sql, $params, $fetch_style);
 		if (array_key_exists($column, $Columns)) {
 			$R = $Columns[$column];
 		}
