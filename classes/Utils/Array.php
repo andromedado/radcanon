@@ -413,6 +413,10 @@ class UtilsArray
 	 * Similar to UtilsArray::callOnAll except more strict, and that the returned value
 	 * from the method call MUST be a Model, and they are aggregated, and duplicates
 	 * ignored. (returned array's keys are used to this effect)
+	 * @param Array $Os
+	 * @param String $Method
+	 * @param Array $Arguments
+	 * @return Array
 	 */
 	public static function getDistinctReturnedModels (
 		array $Os,
@@ -426,6 +430,31 @@ class UtilsArray
 			}
 			$Return = call_user_func_array(array($Class, $Method), $Arguments);
 			self::addModelToArrayIfNotAlreadyThere($Return, $r);
+		}
+		return $r;
+	}
+	
+	/**
+	 * Similar to UtilsArray::callOnAll except more strict,
+	 * and they are aggregated, and duplicate return values
+	 * are ignored. (returned array's keys are used to this effect)
+	 * @param Array $Os
+	 * @param String $Method
+	 * @param Array $Arguments
+	 * @return Array
+	 */
+	public static function getDistinctReturnedValues(
+		array $Os,
+		$Method,
+		array $Arguments = array()
+	) {
+		$r = array();
+		foreach ($Os as $Class) {
+			if (!is_callable(array($Class, $Method))) {
+				throw new ExceptionBase('Can\'t call "' . $Method . '" on given class');
+			}
+			$Return = call_user_func_array(array($Class, $Method), $Arguments);
+			$r[$Return] = $Return;
 		}
 		return $r;
 	}
@@ -571,6 +600,61 @@ class UtilsArray
 			$Array = array(implode($normalJoin, $Array), $fin);
 		}
 		return implode($finalJoin, $Array);
+	}
+	
+	/**
+	 * With all of the given models, compose an array whose indexes are
+	 * the distinct returned values from the given method with the given arguments,
+	 * and whose values are arrays of the Models that returned said indexes
+	 * @param Array $Models
+	 * @param String $method
+	 * @param Array $arguments
+	 * @param Boolean $useModelIds Use Models' ids as their local index?
+	 * @return Array
+	 */
+	public static function groupModelsByMethodReturn(
+		array $Models,
+		$method,
+		array $arguments = array(),
+		$useModelIds = true
+	) {
+		$return = array();
+		foreach ($Models as $Model) {
+			$key = call_user_func_array(array($Model, $method), $arguments);
+			if (!array_key_exists($key, $return)) $return[$key] = array();
+			if ($useModelIds) {
+				$return[$key][$Model->id] = $Model;
+			} else {
+				$return[$key][] = $Model;
+			}
+		}
+		return $return;
+	}
+	
+	/**
+	 * Given an array of indeterminate depth, return a single
+	 * dimensional array of all the values inside
+	 * @param Array $NestedArrays
+	 * @return Array
+	 */
+	public static function unNest(array $NestedArrays)
+	{
+		$final = array();
+		foreach ($NestedArrays as $Element) {
+			self::unNestTo($Element, $final);
+		}
+		return $final;
+	}
+	
+	protected static function unNestTo($Element, array &$final)
+	{
+		if (is_array($Element)) {
+			foreach ($Element as $element) {
+				self::unNestTo($element, $final);
+			}
+		} else {
+			$final[] = $Element;
+		}
 	}
 	
 }
