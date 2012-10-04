@@ -871,7 +871,7 @@ abstract class Model implements Iterator
 		}
 		$sql .= " FROM " . DBCFactory::quote($c::$Table);
 		$args = array();
-		if (!empty($options['fields']) || !empty($options['conditions'])) {
+		if (!empty($options['fields']) || !empty($options['conditions']) || !empty($options['likes'])) {
 			$and = '';
 			$sql .= " WHERE ";
 			if (!empty($options['fields'])) {
@@ -899,6 +899,13 @@ abstract class Model implements Iterator
 			if (!empty($options['conditions'])) {
 				$sql .= $options['conditions']['sql'];
 				foreach ($options['conditions']['args'] as $v) { $args[] = $v;}
+			}
+			if (!empty($options['likes'])) {
+				foreach ($options['likes'] as $field => $var) {
+					$sql .= $and . DBCFactory::quote($field) . " LIKE ?";
+					$and = ' AND ';
+					$args[] = '%' . trim($var, '%') . '%';
+				}
 			}
 		}
 		if (isset($options['sort'])) {
