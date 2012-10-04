@@ -1,6 +1,7 @@
 <?php
 
-class CSV {
+class CSV
+{
 	const TYPE_SESSION = 0;
 	const NEW_LINE = "\n";
 	
@@ -12,6 +13,11 @@ class CSV {
 	protected $quoteReplaceWith;
 	protected $cellCount = 0;
 	protected $rowCount = 0;
+	
+	protected $visible = array(
+		'type', 'name', 'data', 'delimiter',
+		'quote', 'quoteReplaceWith', 'cellCount', 'rowCount',
+	);
 	
 	private static $InitCSV = false;
 	private static $CSVDelimiter = ',';
@@ -40,17 +46,39 @@ class CSV {
 		}
 	}
 	
+	public function isEmpty()
+	{
+		return empty($this->data);
+	}
+	
+	public function __get($var)
+	{
+		if (in_array($var, $this->visible)) {
+			return $this->$var;
+		}
+		return null;
+	}
+	
+	/**
+	 * @return String
+	 */
 	public function getData()
 	{
 		return $this->data;
 	}
 	
+	/**
+	 * @return CSV
+	 */
 	public function clearData()
 	{
 		$this->data = '';
 		return $this;
 	}
 	
+	/**
+	 * @return CSV
+	 */
 	public function addCell ($entry)
 	{
 		if ($this->cellCount > 0) $this->data .= $this->delimiter;
@@ -62,6 +90,9 @@ class CSV {
 		return $this;
 	}
 	
+	/**
+	 * @return CSV
+	 */
 	public function finishRow ()
 	{
 		$this->data .= self::NEW_LINE;
@@ -69,6 +100,9 @@ class CSV {
 		return $this;
 	}
 	
+	/**
+	 * @return CSV
+	 */
 	public function addRow (array $entries)
 	{
 		if ($this->cellCount > 0) {
@@ -78,6 +112,17 @@ class CSV {
 			$this->addCell($entry);
 		}
 		return $this->finishRow();
+	}
+	
+	/**
+	 * @return CSV
+	 */
+	public function addRows (array $rows)
+	{
+		foreach ($rows as $row) {
+			$this->addRow($row);
+		}
+		return $this;
 	}
 	
 	public function handleDownloadResponse (Response $Response)
@@ -137,4 +182,3 @@ class CSV {
 	
 }
 
-?>
