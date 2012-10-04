@@ -1119,12 +1119,28 @@ abstract class Model implements Iterator
 	 * @param Array $groupBy
 	 * @return void
 	 */
-	protected static function handleSearchCriteria(
+	protected static function preHandleSearchCriteria(
 		UtilsArray $SearchCriteria,
 		&$sql,
+		array &$joined,
 		array &$args,
 		array &$wheres,
 		array &$groupBy
+	) {
+		
+	}
+	
+	/**
+	 * Takes the given search criteria and appropriately filters
+	 * the instances provided
+	 * @overwrite
+	 * @param UtilsArray $SearchCriteria
+	 * @param Array $Instances
+	 * @return void
+	 */
+	protected static function postHandleSearchCriteria(
+		UtilsArray $SearchCriteria,
+		array &$Instances
 	) {
 		
 	}
@@ -1149,13 +1165,16 @@ abstract class Model implements Iterator
 		$wheres = array(
 			"`mt`." . DBCFactory::quote($column) . " IN (" . implode(', ', $acceptableValues) . ")",
 		);
-		static::handleSearchCriteria($SearchCriteria, $sql, $args, $wheres, $groupBy);
+		$joined = array();
+		static::preHandleSearchCriteria($SearchCriteria, $sql, $joined, $args, $wheres, $groupBy);
 		$sql .= " WHERE (" . implode(') AND (', $wheres) . ")";
 		if (!empty($groupBy)) {
 			$sql .= " GROUP BY " . implode(', ', $groupBy);
 		}
 //		vdump($sql);
-		return UtilsPDO::fetchIdsIntoInstances($sql, $args, get_called_class());
+		$Instances = UtilsPDO::fetchIdsIntoInstances($sql, $args, get_called_class());
+		static::postHandleSearchCriteria($SearchCriteria, $Instances);
+		return $Instances;
 	}
 
 }
