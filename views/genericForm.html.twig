@@ -1,4 +1,4 @@
-{% block formTag %}<form action="{{ action }}" method="post"{% block additionalFormAttributes %}{% endblock %}>{% endblock %}
+{% block beforeForm %}{% endblock %}{% block formTag %}<form action="{{ action }}" method="post"{% block additionalFormAttributes %}{% endblock %}>{% endblock %}
 	{% block beforeTable %}{% endblock %}
 	{% block tableTag %}
 	<table class="{% block tableClass %}autoT{% endblock %}">
@@ -13,4 +13,4 @@
 		<input type="submit" value="Submit" />
 	</div>
 	{% endblock %}
-</form>
+</form>{% block afterForm %}{% endblock %}
