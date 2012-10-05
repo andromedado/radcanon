@@ -56,7 +56,7 @@ class ModelAdmin extends ModelApp
 		$this->name = $this->fname . ' ' . $this->lname;
 	}
 	
-	protected function preFilterVars (array $vars, $creating) {
+	protected function preFilterVars (array &$vars, $creating) {
 		if (isset($vars['email'])) {
 			if (!UtilsString::isEmail($vars['email'])) {
 				throw new ExceptionValidation('Invalid E-mail Address Provided');
