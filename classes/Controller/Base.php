@@ -160,6 +160,11 @@ abstract class ControllerBase
 		
 	}
 	
+	protected function magicBegan ($method, $arguments)
+	{
+		
+	}
+	
 	protected function magicFinished ($method, $arguments)
 	{
 		
@@ -176,6 +181,7 @@ abstract class ControllerBase
 	 */
 	protected function _update($id, array $settings = array())
 	{
+		$this->magicBegan(__FUNCTION__, func_get_args());
 		$this->model = $Model = $this->getModelMagically($id, $settings);
 		if (!$Model->isValid()) return $this->notFound();
 		
@@ -218,6 +224,7 @@ abstract class ControllerBase
 	 */
 	protected function _create(array $settings = array())
 	{
+		$this->magicBegan(__FUNCTION__, func_get_args());
 		$this->model = $Model = $this->getModelMagically(null, $settings);
 		
 		if ($this->request->isPost()) {
@@ -252,6 +259,7 @@ abstract class ControllerBase
 
 	protected function _delete($id, $settings = array())
 	{
+		$this->magicBegan(__FUNCTION__, func_get_args());
 		if (!$this->request->isPost()) {
 			return $this->notFound();
 		}
@@ -298,6 +306,7 @@ abstract class ControllerBase
 	
 	protected function _review($id, array $settings = array())
 	{
+		$this->magicBegan(__FUNCTION__, func_get_args());
 		$this->model = $Model = $this->getModelMagically($id, $settings);
 		if (!$Model->isValid()) return $this->notFound();
 		if (!isset($settings['modelData'])) $settings['modelData'] = $Model->getData();
