@@ -143,6 +143,7 @@ abstract class ControllerBase
 	 */
 	protected function _index(array $settings = array())
 	{
+		$this->magicBegan(__FUNCTION__, func_get_args());
 		if (!isset($settings['modelName'])) $settings['modelName'] = $this->modelName;
 		if (!isset($settings['templateModelName'])) $settings['templateModelName'] = $this->templateModelName;
 		$this->set(array('model', $settings['templateModelName']), new $this->modelName);
