@@ -618,6 +618,7 @@ class UtilsArray
 		array $arguments = array(),
 		$useModelIds = true
 	) {
+		if (empty($method)) throw new ExceptionBase('Invalid method provided');
 		$return = array();
 		foreach ($Models as $Model) {
 			$key = call_user_func_array(array($Model, $method), $arguments);
