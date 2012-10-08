@@ -1146,6 +1146,27 @@ abstract class Model implements Iterator
 	}
 	
 	/**
+	 * Fetch all instances of this model that match the given search criteria
+	 * @param UtilsArray $SearchCriteria
+	 * @return Array
+	 */
+	public static function findAllMatchingSearchCriteria(UtilsArray $SearchCriteria)
+	{
+		$joined = $wheres = $args = $groupBy = array();
+		$sql = "SELECT `mt`." . DBCFactory::quote(static::$IdCol) . " FROM " . DBCFactory::quote(static::$Table) . " AS `mt` ";
+		static::preHandleSearchCriteria($SearchCriteria, $sql, $joined, $args, $wheres, $groupBy);
+		if (!empty($wheres)) {
+			$sql .= " WHERE (" . implode(') AND (', $wheres) . ")";
+		}
+		if (!empty($groupBy)) {
+			$sql .= " GROUP BY " . implode(', ', $groupBy);
+		}
+		$Instances = UtilsPDO::fetchIdsIntoInstances($sql, $args, get_called_class());
+		static::postHandleSearchCriteria($SearchCriteria, $Instances);
+		return $Instances;
+	}
+	
+	/**
 	 * Fetch all instances of this model where the given columns value
 	 * is an acceptable value, and which match the given search criteria
 	 * @param String $column
