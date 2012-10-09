@@ -191,6 +191,7 @@ var App = (function ($) {
 	app.jqBindInputGetSetter = function (funcName, func) {
 		if ($.fn[funcName]) throw 'Don\'t want to override pre-existing ' + funcName;
 		$.fn[funcName] = function (newVal) {
+			var nv;
 			if (newVal) {
 				nv = func(newVal);
 				return this.each(function (i, E) {
