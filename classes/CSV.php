@@ -19,6 +19,8 @@ class CSV
 		'quote', 'quoteReplaceWith', 'cellCount', 'rowCount',
 	);
 	
+	protected $preFilters = array();
+	
 	private static $InitCSV = false;
 	private static $CSVDelimiter = ',';
 	private static $CSVStringQuote = '"';
@@ -30,7 +32,8 @@ class CSV
 		$name = 'data.csv',
 		$storeType = self::TYPE_SESSION,
 		$delimiter = ',',
-		$quote = '"'
+		$quote = '"',
+		array $preFilters = array()
 	) {
 		$this->name = $name;
 		$this->type = $storeType;
@@ -44,6 +47,7 @@ class CSV
 				if (!isset($_SESSION[__CLASS__][$this->name])) $_SESSION[__CLASS__][$this->name] = '';
 				$this->data =& $_SESSION[__CLASS__][$this->name];
 		}
+		$this->preFilters = $preFilters;
 	}
 	
 	public function isEmpty()
@@ -76,12 +80,28 @@ class CSV
 		return $this;
 	}
 	
+	public function addPreFilter()
+	{
+		$filters = func_get_args();
+		foreach ($filters as $filter) {
+			$this->preFilters[] = $filter;
+		}
+	}
+	
+	protected function preFilterEntry(&$entry)
+	{
+		foreach ($this->preFilters as $filter) {
+			$entry = call_user_func($filter, $entry);
+		}
+	}
+	
 	/**
 	 * @return CSV
 	 */
 	public function addCell ($entry)
 	{
 		if ($this->cellCount > 0) $this->data .= $this->delimiter;
+		$this->preFilterEntry($entry);
 		if (is_null($entry)) $entry = 'NULL';
 		if (is_object($entry) || is_array($entry)) $entry = json_encode($entry);
 		$this->data .= $this->quote . str_replace($this->quote, $this->quoteReplaceWith, $entry) . $this->quote;
