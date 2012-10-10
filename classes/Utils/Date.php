@@ -183,6 +183,27 @@ abstract class UtilsDate {
 	}
 	
 	/**
+	 * Get the Occurrence of the given day (timestamp)
+	 * 2012-10-09 is the '2'nd occurence of Tuesday for October 2012
+	 * @param Integer $timestamp
+	 * @return Integer
+	 */
+	public static function getDayOccurrenceInMonth($timestamp)
+	{
+		return ceil(date('j', $timestamp) / 7);
+	}
+	
+	/**
+	 * Determine the Quarter of the given timestamp
+	 * @param Integer $timestamp
+	 * @return Integer
+	 */
+	public static function determineQuarter($timestamp)
+	{
+		return ceil(date('n', $timestamp) / 3);
+	}
+	
+	/**
 	 * Given two dates, is the first one an earlier day than the second?
 	 * @param String $this
 	 * @param String $that
