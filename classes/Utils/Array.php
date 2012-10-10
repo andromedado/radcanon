@@ -621,6 +621,7 @@ class UtilsArray
 		if (empty($method)) throw new ExceptionBase('Invalid method provided');
 		$return = array();
 		foreach ($Models as $Model) {
+			if (!is_a($Model, 'Model')) throw new ExceptionBase('Non-Model inside ' . __FUNCTION__);
 			$key = call_user_func_array(array($Model, $method), $arguments);
 			if (!array_key_exists($key, $return)) $return[$key] = array();
 			if ($useModelIds) {
@@ -628,6 +629,30 @@ class UtilsArray
 			} else {
 				$return[$key][] = $Model;
 			}
+		}
+		return $return;
+	}
+	
+	/**
+	 * With all of the given Objects, compose an array whose indexes are
+	 * the distinct returned values from the given method with the given arguments,
+	 * and whose values are arrays of the Objects that returned said indexes
+	 * @param Array $Os
+	 * @param String $Method
+	 * @param Array $Arguments
+	 * @return Array
+	 */
+	public static function groupObjectsByMethodReturn(
+		array $Os,
+		$Method,
+		array $Arguments = array()
+	) {
+		if (empty($Method)) throw new ExceptionBase('Invalid method provided');
+		$return = array();
+		foreach ($Os as $O) {
+			$key = call_user_func_array(array($O, $Method), $Arguments);
+			if (!array_key_exists($key, $return)) $return[$key] = array();
+			$return[$key][] = $O;
 		}
 		return $return;
 	}
