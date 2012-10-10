@@ -3,6 +3,23 @@
 abstract class UtilsDate {
 	
 	/**
+	 * Given two dates (String or UnixTimestamp) is 
+	 * the first greater than the second? [for use in `usort`]
+	 * @param mixed $date1
+	 * @param mixed $date2
+	 * @return Integer
+	 */
+	public static function monthCmp($date1, $date2)
+	{
+		if (is_string($date1)) $date1 = (int)strtotime($date1);
+		if (is_string($date2)) $date2 = (int)strtotime($date2);
+		$m1 = date('n', $date1);
+		$m2 = date('n', $date2);
+		if ($m1 === $m2) return 0;
+		return $m1 < $m2 ? -1 : 1;
+	}
+	
+	/**
 	 * Reformat the given date string into the new form
 	 * @param String $date
 	 * @param String $format
@@ -53,8 +70,8 @@ abstract class UtilsDate {
 	 * @return array (Begin,End)
 	 */
 	public static function getExclusiveYearBeginEnd($year) {
-		$begin = strtotime($year . '-01-01 12:00:00AM ' . date('T')) - 1;
-		$end = strtotime($year . '-12-31 12:00:00AM ' . date('T'));
+		$begin = strtotime($year . '-01-01 12:00:00AM') - 1;// . date('T')) - 1;
+		$end = strtotime($year . '-12-31 12:00:00AM') - 1;// . date('T'));
 		return array($begin, $end);
 	}
 	
@@ -66,8 +83,8 @@ abstract class UtilsDate {
 	 * @return array (Begin,End)
 	 */
 	public static function getInclusiveYearBeginEnd($year) {
-		$begin = strtotime($year . '-01-01 12:00:00AM ' . date('T'));
-		$end = strtotime($year . '-12-31 12:00:00AM ' . date('T')) - 1;
+		$begin = strtotime($year . '-01-01 12:00:00AM');// . date('T'));
+		$end = strtotime($year . '-12-31 12:00:00AM') - 1;// . date('T')) - 1;
 		return array($begin, $end);
 	}
 	
@@ -98,8 +115,8 @@ abstract class UtilsDate {
 		if ($quarter < 1) $quarter = 1;
 		$bTS = strtotime($year . '-' . ((3 * $quarter) - 2) . '-1');
 		$eTS = strtotime($year . '-' . (3 * $quarter) . '-1');
-		$begin = strtotime(date('Y-m', $bTS) . '-01 12:00:00AM ' . date('T')) - 1;
-		$end = strtotime(date('Y-m', strtotime('+1 month', $eTS)) . '-01 12:00:00AM ' . date('T'));
+		$begin = strtotime(date('Y-m', $bTS) . '-01 12:00:00AM') - 1;// ' . date('T') // Timezone throwing off when going between daylight savings and not
+		$end = strtotime(date('Y-m', strtotime('+1 month', $eTS)) . '-01 12:00:00AM');// . date('T'));
 		return array($begin, $end);
 	}
 	
@@ -116,8 +133,10 @@ abstract class UtilsDate {
 		if ($quarter < 1) $quarter = 1;
 		$bTS = strtotime($year . '-' . ((3 * $quarter) - 2) . '-1');
 		$eTS = strtotime($year . '-' . (3 * $quarter) . '-1');
-		$begin = strtotime(date('Y-m', $bTS) . '-01 12:00:00AM ' . date('T'));
-		$end = strtotime(date('Y-m', strtotime('+1 month', $eTS)) . '-01 12:00:00AM ' . date('T')) - 1;
+		$beginDate = date('Y-m', $bTS) . '-01 12:00:00AM';// . date('T');
+		$begin = strtotime($beginDate);
+		$endDate = date('Y-m', strtotime('+1 month', $eTS)) . '-01 12:00:00AM';// . date('T');
+		$end = strtotime($endDate) - 1;
 		return array($begin, $end);
 	}
 	
@@ -162,8 +181,8 @@ abstract class UtilsDate {
 	 */
 	public static function getExclusiveMonthBeginEnd($timeStamp = NULL) {
 		if (is_null($timeStamp)) $timeStamp = time();
-		$begin = strtotime(date('Y-m', $timeStamp) . '-01 12:00:00AM ' . date('T')) - 1;
-		$end = strtotime(date('Y-m', strtotime('+1 month', $timeStamp)) . '-01 12:00:00AM ' . date('T'));
+		$begin = strtotime(date('Y-m', $timeStamp) . '-01 12:00:00AM') - 1;// . date('T')) - 1;
+		$end = strtotime(date('Y-m', strtotime('+1 month', $timeStamp)) . '-01 12:00:00AM');// . date('T'));
 		return array($begin, $end);
 	}
 	
@@ -177,8 +196,8 @@ abstract class UtilsDate {
 	 */
 	public static function getInclusiveMonthBeginEnd($timeStamp = NULL) {
 		if (is_null($timeStamp)) $timeStamp = time();
-		$begin = strtotime(date('Y-m', $timeStamp) . '-01 12:00:00AM ' . date('T'));
-		$end = strtotime(date('Y-m', strtotime('+1 month', $timeStamp)) . '-01 12:00:00AM ' . date('T')) - 1;
+		$begin = strtotime(date('Y-m', $timeStamp) . '-01 12:00:00AM');// . date('T'));
+		$end = strtotime(date('Y-m', strtotime('+1 month', $timeStamp)) . '-01 12:00:00AM') - 1;// . date('T')) - 1;
 		return array($begin, $end);
 	}
 	
