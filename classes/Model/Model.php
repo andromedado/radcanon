@@ -1127,7 +1127,16 @@ abstract class Model implements Iterator
 		array &$wheres,
 		array &$groupBy
 	) {
-		
+		$myFields = $SearchCriteria->get('myFields', array());
+		foreach ($myFields as $field => $value) {
+			$wheres[] = '`mt`.`' . DBCFactory::quote($field) . '` = ?';
+			$args[] = $value;
+		}
+		$myExpressions = $SearchCriteria->get('myExpressions', array());
+		foreach ($myExpressions as $expression) {
+			$wheres[] = '`mt`.`' . DBCFactory::quote($expression['column']) . '` ' . $expression['operator'] . ' ?';
+			$args[] = $expression['value'];
+		}
 	}
 	
 	/**
