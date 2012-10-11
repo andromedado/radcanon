@@ -105,6 +105,7 @@ class UtilsArray
 	/**
 	 * Sort the array of objects using the given method and arguments
 	 * Optionally invert the comparison
+	 * @deprecated in favor of `sortWithMethod`
 	 * @param Array $Os
 	 * @param String $Method
 	 * @param Array $Arguments
@@ -112,6 +113,24 @@ class UtilsArray
 	 * @return Array
 	 */
 	public static function orderWithMethod(array $Os, $Method, array $Arguments = array(), $Invert = false) {
+		return self::sortWithMethod($Os, $Method, $Arguments, $Invert);
+	}
+	
+	/**
+	 * Sort the array of objects using the given method and arguments
+	 * Optionally invert the comparison
+	 * @param Array $Os
+	 * @param String $Method
+	 * @param Array $Arguments
+	 * @param Boolean $Invert
+	 * @return Array
+	 */
+	public static function sortWithMethod(
+		array $Os,
+		$Method,
+		array $Arguments = array(),
+		$Invert = false
+	) {
 		self::$CompareMethod = $Method;
 		self::$CompareArguments = $Arguments;
 		self::$CompareInvert = $Invert;
