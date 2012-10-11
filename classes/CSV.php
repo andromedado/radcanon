@@ -128,10 +128,19 @@ class CSV
 		if ($this->cellCount > 0) {
 			$this->finishRow();
 		}
+		$this->addCells($entries);
+		return $this->finishRow();
+	}
+	
+	/**
+	 * @return CSV
+	 */
+	public function addCells(array $entries)
+	{
 		foreach ($entries as $entry) {
 			$this->addCell($entry);
 		}
-		return $this->finishRow();
+		return $this;
 	}
 	
 	/**
