@@ -13,13 +13,15 @@ abstract class UtilsNumber {
 	 * @param Boolean $ordinalSuffice
 	 * @return String
 	 */
-	public static function floatToMixedNumber($float,
-											$denominator,
-											$significantDigits = 4,
-											$forceEndFraction = false,
-											$forceWholeNumber = false,
-											$ordinalSuffix = true,
-											Html $wrapFraction = NULL) {
+	public static function floatToMixedNumber(
+		$float,
+		$denominator,
+		$significantDigits = 4,
+		$forceEndFraction = false,
+		$forceWholeNumber = false,
+		$ordinalSuffix = true,
+		Html $wrapFraction = NULL
+	) {
 		$denominator = (int)$denominator;
 		$str = $wholeNumber = '';
 		$fn = floor($float);
@@ -58,6 +60,34 @@ abstract class UtilsNumber {
 			}
 		}
 		return $str;
+	}
+	
+	/**
+	 * Get the HTML String Representation of the percentage change 
+	 * from the first number to the second
+	 * @param Float|Int $from
+	 * @param Float|Int $to
+	 * @param Float $epsilon Tolerance for equality/0 testing
+	 * @return String
+	 */
+	public static function getPercentageChange(
+		$from,
+		$to,
+		$epsilon = 0.01,
+		$decimalOutput = 0
+	) {
+		if (self::floatsEqual($from, $to, $epsilon)) {
+			$perc = number_format(0, $decimalOutput, '.', '');
+		} else {
+			if (self::floatsEqual($from, 0, $epsilon)) {
+				$perc = '&infin;';
+			} elseif (self::floatsEqual($to, 0, $epsilon)) {
+				$perc = number_format(-100, $decimalOutput, '.', '');
+			} else {
+				$perc = number_format(($from - $to) / $from * 100, $decimalOutput, '.', '');
+			}
+		}
+		return $perc . '%';
 	}
 	
 	/**
