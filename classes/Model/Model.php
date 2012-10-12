@@ -192,7 +192,7 @@ abstract class Model implements Iterator
 	}
 	
 	public function loadAs($id) {
-		$this->id = abs((int)$id);
+		$this->id = (int)$id;
 		$this->valid = $this->loadFromCache() || $this->loadFromTable();
 		$this->load();
 	}
