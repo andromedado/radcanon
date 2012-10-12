@@ -51,7 +51,15 @@ abstract class UtilsPDO
 		$Os = array();
 		$stmt = DBCFactory::rPDO()->prepare($sql);
 		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
-		$r = $stmt->execute($params);
+		if (is_array(reset($params))) {
+			foreach ($params as $k => $arr) {
+				array_unshift($arr, $k + 1);
+				call_user_func_array(array($stmt, 'bindValue'), $arr);
+			}
+			$r = $stmt->execute();
+		} else {
+			$r = $stmt->execute($params);
+		}
 		if ($r) {
 			$data = $stmt->fetchAll(PDO::FETCH_NUM);
 			foreach ($data as $result) {
