@@ -80,8 +80,21 @@ class Email {
 		return $this->sendTo($this->to);
 	}
 	
+	/**
+	 * Send this e-mail to the given recipient(s)
+	 * Optionally pass in an array of recipients to recurse through
+	 * @param String|Array $recipient
+	 * @return Boolean|Array
+	 */
 	public function sendTo($recipient)
 	{
+		if (is_array($recipient)) {
+			$r = array();
+			foreach ($recipient as $k => $recip) {
+				$r[$k] = $this->sendTo($recip);
+			}
+			return $r;
+		}
 		$r = self::sendMail($recipient, $this->subject, strval($this->body), $this->from, '', $this->attachments);
 		if (class_exists('ModelLog') && ((defined('DEBUG') && DEBUG) || $r !== true)) {
 			ModelLog::mkLog('Mail Delivery' . ($r !== true ? ' Failure' : '') . ': ' . json_encode(array($recipient, $this->subject, strval($this->body), $this->from, '', $this->attachements)), 'email', 1);
