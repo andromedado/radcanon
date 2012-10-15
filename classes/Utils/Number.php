@@ -84,7 +84,7 @@ abstract class UtilsNumber {
 			} elseif (self::floatsEqual($to, 0, $epsilon)) {
 				$perc = number_format(-100, $decimalOutput, '.', '');
 			} else {
-				$perc = number_format(($from - $to) / $from * 100, $decimalOutput, '.', '');
+				$perc = number_format(($to - $from) / $from * 100, $decimalOutput, '.', '');
 			}
 		}
 		return $perc . '%';
