@@ -410,6 +410,7 @@ class UtilsArray
 	public static function callOnAll(array $Os, $Method, $Arguments = array())
 	{
 		$r = array();
+		$log = null;
 		foreach ($Os as $k => $Class) {
 			$r[$k] = NULL;
 			if (is_callable(array($Class, $Method))) {
@@ -421,9 +422,14 @@ class UtilsArray
 					//The idea was that you could pass a non-array wrapped single argument
 					//to the method, but if that first parameter was intended to be an array,
 					//it then needs to be wrapped in an array~ seems inconsistent
-					ModelLog::mkLog('UtilsArray::callOnAll called with a non-array third parameter. This will probably be deprecated at some point', 'deprecated', '1', __FILE__, __LINE__);
+					$log = 'UtilsArray::callOnAll called with a non-array third parameter. This will probably be deprecated at some point: ';
+					$log .= is_object($Class) ? get_class($Class) : $Class;
+					$log .= ' ' . $Method . ' ' . json_encode($Arguments);
 				}
 			}
+		}
+		if (!is_null($log)) {
+			ModelLog::mkLog($log, 'deprecated', '1', __FILE__, __LINE__);
 		}
 		return $r;
 	}
