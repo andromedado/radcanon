@@ -88,6 +88,10 @@ abstract class FileOfModel
 		return true;
 	}
 	
+	/**
+	 * Is there at least one file?
+	 * @return Boolean
+	 */
 	public function hasAFile()
 	{
 		$fs = $this->getFilesInBaseDir();
