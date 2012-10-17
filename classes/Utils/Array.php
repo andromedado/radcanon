@@ -100,7 +100,7 @@ class UtilsArray
 		$A = isset($a[self::$CompareIndex]) ? $a[self::$CompareIndex] : null;
 		$B = isset($b[self::$CompareIndex]) ? $b[self::$CompareIndex] : null;
 		$one = self::$CompartIndexInvert ? -1 : 1;
-		return strcmp($A, $B) * $one;
+		return strcmp(strval($A), strval($B)) * $one;
 	}
 	
 	/**
