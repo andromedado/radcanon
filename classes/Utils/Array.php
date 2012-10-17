@@ -7,6 +7,8 @@ class UtilsArray
 	/** @var Array $base */
 	protected $base;
 	protected $whiteList = null;
+	protected static $CompareIndex = null;
+	protected static $CompartIndexInvert = false;
 	protected static $CompareMethod = '__toString';
 	protected static $CompareArguments = array();
 	protected static $CompareInvert = false;
@@ -91,6 +93,29 @@ class UtilsArray
 			$empty = $empty || empty($tested[$key]);
 		}
 		return $empty;
+	}
+	
+	protected static function compIndex($a, $b)
+	{
+		$A = isset($a[self::$CompareIndex]) ? $a[self::$CompareIndex] : null;
+		$B = isset($b[self::$CompareIndex]) ? $b[self::$CompareIndex] : null;
+		$one = self::$CompartIndexInvert ? -1 : 1;
+		return strcmp($A, $B) * $one;
+	}
+	
+	/**
+	 * Sort the given arrays by the value of the given index in each
+	 * @param Array $Arrays
+	 * @param String $index
+	 * @param Boolean $invert
+	 * @return Array
+	 */
+	public static function sortArraysByIndex(array $Arrays, $index, $invert = false)
+	{
+		self::$CompareIndex = $index;
+		self::$CompartIndexInvert = !!$invert;
+		uasort($Arrays, array(__CLASS__, 'compIndex'));
+		return $Arrays;
 	}
 	
 	protected static function compWith($a, $b) {
