@@ -1191,14 +1191,13 @@ abstract class Model implements Iterator
 		UtilsArray $SearchCriteria
 	) {
 		$mIdc = DBCFactory::quote(static::$IdCol);
-		$groupBy = array();
-		$args = array();
+		$groupBy = $args = $joinArgs = array();
 		$sql = "SELECT `mt`.{$mIdc} FROM " . DBCFactory::quote(static::$Table) . " AS `mt` ";
 		$wheres = array(
 			"`mt`." . DBCFactory::quote($column) . " IN (" . implode(', ', $acceptableValues) . ")",
 		);
 		$joined = array();
-		static::preHandleSearchCriteria($SearchCriteria, $sql, $joined, $args, $wheres, $groupBy);
+		static::preHandleSearchCriteria($SearchCriteria, $sql, $joined, $args, $wheres, $groupBy, $joinArgs);
 		$sql .= " WHERE (" . implode(') AND (', $wheres) . ")";
 		if (!empty($groupBy)) {
 			$sql .= " GROUP BY " . implode(', ', $groupBy);
