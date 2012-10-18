@@ -1117,6 +1117,7 @@ abstract class Model implements Iterator
 	 * @param Array $args
 	 * @param Array $wheres
 	 * @param Array $groupBy
+	 * @param Array $joinArgs
 	 * @return void
 	 */
 	protected static function preHandleSearchCriteria(
@@ -1125,7 +1126,8 @@ abstract class Model implements Iterator
 		array &$joined,
 		array &$args,
 		array &$wheres,
-		array &$groupBy
+		array &$groupBy,
+		array &$joinArgs
 	) {
 		$myFields = $SearchCriteria->get('myFields', array());
 		foreach ($myFields as $field => $value) {
@@ -1161,16 +1163,16 @@ abstract class Model implements Iterator
 	 */
 	public static function findAllMatchingSearchCriteria(UtilsArray $SearchCriteria)
 	{
-		$joined = $wheres = $args = $groupBy = array();
+		$joined = $wheres = $whereArgs = $groupBy = $joinArgs = array();
 		$sql = "SELECT `mt`." . DBCFactory::quote(static::$IdCol) . " FROM " . DBCFactory::quote(static::$Table) . " AS `mt` ";
-		static::preHandleSearchCriteria($SearchCriteria, $sql, $joined, $args, $wheres, $groupBy);
+		static::preHandleSearchCriteria($SearchCriteria, $sql, $joined, $whereArgs, $wheres, $groupBy, $joinArgs);
 		if (!empty($wheres)) {
 			$sql .= " WHERE (" . implode(') AND (', $wheres) . ")";
 		}
 		if (!empty($groupBy)) {
 			$sql .= " GROUP BY " . implode(', ', $groupBy);
 		}
-		$Instances = UtilsPDO::fetchIdsIntoInstances($sql, $args, get_called_class());
+		$Instances = UtilsPDO::fetchIdsIntoInstances($sql, array_merge($joinArgs, $whereArgs), get_called_class());
 		static::postHandleSearchCriteria($SearchCriteria, $Instances);
 		return $Instances;
 	}
