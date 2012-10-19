@@ -7,6 +7,7 @@ abstract class UtilsPDO
 	{
 		$stmt = DBCFactory::wPDO()->prepare($sql);
 		if (!$stmt) throw new ExceptionBase(DBCFactory::wPDO()->errorInfo());
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 		return $stmt->execute($args);
 	}
 	
@@ -19,6 +20,7 @@ abstract class UtilsPDO
 		$stmt = DBCFactory::rPDO()->prepare($sql);
 		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
 		$r = $stmt->execute($params);
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 		if (!$r) throw new ExceptionPDO($stmt);
 		$Result = $stmt->fetchAll($fetch_style);
 		$Columns = UtilsArray::autoAmalgamateArrays($Result);
@@ -60,6 +62,7 @@ abstract class UtilsPDO
 		} else {
 			$r = $stmt->execute($params);
 		}
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 		if ($r) {
 			$data = $stmt->fetchAll(PDO::FETCH_NUM);
 			foreach ($data as $result) {
@@ -68,6 +71,42 @@ abstract class UtilsPDO
 				} else {
 					$Os[$result[0]] = new $Class($result[0]);
 				}
+			}
+		}
+		return $Os;
+	}
+	
+	/**
+	 * Using the given SQL, params and Class, fetch Instances from the resulting rows
+	 * @param String $sql
+	 * @param Array $params
+	 * @param String|Array $Class ClassName or Array Argument for call_user_func to generate Object
+	 * @return Array
+	 */
+	public static function fetchRowsIntoInstances($sql, array $params = array(), $Class)
+	{
+		$Os = array();
+		$stmt = DBCFactory::rPDO()->prepare($sql);
+		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
+		if (is_array(reset($params))) {
+			foreach ($params as $k => $arr) {
+				array_unshift($arr, $k + 1);
+				call_user_func_array(array($stmt, 'bindValue'), $arr);
+			}
+			$r = $stmt->execute();
+		} else {
+			$r = $stmt->execute($params);
+		}
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
+		if ($r) {
+			$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			foreach ($data as $result) {
+				if (is_array($Class)) {
+					$O = call_user_func($Class, $result);
+				} else {
+					$O = new $Class($result);
+				}
+				$Os[$O->id] = $O;
 			}
 		}
 		return $Os;
@@ -86,6 +125,7 @@ abstract class UtilsPDO
 		$stmt = DBCFactory::rPDO()->prepare($sql);
 		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
 		$r = $stmt->execute($params);
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 		if ($r) {
 			list($id) = $stmt->fetch(PDO::FETCH_NUM);
 		}

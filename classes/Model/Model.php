@@ -37,7 +37,14 @@ abstract class Model implements Iterator
 	protected static $sortDirection = 'ASC';
 	protected static $AllData = array();
 	
-	public function __construct ($id = 0) {
+	public function __construct ($id = 0)
+	{
+		if (is_array($id)) {
+			if (!isset($id[$this->idCol])) throw new ExceptionBase('invalid parameter for Model::__construct');
+			$info = $id;
+			$id = $info[$this->idCol];
+			static::setCache($id, $info);
+		}
 		if (!empty($this->dbFields)) {
 			$this->_position = 0;
 		}
@@ -126,6 +133,7 @@ abstract class Model implements Iterator
 		while (($data = fgetcsv($handle, 0, $delimiter, $enclosure, $escape)) !== false) {
 			$values = UtilsArray::getValuesForTheseKeys($useKey, $data);
 			$r = $stmt->execute($values);
+			Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 		}
 	}
 
@@ -405,6 +413,7 @@ abstract class Model implements Iterator
 		$sql .= ') ' . $values . ')';
 		$stmt = DBCFactory::wPDO()->prepare($sql);
 		$r = $stmt->execute($vs);
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 		if (!$r) {
 			if ($dieOnFailure) {
 				vdump(DBCFactory::wPDO()->errorInfo(), $stmt, $sql, $vs);
@@ -528,6 +537,7 @@ abstract class Model implements Iterator
 		$stmt = DBCFactory::rPDO()->prepare($sql);
 		$data = false;
 		if ($stmt->execute(array($this->id))) $data = $stmt->fetch(PDO::FETCH_ASSOC);
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 		$this->preFilterDataFromTable($data);
 		static::setCache($this->id, $data);
 		return $this->loadFromCache();
@@ -582,6 +592,7 @@ abstract class Model implements Iterator
 			"WHERE " . DBCFactory::quote($this->idCol) . " = ?";
 		$stmt = DBCFactory::wPDO()->prepare($sql);
 		$r = $stmt->execute(array($val, $this->id));
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 		if (!$r) throw new ExceptionPDO($stmt, $sql . ', Class: ' . $this->c);
 		$this->$var = $val;
 		static::updateCacheValue($this->id, $var, $val);
@@ -652,6 +663,7 @@ abstract class Model implements Iterator
 			"WHERE " . DBCFactory::quote($this->idCol) . " = ?";
 		$stmt = DBCFactory::wPDO()->prepare($sql);
 		$r = $stmt->execute($vs);
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 		if (!$r) {
 			if (DEBUG) {
 				var_dump($r, $stmt->errorInfo(), $sql, $vs);
@@ -684,6 +696,7 @@ abstract class Model implements Iterator
 			if (!$stmt) {
 				throw new ExceptionBase(DBCFactory::wPDO()->errorInfo(), '1');
 			}
+			Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 			if (!$stmt->execute($args)) {
 				throw new ExceptionPDO($stmt, $sql, '1');
 			}
@@ -786,6 +799,7 @@ abstract class Model implements Iterator
 		$sql = "DELETE FROM " . DBCFactory::quote($this->table) . " WHERE " . DBCFactory::quote($this->idCol) . " = ?";// LIMIT 1
 		$stmt = DBCFactory::wPDO()->prepare($sql);
 		$stmt->bindParam(1, $this->id, PDO::PARAM_INT);
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 		return $stmt->execute();
 	}
 	
@@ -846,6 +860,7 @@ abstract class Model implements Iterator
 		$stmt = DBCFactory::rPDO()->prepare($sql);
 		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
 		$r = $stmt->execute($params);
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 		if (!$r) throw new ExceptionPDO($stmt, 'attempted field: ' . $field);
 		list($value) = $stmt->fetch(PDO::FETCH_NUM);
 		return $value;
@@ -871,6 +886,8 @@ abstract class Model implements Iterator
 						$sql .= $comma . DBCFactory::quote($column);
 						$comma = ', ';
 					}
+				} elseif (isset($options['getAllColumns']) && $options['getAllColumns'] === true) {
+					$sql = "SELECT *";
 				} else {
 					$sql = "SELECT " . DBCFactory::quote($c::$IdCol);
 				}
@@ -1046,8 +1063,9 @@ abstract class Model implements Iterator
 	public static function findAll (array $options = array(), $Class = null)
 	{
 		static::attachDefaultSort($options);
+		$options['getAllColumns'] = true;
 		list($sql, $args, $Class) = static::buildQueryFromOptions($options, $Class);
-		$Os = UtilsPDO::fetchIdsIntoInstances($sql, $args, $Class);
+		$Os = UtilsPDO::fetchRowsIntoInstances($sql, $args, $Class);
 		foreach ($Os as $O) {
 			$O->foundWith = $options;
 		}
@@ -1057,6 +1075,7 @@ abstract class Model implements Iterator
 	public static function deleteAll (array $options = array()) {
 		list($sql, $args) = static::buildQueryFromOptions($options, NULL, 'DELETE');
 		$stmt = DBCFactory::wPDO()->prepare($sql);
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
 		return $stmt->execute($args);
 	}
 	
