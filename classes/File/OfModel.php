@@ -209,9 +209,11 @@ abstract class FileOfModel
 	 */
 	public function getFilesInDir ($dir, $noCache = false) {
 		if (!isset($this->cachedScan[$dir]) || $noCache) {
-			$this->cachedScan[$dir] = glob($dir . '*.*');
+			$this->cachedScan[$dir] = glob($dir . '*');
 			if (!is_array($this->cachedScan[$dir])) {
 				$this->cachedScan[$dir] = array();
+			} else {
+				$this->cachedScan[$dir] = array_filter($this->cachedScan[$dir], 'is_file');
 			}
 		}
 		return $this->cachedScan[$dir];
