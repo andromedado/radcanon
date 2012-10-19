@@ -1,9 +1,26 @@
 <?php
 
-abstract class UtilsString {
+abstract class UtilsString
+{
 	const IMAGE_FILENAME_REGEXP = '/\.(gif|jpg|jpeg|png)$/i';
 	const EMAIL_REGEXP = '/[A-Z]+[A-Z\d_\.]*@[^\.]+\.[^\.]+/i';
 	const DOMAIN_REGEXP = '/[A-Z\d-]+\.[A-Z]{2,}/i';
+	
+	/**
+	 * Force UTF-8 Encoding of the given string/array-values
+	 * @param mixed $input
+	 * @return void
+	 */
+	public static function forceUTF8(&$input)
+	{
+		if (is_array($input)) {
+			foreach ($input as &$val) {
+				self::forceUTF8($val);
+			}
+		} elseif (is_string($input) && mb_detect_encoding($input, 'UTF-8', true) === FALSE) {
+			$input = utf8_encode($input);
+		}
+	}
 	
 	public static function isHex($str = '', $caseSensitive = false) {
 		return preg_match('/[A-F\d]+/' . ($caseSensitive ? '' : 'i'), $str);
