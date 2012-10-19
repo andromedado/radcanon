@@ -335,6 +335,7 @@ class Response {
 			case self::TYPE_TEMPLATE_IN_JSON :
 				$array = array('html' => $this->renderFromTemplate($this->template, false));
 				UtilsArray::ifKeyAddToThis('js', $this->getAllTemplateVars(), $array);
+				UtilsString::forceUTF8($array);
 				$content = json_encode($array);
 				break;
 			case self::TYPE_HTML :
@@ -347,6 +348,7 @@ class Response {
 				if (is_array($content) && isset($content['html']) && is_object($content['html']) && get_class($content['html']) !== 'stdClass') {
 					$content['html'] = "{$content['html']}";
 				}
+				UtilsString::forceUTF8($content);
 				$content = json_encode($content);
 				break;
 			case self::TYPE_CSV :
