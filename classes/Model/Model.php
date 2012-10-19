@@ -528,8 +528,14 @@ abstract class Model implements Iterator
 		$stmt = DBCFactory::rPDO()->prepare($sql);
 		$data = false;
 		if ($stmt->execute(array($this->id))) $data = $stmt->fetch(PDO::FETCH_ASSOC);
+		$this->preFilterDataFromTable($data);
 		static::setCache($this->id, $data);
 		return $this->loadFromCache();
+	}
+	
+	protected function preFilterDataFromTable(&$data)
+	{
+		
 	}
 	
 	protected static function setCache($id, $data) {
