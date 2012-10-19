@@ -35,7 +35,7 @@ abstract class DBCFactory {
 	}
 
 	public static function quote ($str) {
-		self::constructPDO(false);
+		self::rPDO();
 		return self::$OpenQuote . $str . self::$CloseQuote;
 	}
 
