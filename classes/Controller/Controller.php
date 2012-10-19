@@ -44,6 +44,9 @@ class Controller {
 	 * @return Response
 	 */
 	public static function handleRequest (Request $Request) {
+		if (DEBUG && $Request->get('php_info', '') === 'true') {
+			phpinfo();exit;
+		}
 		$Response = new AppResponse($Request);
 		$User = UserFactory::build();
 		self::filterWith(self::$preFilters, $Request, $Response, $User);
