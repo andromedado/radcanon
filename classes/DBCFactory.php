@@ -132,6 +132,9 @@ abstract class DBCFactory {
 	 */
 	public static function rPDO () {
 		if (is_null(self::$ReadPDOConnection)) {
+			if (!self::SEGREGATE || empty(self::$ReadDBCs)) {
+				return self::wPDO();
+			}
 			self::$ReadPDOConnection = self::constructPDO(false);
 		}
 		return self::$ReadPDOConnection;
