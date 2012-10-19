@@ -36,15 +36,10 @@ abstract class Model implements Iterator
 	protected static $sortField = null;
 	protected static $sortDirection = 'ASC';
 	protected static $AllData = array();
+	protected static $PermitCache = true;
 	
 	public function __construct ($id = 0)
 	{
-		if (is_array($id)) {
-			if (!isset($id[$this->idCol])) throw new ExceptionBase('invalid parameter for Model::__construct');
-			$info = $id;
-			$id = $info[$this->idCol];
-			static::setCache($id, $info);
-		}
 		if (!empty($this->dbFields)) {
 			$this->_position = 0;
 		}
@@ -53,7 +48,13 @@ abstract class Model implements Iterator
 		if (empty($this->baseName)) {
 			$this->baseName = preg_replace('/^Model/', '', $this->c);
 		}
-		$this->loadAs($id);
+		$data = array();
+		if (is_array($id)) {
+			if (!isset($id[$this->idCol])) throw new ExceptionBase('invalid parameter for Model::__construct');
+			$data = $id;
+			$id = $data[$this->idCol];
+		}
+		$this->loadAs($id, $data);
 	}
 	
 	public function rewind()
@@ -199,9 +200,10 @@ abstract class Model implements Iterator
 		return false;
 	}
 	
-	public function loadAs($id) {
+	public function loadAs($id, array $data = array())
+	{
 		$this->id = (int)$id;
-		$this->valid = $this->loadFromCache() || $this->loadFromTable();
+		$this->valid = $this->loadFromData($data) || $this->loadFromCache() || $this->loadFromTable();
 		$this->load();
 	}
 	
@@ -548,11 +550,23 @@ abstract class Model implements Iterator
 		
 	}
 	
+	public static function disableCache()
+	{
+		static::$PermitCache = false;
+	}
+	
+	public static function enableCache()
+	{
+		static::$PermitCache = true;
+	}
+	
 	protected static function setCache($id, $data) {
+		if (!static::$PermitCache) return;
 		static::$AllData[$id] = $data;
 	}
 	
 	protected static function updateCacheValue($id, $var, $val) {
+		if (!static::$PermitCache) return $val;
 		if (is_null($id)) {
 			foreach (static::$AllData as &$data) {
 				$data[$var] = $val;
@@ -570,12 +584,18 @@ abstract class Model implements Iterator
 		return true;
 	}
 	
-	protected function loadFromCache() {
-		if (!isset(static::$AllData[$this->id]) || !is_array(static::$AllData[$this->id])) return false;
-		foreach (static::$AllData[$this->id] as $var => $val) {
+	protected function loadFromData(array $data)
+	{
+		if (empty($data)) return false;
+		foreach ($data as $var => $val) {
 			$this->$var = $val;
 		}
 		return true;
+	}
+	
+	protected function loadFromCache() {
+		if (!isset(static::$AllData[$this->id]) || !is_array(static::$AllData[$this->id])) return false;
+		return $this->loadFromData(static::$AllData[$this->id]);
 	}
 	
 	/**
