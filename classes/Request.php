@@ -21,6 +21,8 @@ class Request
 	protected $Accessable = array('get', 'server', 'post', 'cookie', 'files');
 	protected $Abstracted = array('get', 'server', 'post', 'cookie', 'files');
 	
+	protected static $Info = array();
+	
 	public function __construct(
 		array $_server = null,
 		array $_get = null,
@@ -282,6 +284,40 @@ class Request
 	 */
 	public function isAjax() {
 		return $this->get('requestType', '') === 'ajax' || (isset($_SERVER['HTTP_REQBY']) && strtolower($_SERVER['HTTP_REQBY']) === 'ajax') || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+	}
+	
+	/**
+	 * Set some information
+	 * This is as close to global scope as I'm currently comfortable with
+	 * @param String $key
+	 * @param mixed $val
+	 * @return void
+	 */
+	public static function setInfo($key, $val)
+	{
+		static::$Info[strval($key)] = $val;
+	}
+	
+	/**
+	 * Get some information
+	 * @param String $key
+	 * @param mixed $default
+	 * @return mixed
+	 */
+	public static function getInfo($key, $default = null)
+	{
+		$key = strval($key);
+		if (!array_key_exists($key, static::$Info)) return $default;
+		return static::$Info[$key];
+	}
+	
+	/**
+	 * Get all information currently set
+	 * @return Array
+	 */
+	public static function getAllInfo()
+	{
+		return static::$Info;
 	}
 	
 }
