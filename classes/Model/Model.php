@@ -897,6 +897,9 @@ abstract class Model implements Iterator
 			case "DELETE":
 				$sql = "DELETE";
 			break;
+			case "COUNT":
+				$sql = "SELECT COUNT(" . DBCFactory::quote($c::$IdCol) . ")";
+			break;
 			case "SELECT":
 			default:
 				if (!empty($options['columns']) && is_array($options['columns'])) {
@@ -1004,6 +1007,16 @@ abstract class Model implements Iterator
 		)));
 	}
 	
+	public static function getCountBelongingTo(Model $Model, $additionalOptions = array())
+	{
+		static::attachDefaultSort($additionalOptions);
+		return static::getCount(array_merge($additionalOptions, array(
+			'fields' => array(
+				$Model->idCol => $Model->id,
+			),
+		)));
+	}
+	
 	/**
 	 * @return Model
 	 */
@@ -1090,6 +1103,17 @@ abstract class Model implements Iterator
 			$O->foundWith = $options;
 		}
 		return $Os;
+	}
+	
+	public static function getCount (array $options = array(), $Class = null)
+	{
+		static::attachDefaultSort($options);
+		list($sql, $args, $Class) = static::buildQueryFromOptions($options, $Class, 'COUNT');
+		$stmt = DBCFactory::rPDO()->prepare($sql);
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
+		$r = $stmt->execute($args);
+		if (!$r) throw new ExceptionPDO($stmt);
+		return $stmt->fetchColumn();
 	}
 	
 	public static function deleteAll (array $options = array()) {
