@@ -1,6 +1,7 @@
 <?php
 
-class FilterAuthUser implements Filter {
+class FilterAuthUser implements Filter
+{
 	
 	public function filter(Request $Request, Response $Response, User $User) {
 		if (is_a($User, 'AuthUser') && !$Request->isPost()) {
@@ -12,4 +13,3 @@ class FilterAuthUser implements Filter {
 	
 }
 
-?>
