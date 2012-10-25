@@ -1155,10 +1155,14 @@ abstract class Model implements Iterator
 	/**
 	 * Get data from each Model in the given array
 	 * @param Array $Models
+	 * @param Boolean $redoKeysWithIds
 	 * @return Array Data
 	 */
-	public static function extractDataFromArray (array $Models)
+	public static function extractDataFromArray (array $Models, $redoKeysWithIds = false)
 	{
+		if ($redoKeysWithIds) {
+			return UtilsArray::buildWithMethods($Models, 'getData', array(), 'getId');
+		}
 		return UtilsArray::callOnAll($Models, 'getData');
 	}
 	
