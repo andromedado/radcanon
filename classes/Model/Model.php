@@ -968,6 +968,8 @@ abstract class Model implements Iterator
 	}
 	
 	/**
+	 * Find an instance of this model that belongs to all Models passed in
+	 * @param Model $Model,... As many models as you like
 	 * @return Model
 	 */
 	public static function findOneBelongingTo () {
