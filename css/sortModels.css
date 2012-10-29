@@ -1,0 +1,8 @@
+
+.sortablModels {
+	list-style:none;
+}
+
+.sortablModels .drag_handle {
+	margin:0 5px 0 0;
+}
