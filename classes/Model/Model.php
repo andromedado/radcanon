@@ -138,6 +138,11 @@ abstract class Model implements Iterator
 		}
 	}
 
+	/**
+	 * Get all database field values as
+	 * an associative array
+	 * @return Array
+	 */
 	public function getRawData()
 	{
 		$d = array();
