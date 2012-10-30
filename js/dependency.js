@@ -54,6 +54,16 @@ new App.Module(function ($) {
 		return Module;
 	};
 	
+	Module.multiDepend = function (whatToViewId, dependencyCheckFunc, $whoToListenTo) {
+		if (!$whoToListenTo.jquery) throw 'invalid `whoToListenTo`, jQ obj required';
+		$whoToListenTo.change(function () {
+			dependency(whatToViewId, dependencyCheckFunc());
+		});
+		$(function () {
+			dependency(whatToViewId, dependencyCheckFunc());
+		});
+	};
+	
 	Module.establishDependency = function (InpId, SensVal, WhatToViewId, che) {
 		var selector;
 		che = che || false;
