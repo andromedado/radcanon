@@ -939,6 +939,15 @@ abstract class Model implements Iterator
 					foreach ($options['fields'] as $f => $v) {
 						if (is_null($v)) {
 							$sql .= $and . DBCFactory::quote($f) . " IS NULL";
+						} elseif (is_array($v)) {
+							$sql .= $and . DBCFactory::quote($f) . " IN (";
+							$inComma = '';
+							foreach ($v as $val) {
+								$sql .= $inComma . '?';
+								$args[] = $val;
+								$inComma = ', ';
+							}
+							$sql .= ")";
 						} else {
 							$sql .= $and . DBCFactory::quote($f) . " = ?";
 							$args[] = $v;
