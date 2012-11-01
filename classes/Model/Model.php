@@ -1220,12 +1220,12 @@ abstract class Model implements Iterator
 	) {
 		$myFields = $SearchCriteria->get('myFields', array());
 		foreach ($myFields as $field => $value) {
-			$wheres[] = '`mt`.`' . DBCFactory::quote($field) . '` = ?';
+			$wheres[] = '`mt`.' . DBCFactory::quote($field) . ' = ?';
 			$args[] = $value;
 		}
 		$myExpressions = $SearchCriteria->get('myExpressions', array());
 		foreach ($myExpressions as $expression) {
-			$wheres[] = '`mt`.`' . DBCFactory::quote($expression['column']) . '` ' . $expression['operator'] . ' ?';
+			$wheres[] = '`mt`.' . DBCFactory::quote($expression['column']) . ' ' . $expression['operator'] . ' ?';
 			$args[] = $expression['value'];
 		}
 	}
@@ -1243,6 +1243,27 @@ abstract class Model implements Iterator
 		array &$Instances
 	) {
 		
+	}
+	
+	public static function getDistinctColumnMatchingSearchCriteria($column, UtilsArray $SearchCriteria)
+	{
+		$joined = $wheres = $whereArgs = $joinArgs = array();
+		$groupBy = array(DBCFactory::quote($column));
+		$sql = "SELECT `mt`." . DBCFactory::quote($column) . " FROM " . DBCFactory::quote(static::$Table) . " AS `mt` ";
+		static::preHandleSearchCriteria($SearchCriteria, $sql, $joined, $whereArgs, $wheres, $groupBy, $joinArgs);
+		if (!empty($wheres)) {
+			$sql .= " WHERE (" . implode(') AND (', $wheres) . ")";
+		}
+		if (!empty($groupBy)) {
+			$sql .= " GROUP BY " . implode(', ', $groupBy);
+		}
+		$stmt = DBCFactory::rPDO()->prepare($sql);
+		if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
+		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
+		$r = $stmt->execute(array_merge($joinArgs, $whereArgs));
+		if (!$r) throw new ExceptionPDO($stmt, $sql);
+		$data = $stmt->fetchAll(PDO::FETCH_NUM);
+		return UtilsArray::unNest($data);
 	}
 	
 	/**
