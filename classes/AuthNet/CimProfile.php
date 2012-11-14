@@ -3,7 +3,7 @@
 /**
  * Authorize.net CIM Profile
  * 
- * @version 1.0
+ * @version 1.1
  * @author Shad Downey
  * @package RadCanon.AuthNet
  */
@@ -16,12 +16,7 @@ class AuthNetCimProfile extends AuthNetCim
 	 */
 	public function createWithCustomerId ($id)
 	{
-		$info = array('profile' => array('merchantCustomerId' => $this->formatId($id)));
-		$R = $this->getAuthNetXMLRequest()->getAuthNetXMLResponse('createCustomerProfileRequest', $info);
-		if (!$R->isGood) {
-			throw new ExceptionAuthNet($this->getPublicError($R->code));
-		}
-		return strval($R->XML->customerProfileId);
+		return $this->createWithProfileInfo(array('merchantCustomerId' => $this->formatId($id)));
 	}
 	
 	/**
@@ -30,12 +25,41 @@ class AuthNetCimProfile extends AuthNetCim
 	 */
 	public function createWithCustomerIdAndEmail ($id, $email)
 	{
-		$info = array('profile' => array('merchantCustomerId' => $this->formatId($id), 'email' => $email));
-		$R = $this->getAuthNetXMLRequest()->getAuthNetXMLResponse('createCustomerProfileRequest', $info);
+		return $this->createWithProfileInfo(array('merchantCustomerId' => $this->formatId($id), 'email' => $email));
+	}
+	
+	/**
+	 * Using the given profile information, create a CIM Profile
+	 * You must use at least one of: [merchantCustomerId, email, description]
+	 * @throws ExceptionAuthNet
+	 * @param Array $info array('merchantCustomerId' => #)
+	 * @return String Customer Profile ID
+	 */
+	public function createWithProfileInfo(array $info)
+	{
+		if (empty($info['merchantCustomerId']) && empty($info['email']) && empty($info['description'])) {
+			throw new ExceptionAuthNet('You must use at least one of: [merchantCustomerId, email, description]');
+		}
+		$R = $this->getAuthNetXMLRequest()->getAuthNetXMLResponse('createCustomerProfileRequest', array('profile' => $info));
 		if (!$R->isGood) {
 			throw new ExceptionAuthNet($this->getPublicError($R->code));
 		}
 		return strval($R->XML->customerProfileId);
+	}
+	
+	/**
+	 * Delete the given Payment Profile attached to this customer profile
+	 * @throws ExceptionAuthNet
+	 * @param Integer $customerPaymentProfileId
+	 * @return true
+	 */
+	public function deleteCustomerPaymentProfile($customerPaymentProfileId)
+	{
+		$R = $this->getAuthNetXMLRequest()->getAuthNetXMLResponse('deleteCustomerPaymentProfileRequest', array('customerProfileId' => $this->id, 'customerPaymentProfileId' => $customerPaymentProfileId));
+		if (!$R->isGood) {
+			throw new ExceptionAuthNet($this->getPublicError($R->code));
+		}
+		return true;
 	}
 	
 	/**
