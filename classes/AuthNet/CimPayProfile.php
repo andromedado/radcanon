@@ -158,14 +158,17 @@ class AuthNetCimPayProfile extends AuthNetCim
 		return $Response;
 	}
 	
+	/**
+	 * Create a payment profile; returns customerPaymentProfileId
+	 * @param Array
+	 * @return Integer
+	 */
 	public function createPayProfile (array $raw)
 	{
 		$reqsAndMaxLength = array(
 			'customerProfileId' => NULL,
 			'firstName' => 50,
 			'lastName' => 50,
-			'address' => 60,
-			'zip' => 20,
 			'cardNumber' => 16,
 			'expirationDate' => 7,
 			'cardCode' => 4,
@@ -178,8 +181,10 @@ class AuthNetCimPayProfile extends AuthNetCim
 			}
 		}
 		$optionalsAndMaxLength = array(
+			'address' => 60,
 			'city' => 40,
 			'state' => 40,
+			'zip' => 20,
 			'phoneNumber' => 25,
 		);
 		foreach ($optionalsAndMaxLength as $field => $maxLength) {
@@ -192,13 +197,12 @@ class AuthNetCimPayProfile extends AuthNetCim
 		$billToArray = array(
 			'firstName' => $data['firstName'],
 			'lastName' => $data['lastName'],
-			'address' => $data['address'],
 		);
-		if (isset($data['city'])) $billToArray['city'] = $data['city'];
-		if (isset($data['state'])) $billToArray['state'] = $data['state'];
-		$billToArray['zip'] = $data['zip'];
-		$billToArray['country'] = isset($data['country']) ? $data['country'] : 'usa';
-		if (isset($data['phoneNumber'])) $billToArray['phoneNumber'] = $data['phoneNumber'];
+		$optBtfs = array('address', 'city', 'state', 'zip', 'country', 'phoneNumber');
+		if (isset($data['state']) && !isset($data['country'])) $data['country'] = 'usa';
+		foreach ($optBtfs as $key) {
+			UtilsArray::ifKeyAddToThis($key, $data, $billToArray);
+		}
 		
 		$PayProfileInfo = array(
 			'customerProfileId' => $data['customerProfileId'],
