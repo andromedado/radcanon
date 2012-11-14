@@ -214,11 +214,12 @@ abstract class UtilsDate {
 	
 	/**
 	 * Determine the Quarter of the given timestamp
-	 * @param Integer $timestamp
+	 * @param Integer $timestamp defaults to now
 	 * @return Integer
 	 */
-	public static function determineQuarter($timestamp)
+	public static function determineQuarter($timestamp = null)
 	{
+		if (is_null($timestamp)) $timestamp = time();
 		return ceil(date('n', $timestamp) / 3);
 	}
 	

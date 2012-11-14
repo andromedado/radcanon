@@ -12,7 +12,7 @@ new App.Module(function ($) {
 		hideTO,
 		fit;
 	
-	fit = function () {
+	Module.fit = fit = function () {
 		$ajScreen.height($(window).height());
 		$ajScreen.width($(window).width());
 		$ajFWrap.css({'margin-left':($(window).width() / 2) - ($('#ajForms_Wrap').width() / 2)});
@@ -76,7 +76,7 @@ new App.Module(function ($) {
 		Module.show(function () {
 			Module.preparePane(true);
 			fit();
-			if (adi && typeof adi === 'function') adi();
+			if (adi && typeof adi === 'function') adi.call(Module, $ajForms);
 		});
 		return $ajForms;
 	};
