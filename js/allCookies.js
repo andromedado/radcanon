@@ -26,9 +26,9 @@ new App.Module(function ($, app, undefined) {
 	    }
 	    document.cookie = escape(sKey) + "=" + escape(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
 	  },
-	  removeItem: function (sKey, sPath) {
+	  removeItem: function (sKey, sPath, sDomain) {
 	    if (!sKey || !this.hasItem(sKey)) { return; }
-	    document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + (sPath ? "; path=" + sPath : "");
+	    document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + (sPath ? "; path=" + sPath : "") + (sDomain ? "; domain=" + sDomain : "");
 	  },
 	  hasItem: function (sKey) {
 	    return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
