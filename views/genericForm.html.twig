@@ -1,5 +1,6 @@
 {% block beforeForm %}{% endblock %}{% block formTag %}<form action="{{ action }}" method="post"{% block additionalFormAttributes %}{% endblock %}>{% endblock %}
 	{% block beforeTable %}{% endblock %}
+	{% block formTable %}
 	{% block tableTag %}
 	<table class="{% block tableClass %}autoT{% endblock %}">
 	{% endblock %}
@@ -7,6 +8,7 @@
 		{% block tbody %}{% endblock %}
 		</tbody>
 	</table>
+	{% endblock formTable %}
 	{% block afterTable %}{% endblock %}
 	{% block submitButton %}
 	<div align="center">
