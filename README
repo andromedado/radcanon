@@ -1,5 +1,5 @@
 This is a Rapid Application Development Framework (my RAD-Canon)
-*It uses an MVC pattern, and the Twig templating engine
+* It uses an MVC pattern, and the Twig templating engine
 
 Framework Principles
 	All classes and constants may already be defined in the parent application
