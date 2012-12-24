@@ -50,6 +50,7 @@ class ControllerMagic extends ControllerApp
 	
 	protected function determineSettings($invoked, array $args)
 	{
+		$this->set('_uri', $args);
 		$settings = array();
 		switch($invoked) {
 			case 'delete':
