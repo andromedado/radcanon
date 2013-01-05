@@ -13,7 +13,8 @@ abstract class Model implements Iterator
 	protected $dbFields = array();
 	protected $dontUpdate = array();
 	protected $genericallyAvailable = array(
-		'id', 'idCol', 'table', 'whatIAm', 'baseName', 'whatIAms',
+		'id', 'idCol', 'table', 'whatIAm',
+		'baseName', 'whatIAms', 'name',
 	);
 	protected $readOnly = array(
 	);
