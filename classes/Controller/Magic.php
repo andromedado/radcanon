@@ -37,6 +37,9 @@ class ControllerMagic extends ControllerApp
 	
 	protected function determineDestination($invoked, array $args)
 	{
+		if ($this->request->post('_bounceBack', null) !== null) {
+			return $this->request->post('_bounceBack');
+		}
 		switch ($invoked) {
 			case "update":
 				$id = isset($args[0]) ? $args[0] : 0;
