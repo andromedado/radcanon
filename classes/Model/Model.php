@@ -958,7 +958,7 @@ abstract class Model implements Iterator
 				}
 			}
 			if (!empty($options['conditions'])) {
-				$sql .= $options['conditions']['sql'];
+				$sql .= $and . preg_replace('/^\s*and\s+/i', '', $options['conditions']['sql']);
 				foreach ($options['conditions']['args'] as $v) { $args[] = $v;}
 			}
 			if (!empty($options['likes'])) {
@@ -989,14 +989,17 @@ abstract class Model implements Iterator
 	 */
 	public static function findOneBelongingTo () {
 		$args = func_get_args();
-		$fields = array();
+		$moreOptions = $fields = array();
 		foreach ($args as $Model) {
-			if (!is_a($Model, 'Model')) throw new ExceptionBase('Invalid class passed in, Model required');
-			$fields[$Model->idCol] = $Model->id;
+			if (is_a($Model, 'Model')) {
+				$fields[$Model->idCol] = $Model->id;
+			} else {
+				$moreOptions = array_merge($moreOptions, $Model);
+			}
 		}
-		return static::findOne(array(
+		return static::findOne(array_merge($moreOptions, array(
 			'fields' => $fields,
-		));
+		)));
 	}
 	
 	/**
