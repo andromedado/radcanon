@@ -1,5 +1,5 @@
 {% extends "base.html.twig" %}
 {% block mainContent %}
 <h1><a href="{{ model.updateHref }}" class="fr">edit</a>{{ model.whatIAm }}: {{ model.name }}</h1>
-{% include templateDir ~ "/review.body.html.twig" %}
+{% include templateDir ~ "/review.body.html.twig" ignore missing %}
 {% endblock %}
