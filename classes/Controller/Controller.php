@@ -13,6 +13,8 @@ class Controller {
 	);
 	private static $CustomHeaders = array();
 	private static $DebugText = array();
+	/** @var User $theUser */
+	private static $theUser = null;
 	
 	public static function addControllerSynonym ($from, $to = NULL) {
 		if (is_null($to) && is_array($from)) {
@@ -35,7 +37,18 @@ class Controller {
 			self::$postFilters[] = $filter;
 		}
 	}
-	
+
+	/**
+	 * @return User
+	 */
+	public static function getUser()
+	{
+		if (is_null(self::$theUser)) {
+			self::$theUser = UserFactory::build();
+		}
+		return self::$theUser;
+	}
+
 	/**
 	 * Primary Public Method
 	 * Translates an incoming request into a response
@@ -48,7 +61,7 @@ class Controller {
 			phpinfo();exit;
 		}
 		$Response = new AppResponse($Request);
-		$User = UserFactory::build();
+		$User = self::getUser();
 		self::filterWith(self::$preFilters, $Request, $Response, $User);
 		try {
 			self::determineResponseType($Request, $Response);
@@ -61,7 +74,7 @@ class Controller {
 		self::filterWith(self::$postFilters, $Request, $Response, $User);
 		return $Response;
 	}
-	
+
 	protected static function filterWith($filter, Request $Request, Response $Response, User $User) {
 		if (is_array($filter)) {
 			foreach ($filter as $f) {
@@ -177,4 +190,4 @@ class Controller {
 
 }
 
-?>
+
