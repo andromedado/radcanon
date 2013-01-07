@@ -15,6 +15,7 @@
 	</head>
 	<body>
 {% block body %}
+	{% block preWrap %}{% endblock %}
 	<div id="wrapper">
 	{% block notifications %} {% block errorNotifications %} {% for
 	error in errors %}
@@ -27,6 +28,7 @@
 		{{ content }}
 	{% endblock %}
 	</div>
+	{% block postWrap %}{% endblock %}
 {% endblock %}
 <!--
 {{ dump(invocation)|raw }}-->
