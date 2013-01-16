@@ -338,13 +338,44 @@ class UtilsArray
 		$Fin = array();
 		foreach ($Os as $oid => $O) {
 			$test = call_user_func_array(array($O, $Method), $Arguments);
-			if (($test && !$invert) || (!$test && $invert)) {
+			if (!!$test === !$invert) {
 				$Fin[$oid] = $O;
 			}
 		}
 		return $Fin;
 	}
-	
+
+	/**
+	 * Bifurcates the given array of objects by the given Method
+	 * If the returned value from the method call is truthy,
+	 * the Object Makes it onto the first array returned.
+	 * You can optionally pass arguements to the method,
+	 * and/or invert the logic of the test
+	 *
+	 * @param Array $Os
+	 * @param String $Method
+	 * @param Array $Arguments
+	 * @param Boolean $invert Invert the test?
+	 * @return Array
+	 */
+	public static function bifurcateWithMethod(
+		array $Os,
+		$Method,
+		array $Arguments = array(),
+		$invert = false
+	) {
+		$first = $second = array();
+		foreach ($Os as $oid => $O) {
+			$test = call_user_func_array(array($O, $Method), $Arguments);
+			if (!!$test === !$invert) {
+				$first[$oid] = $O;
+			} else {
+				$second[$oid] = $O;
+			}
+		}
+		return array($first, $second);
+	}
+
 	/**
 	 * Filters the given array of objects by the given Methods
 	 * If the returned value from the method calls are all truthy,
