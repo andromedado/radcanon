@@ -14,6 +14,7 @@ abstract class ControllerBase
 	protected $TemplateDir = null;
 	protected $baseName = null;
 	protected $templateModelName = 'modelData';
+    protected $defaultTemplate;
 	
 	final public function __construct(Request $req, Response $res, User $user) {
 		$this->request = $req;
@@ -94,12 +95,12 @@ abstract class ControllerBase
 		$this->prefilterInvocation($method, $arguments);
 		$this->response->set('invocation', array(get_class($this), $method, $arguments));
 		if (!method_exists($this, $method)) throw new ExceptionBase('Invoke called on with invalid combo: ' . $method);
-		$template = $this->getTemplateDir() . DS . $method . '.html.twig';
-		if (file_exists(APP_TEMPLATES_DIR . $template) || file_exists(RADCANON_TEMPLATES_DIR . $template)) {
-			$this->response->template = $template;
+		$this->defaultTemplate = $this->getTemplateDir() . DS . $method . '.html.twig';
+		if ($this->response->templateExists($this->defaultTemplate)) {
+			$this->response->template = $this->defaultTemplate;
 		} elseif (DEBUG) {
 			$this->response->template = 'RadCanon' . DS . 'missingTemplate.html.twig';
-			$this->response->set('missingTemplate', $template);
+			$this->response->set('missingTemplate', $this->defaultTemplate);
 		}
 		if (file_exists(CSS_DIR . strtolower($this->baseName) . '.css')) {
 			$this->addStyle(strtolower($this->baseName));
