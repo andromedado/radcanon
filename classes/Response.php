@@ -78,7 +78,25 @@ class Response {
 		$this->tplDirs[] = RADCANON_TEMPLATES_DIR;
 		$this->load();
 	}
-	
+
+    /**
+     * Does the given template filename (fully qualified, but relative) exist?
+     * @param String $template
+     * @return Boolean
+     */
+    public function templateExists($template)
+    {
+        $exists = false;
+        if (!empty($template)) {
+            foreach ($this->tplDirs as $dir) {
+                if ($exists = file_exists($dir . $template)) {
+                    break;
+                }
+            }
+        }
+        return $exists;
+    }
+
 	protected function load() {
 		
 	}
