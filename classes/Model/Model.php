@@ -1036,11 +1036,12 @@ abstract class Model implements Iterator
 			),
 		)));
 	}
-	
+
 	/**
 	 * @return Model
 	 */
 	public static function findOne (array $options = array(), $Class = NULL) {
+        static::attachDefaultSort($options);
 		list($sql, $args, $Class) = static::buildQueryFromOptions($options, $Class);
 		$O = UtilsPDO::fetchIdIntoInstance($sql, $args, $Class);
 		$O->foundWith = $options;
