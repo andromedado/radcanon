@@ -2,9 +2,9 @@
 
 class ControllerExt extends ControllerMagic
 {
-	protected $modelName = 'ModelExt';
-	protected $templateModelName = 'ext';
-	protected $GateKeeperMethods = array(
-	);
+    protected $modelName = 'ModelExt';
+    protected $templateModelName = 'ext';
+    protected $GateKeeperMethods = array(
+    );
 }
 
