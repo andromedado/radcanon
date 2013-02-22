@@ -166,11 +166,16 @@ abstract class ControllerBase
 	{
 		
 	}
-	
-	protected function magicFinished ($method, $arguments)
-	{
-		
-	}
+
+    protected function magicFinished ($method, $arguments)
+    {
+        if (method_exists($this, 'post' . $method)) {
+            $RM = new ReflectionMethod($this, 'post' . $method);
+            if (!$RM->isPublic()) {
+                call_user_func_array(array($this, 'post' . $method), $arguments);
+            }
+        }
+    }
 
 	/**
 	 * Most common update action
