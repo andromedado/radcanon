@@ -522,12 +522,14 @@ class UtilsArray
 	 * @param Array $Os
 	 * @param String $Method
 	 * @param Array $Arguments
+     * @param Boolean $plainReturn Return a numerically indexed array (starting at 0)
 	 * @return Array
 	 */
 	public static function getDistinctReturnedValues(
 		array $Os,
 		$Method,
-		array $Arguments = array()
+		array $Arguments = array(),
+		$plainReturn = false
 	) {
 		$r = array();
 		foreach ($Os as $Class) {
@@ -537,6 +539,9 @@ class UtilsArray
 			$Return = call_user_func_array(array($Class, $Method), $Arguments);
 			$r[$Return] = $Return;
 		}
+        if ($plainReturn) {
+            $r = array_values($r);
+        }
 		return $r;
 	}
 	
