@@ -1306,10 +1306,15 @@ abstract class Model implements Iterator
 		UtilsArray $SearchCriteria
 	) {
 		$mIdc = DBCFactory::quote(static::$IdCol);
-		$groupBy = $args = $joinArgs = array();
+		$groupBy = $joinArgs = array();
+        $args = $acceptableValues;
 		$sql = "SELECT `mt`.{$mIdc} FROM " . DBCFactory::quote(static::$Table) . " AS `mt` ";
+        $qs = array();
+        foreach ($acceptableValues as $blah) {
+            $qs[] = '?';
+        }
 		$wheres = array(
-			"`mt`." . DBCFactory::quote($column) . " IN (" . implode(', ', $acceptableValues) . ")",
+			"`mt`." . DBCFactory::quote($column) . " IN (" . implode(', ', $qs) . ")",
 		);
 		$joined = array();
 		static::preHandleSearchCriteria($SearchCriteria, $sql, $joined, $args, $wheres, $groupBy, $joinArgs);
@@ -1317,7 +1322,7 @@ abstract class Model implements Iterator
 		if (!empty($groupBy)) {
 			$sql .= " GROUP BY " . implode(', ', $groupBy);
 		}
-//		vdump($sql);
+//		vdump($sql, $args);
 		$Instances = UtilsPDO::fetchIdsIntoInstances($sql, $args, get_called_class());
 		static::postHandleSearchCriteria($SearchCriteria, $Instances);
 		return $Instances;
