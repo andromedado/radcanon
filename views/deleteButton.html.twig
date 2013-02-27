@@ -1,3 +1,3 @@
-<form action="{{ model.deleteAction }}" method="post" onsubmit="return confirm('Permanently Delete?')">
+<form action="{{ model.deleteAction }}" method="post" onsubmit="return confirm('Permanently Delete?')" class="{{ deleteFormClass }}">
 <input type="submit" value="Delete {{ model.whatIAm }}" />
 </form>

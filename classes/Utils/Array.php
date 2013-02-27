@@ -688,37 +688,74 @@ class UtilsArray
 		return implode($finalJoin, $Array);
 	}
 	
-	/**
-	 * With all of the given models, compose an array whose indexes are
-	 * the distinct returned values from the given method with the given arguments,
-	 * and whose values are arrays of the Models that returned said indexes
-	 * @param Array $Models
-	 * @param String $method
-	 * @param Array $arguments
-	 * @param Boolean $useModelIds Use Models' ids as their local index?
-	 * @return Array
-	 */
-	public static function groupModelsByMethodReturn(
-		array $Models,
-		$method,
-		array $arguments = array(),
-		$useModelIds = true
-	) {
-		if (empty($method)) throw new ExceptionBase('Invalid method provided');
-		$return = array();
-		foreach ($Models as $Model) {
-			if (!is_a($Model, 'Model')) throw new ExceptionBase('Non-Model inside ' . __FUNCTION__);
-			$key = call_user_func_array(array($Model, $method), $arguments);
-			if (!array_key_exists($key, $return)) $return[$key] = array();
-			if ($useModelIds) {
-				$return[$key][$Model->id] = $Model;
-			} else {
-				$return[$key][] = $Model;
-			}
-		}
-		return $return;
-	}
-	
+    /**
+     * With all of the given models, compose an array whose indexes are
+     * the distinct returned values from the given method with the given arguments,
+     * and whose values are arrays of the Models that returned said indexes
+     * @param Array $Models
+     * @param String $method
+     * @param Array $arguments
+     * @param Boolean $useModelIds Use Models' ids as their local index?
+     * @return Array
+     */
+    public static function groupModelsByMethodReturn(
+        array $Models,
+        $method,
+        array $arguments = array(),
+        $useModelIds = true
+    ) {
+        if (empty($method)) throw new ExceptionBase('Invalid method provided');
+        $return = array();
+        foreach ($Models as $Model) {
+            if (!is_a($Model, 'Model')) throw new ExceptionBase('Non-Model inside ' . __FUNCTION__);
+            $key = call_user_func_array(array($Model, $method), $arguments);
+            if (!array_key_exists($key, $return)) $return[$key] = array();
+            if ($useModelIds) {
+                $return[$key][$Model->id] = $Model;
+            } else {
+                $return[$key][] = $Model;
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * With all of the given models, compose an array whose indexes are
+     * the distinct returned values from the given method with the given arguments,
+     * and whose values are the returned values for the given method,
+     * with the given arguments on the given models
+     * @param Array $Models
+     * @param String $groupingMethod
+     * @param Array $groupingArguments
+     * @param String $groupingMethod
+     * @param Array $groupingArguments
+     * @param Boolean $useModelIds Use Models' ids as their local index?
+     * @return Array
+     */
+    public static function groupReturnedValueByMethodReturn(
+        array $Models,
+        $groupingMethod,
+        array $groupingArguments = array(),
+        $valueMethod,
+        array $valueArguments = array(),
+        $useModelIds = true
+    ) {
+        if (empty($groupingMethod) || empty($valueMethod)) throw new ExceptionBase('Invalid method provided');
+        $return = array();
+        foreach ($Models as $Model) {
+            if (!is_a($Model, 'Model')) throw new ExceptionBase('Non-Model inside ' . __FUNCTION__);
+            $key = call_user_func_array(array($Model, $groupingMethod), $groupingArguments);
+            if (!array_key_exists($key, $return)) $return[$key] = array();
+            $v = call_user_func_array(array($Model, $valueMethod), $valueArguments);
+            if ($useModelIds) {
+                $return[$key][$Model->id] = $v;
+            } else {
+                $return[$key][] = $v;
+            }
+        }
+        return $return;
+    }
+
 	/**
 	 * With all of the given Objects, compose an array whose indexes are
 	 * the distinct returned values from the given method with the given arguments,
