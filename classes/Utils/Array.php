@@ -13,7 +13,7 @@ class UtilsArray
 	protected static $CompareArguments = array();
 	protected static $CompareInvert = false;
 	
-	public function __construct (array $base, $whenNotFound = NULL) {
+	public function __construct (array $base = array(), $whenNotFound = NULL) {
 		$this->base = $base;
 		$this->whenNotFound = $whenNotFound;
 	}
