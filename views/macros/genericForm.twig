@@ -4,13 +4,23 @@
 	<td><input type="text" name="{{ property }}" value="{{ model[property] }}" /></td>
 </tr>
 {% endmacro %}
+{% macro rowTextarea(property, propertyName, model, rows, columns) %}
+<tr>
+	<th>{{ propertyName }}</th>
+	<td><textarea name="{{ property }}" rows="{{ rows|default(5) }}" cols="{{ cols|default(60) }}">{{ model[property] }}</textarea></td>
+</tr>
+{% endmacro %}
 {% macro rowSelect(property, propertyName, propertyOptions, model) %}
 <tr>
 	<th>{{ propertyName }}</th>
 	<td>
 		<select name="{{ property }}">
-		{% for Prop in propertyOptions %}
+		{% for key, Prop in propertyOptions %}
+			{% if Prop.idCol %}
 			<option value="{{ Prop.id }}"{{ Prop.id == model[property] ? ' selected="selected"' : '' }}>{{ Prop.name }}</option>
+			{% else %}
+			<option value="{{ key }}"{{ key == model[property] ? ' selected="selected"' : '' }}>{{ Prop }}</option>
+			{% endif %}
 		{% endfor %}
 		</select>
 	</td>
