@@ -1,0 +1,18 @@
+{% macro row(property, propertyName, model) %}
+<tr>
+	<th>{{ propertyName }}</th>
+	<td><input type="text" name="{{ property }}" value="{{ model[property] }}" /></td>
+</tr>
+{% endmacro %}
+{% macro rowSelect(property, propertyName, propertyOptions, model) %}
+<tr>
+	<th>{{ propertyName }}</th>
+	<td>
+		<select name="{{ property }}">
+		{% for Prop in propertyOptions %}
+			<option value="{{ Prop.id }}"{{ Prop.id == model[property] ? ' selected="selected"' : '' }}>{{ Prop.name }}</option>
+		{% endfor %}
+		</select>
+	</td>
+</tr>
+{% endmacro %}

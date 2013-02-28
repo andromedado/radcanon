@@ -1,4 +1,8 @@
-{% block beforeForm %}{% endblock %}{% block formTag %}<form action="{{ action }}" method="post"{% block additionalFormAttributes %}{% endblock %}>{% endblock %}
+{% import "macros/genericForm.twig" as genericForm %}
+{% block beforeForm %}{% endblock %}
+{% block formTag %}
+<form action="{{ action }}" method="post"{% block additionalFormAttributes %}{% endblock %}>
+{% endblock %}
 	{% block beforeTable %}{% endblock %}
 	{% block formTable %}
 	{% block tableTag %}
