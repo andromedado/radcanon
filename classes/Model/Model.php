@@ -619,7 +619,7 @@ abstract class Model implements Iterator
 		$stmt = DBCFactory::wPDO()->prepare($sql);
 		$r = $stmt->execute(array($val, $this->id));
 		Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
-		if (!$r) throw new ExceptionPDO($stmt, $sql . ', Class: ' . $this->c);
+		if (!$r) throw new ExceptionPDO($stmt, $sql . ', Class: ' . $this->c . ', args: ' . implode(',', array($val, $this->id)));
 		$this->$var = $val;
 		static::updateCacheValue($this->id, $var, $val);
 		$this->updateFollowUp(array($var));
