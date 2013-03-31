@@ -116,8 +116,11 @@ abstract class ControllerBase
 		}
 		$this->response->content = call_user_func_array(array($this, $method), $arguments);
 	}
-	
-	public function notFound() {
+
+    /**
+     * @return void
+     */
+    public function notFound() {
 		$this->response->addHeader('Not Found', true, 404);
 		$this->response->template = 'Pages' . DS . 'notFound.html.twig';
 	}

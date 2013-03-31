@@ -5,6 +5,10 @@
  *
  * @package RAD-Canon
  * @author Shad Downey
+ * @property String $template
+ * @property String $content
+ * @property String $error
+ * @property String $type
  */
 class Response {
 	const TYPE_HTML = 0;
