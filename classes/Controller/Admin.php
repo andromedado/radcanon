@@ -11,7 +11,7 @@ class ControllerAdmin extends ControllerAdminOnly
 	
 	protected function load () {
 		parent::load();
-		$this->set('logoutAction', FilterRoutes::buildUrl(array('Admin', 'logout')));
+		$this->set('logoutAction', FilterAppRoutes::buildUrl(array('Admin', 'logout')));
 	}
 	
 	private function edit ($id = NULL) {
@@ -133,7 +133,7 @@ class ControllerAdmin extends ControllerAdminOnly
 		}
 		
 		$this->set('modifier', $modifier);
-		$this->set('action', FilterRoutes::buildUrl(array('Admin', 'changePassword')));
+		$this->set('action', FilterAppRoutes::buildUrl(array('Admin', 'changePassword')));
 		return;
 	}
 	
@@ -182,7 +182,7 @@ class ControllerAdmin extends ControllerAdminOnly
 			$errors[] = 'Invalid E-Mail provided';
 		}
 		
-		$this->set('action', FilterRoutes::buildUrl(array("Admin", 'forgotPassword')));
+		$this->set('action', FilterAppRoutes::buildUrl(array("Admin", 'forgotPassword')));
 	}
 	
 	public function index () {
@@ -220,8 +220,8 @@ class ControllerAdmin extends ControllerAdminOnly
 		
 		$this->set('errors', $errors);
 		$this->set('post', $this->request->post());
-		$this->set('forgotHref', FilterRoutes::buildUrl(array('Admin', 'forgotPassword')));
-		$this->set('action', FilterRoutes::buildUrl(array('Admin', 'login')));
+		$this->set('forgotHref', FilterAppRoutes::buildUrl(array('Admin', 'forgotPassword')));
+		$this->set('action', FilterAppRoutes::buildUrl(array('Admin', 'login')));
 	}
 	
 }

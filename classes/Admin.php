@@ -26,12 +26,12 @@ class Admin extends AuthUser
 				}
 			}
 		}
-		$Test = FilterRoutes::buildUrl($test);
+		$Test = FilterAppRoutes::buildUrl($test);
 		foreach ($this->NavItems as $word => $location) {
-			$ul->li(AppLink::newLink($word, $location), 'c:' . ($Test === FilterRoutes::buildUrl($location) ? 'current' : ''));
+			$ul->li(AppLink::newLink($word, $location), 'c:' . ($Test === FilterAppRoutes::buildUrl($location) ? 'current' : ''));
 		}
 		foreach ($this->AdiNavItems as $word => $location) {
-			$ul->li(AppLink::newLink($word, $location), 'c:' . ($Test === FilterRoutes::buildUrl($location) ? 'current' : ''));
+			$ul->li(AppLink::newLink($word, $location), 'c:' . ($Test === FilterAppRoutes::buildUrl($location) ? 'current' : ''));
 		}
 		$c->prepend($F = new AppForm('', 'Admin/Logout/'));
 		$F->form->addClass('fr');

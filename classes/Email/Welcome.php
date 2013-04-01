@@ -17,7 +17,7 @@ class EmailWelcome extends Email
 	protected function load() {
 		Html::n('h1', '', 'You now have a user account with ', $this->body);
 		$ul = Html::n('ul', '', '', $this->body);
-		$ul->li('Login URL: ' . 'http://' . SITE_HOST . FilterRoutes::buildUrl(array('AuthUser', 'login')));
+		$ul->li('Login URL: ' . 'http://' . SITE_HOST . FilterAppRoutes::buildUrl(array('AuthUser', 'login')));
 		$ul->li('Username: ' . $this->to);
 		$ul->li('Password: ' . $this->firstPassword);
 	}

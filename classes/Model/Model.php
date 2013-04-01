@@ -165,10 +165,10 @@ abstract class Model implements Iterator
 			$d[$f] = $this->$f;
 		}
 		$d['isValid'] = $this->isValid();
-		if (!isset($d['href'])) $d['href'] = FilterRoutes::buildUrl(array($this->baseName, 'review', $this->id));
-		if (!isset($d['updateHref'])) $d['updateHref'] = FilterRoutes::buildUrl(array($this->baseName, 'update', $this->id));
-		if (!isset($d['deleteAction'])) $d['deleteAction'] = FilterRoutes::buildUrl(array($this->baseName, 'delete', $this->id));
-		if (!isset($d['newHref'])) $d['newHref'] = FilterRoutes::buildUrl(array($this->baseName, 'create'));
+		if (!isset($d['href'])) $d['href'] = FilterAppRoutes::buildUrl(array($this->baseName, 'review', $this->id));
+		if (!isset($d['updateHref'])) $d['updateHref'] = FilterAppRoutes::buildUrl(array($this->baseName, 'update', $this->id));
+		if (!isset($d['deleteAction'])) $d['deleteAction'] = FilterAppRoutes::buildUrl(array($this->baseName, 'delete', $this->id));
+		if (!isset($d['newHref'])) $d['newHref'] = FilterAppRoutes::buildUrl(array($this->baseName, 'create'));
 		$this->appendAdditionalData($d);
 		return $d;
 	}
@@ -269,7 +269,7 @@ abstract class Model implements Iterator
 			$a->href = 'javascript:void(0)';
 			$a->onclick("App.prompt('{$this->c}/Form/{$this->id}')");
 		} else {
-			$a->href = FilterRoutes::buildUrl(array($this->baseName, 'Form', $this->id));
+			$a->href = FilterAppRoutes::buildUrl(array($this->baseName, 'Form', $this->id));
 		}
 		$html = $this->name . '&nbsp;' . $a . '&nbsp;' . $this->deleteButton();
 		return $html;
@@ -470,7 +470,7 @@ abstract class Model implements Iterator
 	 * @return string The URL
 	 */
 	public function getViewUrl($v){
-		return FilterRoutes::buildUrl(array($this->baseName, $v, $this->id));
+		return FilterAppRoutes::buildUrl(array($this->baseName, $v, $this->id));
 	}
 	
 	/**
@@ -521,7 +521,7 @@ abstract class Model implements Iterator
 		if (!$this->canEdit()) {
 			return HtmlE::N('a');
 		}
-		return Html::n('a', FilterRoutes::buildUrl(array($this->baseName, $m, $this->id)), $w);
+		return Html::n('a', FilterAppRoutes::buildUrl(array($this->baseName, $m, $this->id)), $w);
 	}
 
 	/**
@@ -805,7 +805,7 @@ abstract class Model implements Iterator
 	 * @return void
 	 */
 	public function getUpdatedLoc() {
-		return FilterRoutes::buildUrl(array($this->baseName, 'Review', $this->id));
+		return FilterAppRoutes::buildUrl(array($this->baseName, 'Review', $this->id));
 	}
 	
 	/**
@@ -813,7 +813,7 @@ abstract class Model implements Iterator
 	 * @return void
 	 */
 	public function getCreatedLoc() {
-		return FilterRoutes::buildUrl(array($this->baseName, 'Review', $this->id));
+		return FilterAppRoutes::buildUrl(array($this->baseName, 'Review', $this->id));
 	}
 	
 	public function delete ($force = false) {

@@ -2,7 +2,6 @@
 
 abstract class ControllerApp extends ControllerBase
 {
-	
-	
+
 }
 

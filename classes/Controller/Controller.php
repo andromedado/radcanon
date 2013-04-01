@@ -3,7 +3,7 @@
 class Controller {
 	private static $preFilters = array(
 		'FilterSubDir',
-		'FilterRoutes',
+		'FilterAppRoutes',
 	);
 	private static $postFilters = array(
 	);

@@ -39,7 +39,7 @@ class AppForm {
 		}
 		$this->id_prefix = '_' . uniqid();
 		if (is_array($action)) {
-			$action = FilterRoutes::buildUrl($action);
+			$action = FilterAppRoutes::buildUrl($action);
 		}
 		$this->form = Html::n('form', 'm:post')->action($action);
 		$this->table = Html::n('table', 'c:autoT');

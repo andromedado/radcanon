@@ -21,7 +21,7 @@ abstract class ControllerOnlyUserType extends ControllerApp {
 	protected function throwReRoute()
 	{
 		if (!empty($this->reRouteTo)) {
-			throw new ExceptionReroute(FilterRoutes::buildUrl($this->reRouteTo, false, false));
+			throw new ExceptionReroute(FilterAppRoutes::buildUrl($this->reRouteTo, false, false));
 		}
 	}
 	

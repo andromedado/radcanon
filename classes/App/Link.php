@@ -9,7 +9,7 @@ class AppLink extends HtmlA {
 	 */
 	public function __construct($word, $location, $relative = false) {
 		if (is_array($location)) {
-			$href = FilterRoutes::buildUrl($location, $relative);
+			$href = FilterAppRoutes::buildUrl($location, $relative);
 		} else {
 			$href = $location;
 		}

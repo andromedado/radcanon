@@ -233,7 +233,7 @@ class Response {
 	 */
 	public function redirectTo($location, $code = null) {
 		if (is_array($location)) {
-			$this->location = FilterRoutes::buildUrl($location);
+			$this->location = FilterAppRoutes::buildUrl($location);
 		} else {
 			$this->location = $location;
 		}

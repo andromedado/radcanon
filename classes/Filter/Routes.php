@@ -31,7 +31,7 @@ class FilterRoutes implements Filter
 			'action' => 'notFound',
 		),
 	);
-	
+
 	/**
 	 * Add a static route
 	 * @param String $url
@@ -52,15 +52,15 @@ class FilterRoutes implements Filter
 				}
 			}
 		}
-		self::$Routes[$url] = $path;
+		static::$Routes[$url] = $path;
 	}
-	
+
 	public function filter(Request $req, Response $res, User $user) {
 		$uri = $req->getURI();
-		if (in_array($uri, self::$DeniedRoutes)) {
+		if (in_array($uri, static::$DeniedRoutes)) {
 			$req->setURI($uri = 'Pages/notFound');
 		}
-		foreach (self::$PregRoutes as $bits) {
+		foreach (static::$PregRoutes as $bits) {
 			if (preg_match($bits['decode']['pattern'], $uri)) {
 				$truePath = $bits['decode'];
 				unset($truePath['pattern']);
@@ -71,15 +71,15 @@ class FilterRoutes implements Filter
 				break;
 			}
 		}
-		if (array_key_exists($uri, self::$Routes)) {
-			$info = self::$Routes[$uri];
+		if (array_key_exists($uri, static::$Routes)) {
+			$info = static::$Routes[$uri];
 			if (isset($info['arguments']) && is_array($info['arguments'])) {
 				$info['arguments'] = implode('/', $info['arguments']);
 			}
 			$req->setURI(implode('/', $info));
 		}
 	}
-	
+
 	public static function buildUrl (array $info, $relative = false, $useShortcuts = true) {
 		$Info = array();
 		$info = array_map('urlencode', $info);
@@ -98,7 +98,7 @@ class FilterRoutes implements Filter
 		}
 		$suffix = implode('/', $Info);
 		if ($useShortcuts) {
-			foreach (self::$Routes as $Suffix => $Route) {
+			foreach (static::$Routes as $Suffix => $Route) {
 				$route = $Route;
 				if (isset($route['arguments']) && is_array($route['arguments'])) {
 					$route['arguments'] = implode('/', $route['arguments']);
@@ -110,7 +110,7 @@ class FilterRoutes implements Filter
 				}
 			}
 			if (!isset($path['arguments'])) $path['arguments'] = array();
-			foreach (self::$PregRoutes as $bits) {
+			foreach (static::$PregRoutes as $bits) {
 				if (isset($path['controller']) && isset($path['action']) && count($path['arguments']) === count($bits['encode']['arguments'])) {
 					if (preg_match($bits['encode']['controller'], $path['controller']) && preg_match($bits['encode']['action'], $path['action'])) {
 						$continue = true;
@@ -130,6 +130,6 @@ class FilterRoutes implements Filter
 		if ($relative) return $suffix;
 		return APP_SUB_DIR . '/' . $suffix;
 	}
-	
+
 }
 
