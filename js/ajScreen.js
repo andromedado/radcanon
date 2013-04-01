@@ -11,8 +11,8 @@ new App.Module(function ($) {
 		resizeBound,
 		hideTO,
 		fit;
-	
-	Module.fit = fit = function () {
+
+    Module.fit = fit = function () {
 		$ajScreen.height($(window).height());
 		$ajScreen.width($(window).width());
 		$ajFWrap.css({'margin-left':($(window).width() / 2) - ($('#ajForms_Wrap').width() / 2)});
@@ -83,8 +83,7 @@ new App.Module(function ($) {
 	
 	Module.prompt = function (url, data) {
 		var tD, bits, i, l;
-		if (!url) 
-		if (!url.match(RegExp('\^' + App.subDir))) {
+		if (!url.match(new RegExp('\^' + App.subDir))) {
 			url = App.subDir + url;
 		}
 		data = data || {};
