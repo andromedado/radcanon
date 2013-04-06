@@ -77,7 +77,7 @@ abstract class ControllerBase
 		$this->response->set($var, $val);
 		return $this;
 	}
-	
+
 	/**
 	 * Get Template var
 	 */
@@ -85,12 +85,28 @@ abstract class ControllerBase
 	{
 		return $this->response->get($what, $default);
 	}
-	
+
 	public function getTemplateDir () {
 		if (!is_null($this->TemplateDir)) return $this->TemplateDir;
 		return preg_replace('/^Controller/', '', get_class($this));
 	}
-	
+
+    protected function autoAddAssets($method, $arguments = array())
+    {
+        if (file_exists(CSS_DIR . strtolower($this->baseName) . '.css')) {
+            $this->addStyle(strtolower($this->baseName));
+        }
+        if (file_exists(CSS_DIR . strtolower($this->baseName . '-' . $method) . '.css')) {
+            $this->addStyle(strtolower($this->baseName . '-' . $method));
+        }
+        if (file_exists(JS_DIR . strtolower($this->baseName) . '.js')) {
+            $this->addScript(strtolower($this->baseName));
+        }
+        if (file_exists(JS_DIR . strtolower($this->baseName . '-' . $method) . '.js')) {
+            $this->addScript(strtolower($this->baseName . '-' . $method));
+        }
+    }
+
 	public function invoke ($method, array $arguments = array()) {
 		$this->prefilterInvocation($method, $arguments);
 		$this->response->set('invocation', array(get_class($this), $method, $arguments));
@@ -102,25 +118,14 @@ abstract class ControllerBase
 			$this->response->template = 'RadCanon' . DS . 'missingTemplate.html.twig';
 			$this->response->set('missingTemplate', $this->defaultTemplate);
 		}
-		if (file_exists(CSS_DIR . strtolower($this->baseName) . '.css')) {
-			$this->addStyle(strtolower($this->baseName));
-		}
-		if (file_exists(CSS_DIR . strtolower($this->baseName . '-' . $method) . '.css')) {
-			$this->addStyle(strtolower($this->baseName . '-' . $method));
-		}
-		if (file_exists(JS_DIR . strtolower($this->baseName) . '.js')) {
-			$this->addScript(strtolower($this->baseName));
-		}
-		if (file_exists(JS_DIR . strtolower($this->baseName . '-' . $method) . '.js')) {
-			$this->addScript(strtolower($this->baseName . '-' . $method));
-		}
+        $this->autoAddAssets($method, $arguments);
 		$this->response->content = call_user_func_array(array($this, $method), $arguments);
 	}
 
     /**
      * @return void
      */
-    public function notFound() {
+    public function notFound () {
 		$this->response->addHeader('Not Found', true, 404);
 		$this->response->template = 'Pages' . DS . 'notFound.html.twig';
 	}
