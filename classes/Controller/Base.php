@@ -73,7 +73,7 @@ abstract class ControllerBase
 	 * Set Template Var to given Val
 	 * @return ControllerApp
 	 */
-	public function set ($var, $val) {
+	public function set ($var, $val = null) {
 		$this->response->set($var, $val);
 		return $this;
 	}

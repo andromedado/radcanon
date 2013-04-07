@@ -19,6 +19,7 @@ class Response {
 	const TYPE_FILESTREAM = 5;
 	const TYPE_TEMPLATE_IN_JSON = 6;
 	const TYPE_RAW_ECHO = 7;
+    const TYPE_EMPTY = 8;
 	
 	/**@var Request $request */
 	protected $request = null;
@@ -172,7 +173,7 @@ class Response {
 	 * Set Template Var to given Val
 	 * @return Response
 	 */
-	public function set ($what, $toWhat) {
+	public function set ($what, $toWhat = null) {
 		if (is_object($toWhat)) {
 			if (is_a($toWhat, 'Model')) {
 				$toWhat = $toWhat->getData();
@@ -181,9 +182,15 @@ class Response {
 			}
 		}
 		if (is_array($what)) {
-			foreach ($what as $key) {
-				$this->vars[$key] = $toWhat;
-			}
+            if (is_null($toWhat)) {
+                foreach ($what as $k => $v) {
+                    $this->vars[$k] = $v;
+                }
+            } else {
+                foreach ($what as $key) {
+                    $this->vars[$key] = $toWhat;
+                }
+            }
 		} else {
 			$this->vars[$what] = $toWhat;
 		}
@@ -385,6 +392,9 @@ class Response {
 			case self::TYPE_RAW_ECHO :
 				$echoContent = true;
 				break;
+            case self::TYPE_EMPTY :
+                $echoContent = false;
+                break;
 		}
 		if ($echoContent) echo $content;
 	}
