@@ -156,6 +156,12 @@ class Email {
 		
 		$mail_content = '';
 		$mail_content .= "--" . $mime_boundary . $nl;
+        if (!empty($attachments)) {
+            $mixedBoundary = $mime_boundary;
+            $mime_boundary = "----=_" . date('dm_Y') . rand(100000000000, 1000000000000) . date('_His');
+            $mail_content .= 'Content-Type: multipart/alternative; boundary="' . $mime_boundary . '"' . $nl . $nl;
+            $mail_content .= "--" . $mime_boundary . $nl;
+        }
 		$mail_content .= "Content-Type: text/plain; charset=\"CHARSET_GOES_HERE\"" . $nl;
 		$mail_content .= "Content-Transfer-Encoding: base64" . $nl . $nl;
 		$mail_content .= trim(chunk_split(base64_encode($plainBody))) . $nl;
@@ -164,8 +170,11 @@ class Email {
 		$mail_content .= "Content-Transfer-Encoding: base64" . $nl . $nl;
 		$mail_content .= trim(chunk_split(base64_encode($htmlBody))) . $nl;
 		$mail_content .= "--" . $mime_boundary;
-		
+
 		if (!empty($attachments)) {
+            $mail_content .= '--' . $nl . $nl;
+            $mime_boundary = $mixedBoundary;
+            $mail_content .= '--' . $mime_boundary;
 			foreach ($attachments as $att) {
 				$BLARGH = trim(chunk_split(base64_encode($att['content'])));
 				$mail_content .= <<<EOT
