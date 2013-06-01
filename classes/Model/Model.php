@@ -7,7 +7,7 @@ abstract class Model implements Iterator
 	protected $name;
 	protected $_position = null;
 	protected $c;
-	
+
 	protected $baseName = null;
 	protected $foundWith = null;
 	protected $dbFields = array();
@@ -1125,7 +1125,21 @@ abstract class Model implements Iterator
 		}
 		return $Os;
 	}
-	
+
+    public static function findWithGreatestId($limit = 5, $Class = null)
+    {
+        $options = array();
+        $options['limit'] = intval($limit);
+        $options['sort'] = static::$IdCol . ' DESC';
+        $options['getAllColumns'] = true;
+        list($sql, $args, $Class) = static::buildQueryFromOptions($options, $Class);
+        $Os = UtilsPDO::fetchRowsIntoInstances($sql, $args, $Class);
+        foreach ($Os as $O) {
+            $O->foundWith = $options;
+        }
+        return $Os;
+    }
+
 	public static function getCount (array $options = array(), $Class = null)
 	{
 		static::attachDefaultSort($options);
