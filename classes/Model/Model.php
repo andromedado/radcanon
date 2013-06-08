@@ -57,8 +57,90 @@ abstract class Model implements Iterator
 		}
 		$this->loadAs($id, $data);
 	}
-	
-	public function rewind()
+
+    public function getAttrsToMethods()
+    {
+        return array(
+            'Name' => 'getAttrProperName',
+            'name' => 'getAttrName',
+            'classes' => 'getAttrClasses',
+            'value' => 'getAttrValue',
+            'Value' => 'getAttrDisplayValue',
+            'values' => 'getAttrValues',
+            'big' => 'attrIsBig',
+            'template' => 'getAttrTemplate',
+            'tplVars' => 'getAttrTemplateVars',
+            'valueTemplate' => 'getAttrValueTemplate',
+        );
+    }
+
+    public function getAttrInfo($attr)
+    {
+        $keysToMethods = $this->getAttrsToMethods();
+        $info = array();
+        foreach ($keysToMethods as $key => $method) {
+            $info[$key] = call_user_func(array($this, $method), $attr);
+        }
+        return $info;
+    }
+
+    public function getAttrValueTemplate($attr)
+    {
+        return false;
+    }
+
+    protected function getAttrTemplateVars($attr)
+    {
+        return array();
+    }
+
+    protected function getAttrTemplate($attr)
+    {
+        return false;
+    }
+
+    protected function attrIsBig($attr)
+    {
+        return false;
+    }
+
+    public function getAttrValues($attr)
+    {
+        return false;
+    }
+
+    protected function getAttrDisplayValue($attr)
+    {
+        return $this->getAttrValue($attr);
+    }
+
+    protected function getAttrValue($attr)
+    {
+        return $this->$attr;
+    }
+
+    protected function getAttrClasses($attr)
+    {
+        return '';
+    }
+
+    protected function getAttrName($attr)
+    {
+        return $attr;
+    }
+
+    protected function getAttrProperName($attr)
+    {
+        $attr = str_replace(array('pretty_', '_pretty'), '', $attr);
+        return ucwords(str_replace('_', ' ', $attr));
+    }
+
+    public function determineEditAttrCallback($attr)
+    {
+        return array($this, 'safeUpdateVars');
+    }
+
+    public function rewind()
 	{
 		if (!empty($this->dbFields)) {
 			$this->_position = 0;

@@ -160,6 +160,63 @@ abstract class ControllerBase
 		$this->magicFinished(__FUNCTION__, func_get_args());
 	}
 
+    protected function getTemplateDirs()
+    {
+        return array(
+            $this->getTemplateDir() . DS,
+            'Model' . DS,
+            '',
+        );
+    }
+
+    protected function getTemplate($templateName)
+    {
+        $t = $exists = false;
+        $dirsToTry = $this->getTemplateDirs();
+        foreach ($dirsToTry as $dir) {
+            $t = $dir . $templateName . '.html.twig';
+            if ($exists = $this->response->templateExists($t)) {
+                break;
+            }
+        }
+        if (!$exists) {
+            throw new ExceptionBase('Unable to find template file for "' . $templateName . '"');
+        }
+        return $t;
+    }
+
+    protected function _editAttr($id = null, $attr = null, $options = array())
+    {
+        $model = $this->getModelMagically($id, $options);
+        if ($this->request->isPost()) {
+            $v = '';
+            try {
+                $callback = $model->determineEditAttrCallback($attr);
+                call_user_func($callback, $this->request->post(), $this->request);
+                $info = $model->getAttrInfo($attr);
+                if ($info['valueTemplate']) {
+                    $this->set($info['tplVars']);
+                    $this->response->type = Response::TYPE_TEMPLATE_IN_JSON;
+                    $this->response->template = $info['valueTemplate'];
+                    return;
+                }
+                $this->response->type = Response::TYPE_JSON;
+                $v = $info['Value'];
+            } catch (Exception $e) {
+                http_send_status(400);
+                $this->response->type = Response::TYPE_EMPTY;
+            }
+            return $v;
+        }
+        $attrInfo = $model->getAttrInfo($attr);
+        $this->set(array($this->templateModelName, 'model'), $model->getData());
+        $this->set($attrInfo['tplVars']);
+        unset($attrInfo['tplVars']);
+        $this->set('attrInfo', $attrInfo);
+        $this->response->template = $this->getTemplate('editAttr');
+        $this->response->type = Response::TYPE_TEMPLATE_IN_JSON;
+    }
+
 	protected function beforeSave(Model $M, $creating = false)
 	{
 		

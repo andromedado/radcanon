@@ -126,30 +126,5 @@ class ControllerMagic extends ControllerApp
         return $this->_index($this->determineSettings(__FUNCTION__, $args));
     }
 
-    protected function getTemplateDirs()
-    {
-        return array(
-            $this->getTemplateDir() . DS,
-            'Model' . DS,
-            '',
-        );
-    }
-
-    protected function getTemplate($templateName)
-    {
-        $t = $exists = false;
-        $dirsToTry = $this->getTemplateDirs();
-        foreach ($dirsToTry as $dir) {
-            $t = $dir . $templateName . '.html.twig';
-            if ($exists = $this->response->templateExists($t)) {
-                break;
-            }
-        }
-        if (!$exists) {
-            throw new ExceptionBase('Unable to find template file for "' . $templateName . '"');
-        }
-        return $t;
-    }
-
 }
 
