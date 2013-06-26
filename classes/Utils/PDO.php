@@ -16,12 +16,13 @@ abstract class UtilsPDO
         array $params = array(),
         $fetch_style = PDO::FETCH_BOTH
     ) {
-        $Columns = array();
         $stmt = DBCFactory::rPDO()->prepare($sql);
         if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
         $r = $stmt->execute($params);
         Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
-        if (!$r) throw new ExceptionPDO($stmt);
+        if (!$r) {
+            throw new ExceptionPDO($stmt);
+        }
         $Result = $stmt->fetchAll($fetch_style);
         $Columns = UtilsArray::autoAmalgamateArrays($Result);
         return $Columns;
@@ -52,7 +53,9 @@ abstract class UtilsPDO
     {
         $Os = array();
         $stmt = DBCFactory::rPDO()->prepare($sql);
-        if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
+        if (!$stmt) {
+            throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
+        }
         if (is_array(reset($params))) {
             foreach ($params as $k => $arr) {
                 array_unshift($arr, $k + 1);
