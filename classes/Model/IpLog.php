@@ -24,10 +24,9 @@ class ModelIpLog extends ModelApp
 	protected static $Table = 'ip_log';
 	protected static $IdCol = 'ip';
 	protected static $AllData = array();
-}
 
-/*
-CREATE TABLE `ip_log` (
+    protected static $createTableSQLQuery = "
+CREATE TABLE IF NOT EXISTS `ip_log` (
   `ip` bigint(20) NOT NULL,
   `pip` varchar(60) NOT NULL DEFAULT '',
   `user_agent` varchar(255) NOT NULL DEFAULT '',
@@ -36,5 +35,6 @@ CREATE TABLE `ip_log` (
   `reputation` tinyint(4) NOT NULL,
   PRIMARY KEY (`ip`),
   KEY `user_agent` (`user_agent`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
- */
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    ";
+}

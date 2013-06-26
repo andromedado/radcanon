@@ -82,16 +82,17 @@ EOT;
         return $str;
     }
 
-}
+    protected static $createTableSQLQuery = "
+CREATE TABLE IF NOT EXISTS `email_templates` (
+  `et_id` int(11) NOT NULL AUTO_INCREMENT,
+  `adid` int(11) NOT NULL,
+  `type` smallint(6) NOT NULL,
+  `active` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `name` varchar(30) NOT NULL DEFAULT '',
+  `subject` varchar(60) NOT NULL DEFAULT '',
+  `body` text NOT NULL,
+  PRIMARY KEY (`et_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
-/*
-CREATE TABLE email_templates (
- et_id INT IDENTITY NOT NULL PRIMARY KEY,
- adid INT NOT NULL,
- type SMALLINT NOT NULL,
- inactive SMALLINT NULL,
- name VARCHAR(30) NOT NULL,
- subject VARCHAR(60) NOT NULL,
- body TEXT NOT NULL );
- */
+}
 

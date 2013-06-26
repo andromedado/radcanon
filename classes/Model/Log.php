@@ -65,21 +65,8 @@ class ModelLog extends ModelApp
         }
     }
 
-}
-
-/*
-
-CREATE TABLE [logs] (
-  "log_id" INT IDENTITY NOT NULL PRIMARY KEY,
-  "category" VARCHAR(30) NOT NULL,
-  "criticality" SMALLINT NOT NULL,
-  `addressed` CHAR(1) NULL,
-  "content" TEXT NOT NULL,
-  "when" TIMESTAMP NOT NULL,
-  "file" VARCHAR(255) NOT NULL,
-  "line" INT NOT NULL);
-
-CREATE TABLE `logs` (
+    protected static $createTableSQLQuery = "
+CREATE TABLE IF NOT EXISTS `logs` (
   `log_id` int(11) unsigned NOT NULL auto_increment,
   `category` varchar(20) NOT NULL default '',
   `criticality` enum('0','1','2') NOT NULL default '0',
@@ -93,7 +80,11 @@ CREATE TABLE `logs` (
   KEY `criticality` (`criticality`),
   KEY `addressed` (`addressed`),
   KEY `file` (`file`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+
+}
+
+/*
 
 CREATE VIEW `issues` AS
 SELECT *

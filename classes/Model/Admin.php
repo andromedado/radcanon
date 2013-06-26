@@ -191,11 +191,8 @@ class ModelAdmin extends ModelApp
         return false;
     }
 
-}
-
-/*
-
-CREATE TABLE `admins` (
+    protected static $createTableSQLQuery = "
+CREATE TABLE IF NOT EXISTS `admins` (
   `adid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(100) NOT NULL DEFAULT '',
   `salt` varchar(10) NOT NULL DEFAULT '',
@@ -207,19 +204,7 @@ CREATE TABLE `admins` (
   `tmp_expires` int(11) DEFAULT NULL,
   `requires_password_change` tinyint(4) NOT NULL,
   PRIMARY KEY (`adid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 
-CREATE TABLE admins (
-  "adid" INT IDENTITY NOT NULL PRIMARY KEY,
-  "email" VARCHAR(100) NOT NULL,
-  "salt" VARCHAR(10) NULL,
-  "pwd" VARCHAR(128) NULL,
-  "level" SMALLINT NOT NULL,
-  "fname" VARCHAR(80) NOT NULL,
-  "lname" VARCHAR(80) NOT NULL,
-  "tmp_pass" VARCHAR(128) NULL ,
-  "tmp_expires" INT NULL ,
-  "requires_password_change" SMALLINT NULL );
-
- */
+}
 

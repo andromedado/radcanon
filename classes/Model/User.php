@@ -203,5 +203,20 @@ class ModelUser extends ModelApp
         ));
     }
 
+    protected static $createTableSQLQuery = "
+CREATE TABLE IF NOT EXISTS `users` (
+  `uid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(100) NOT NULL DEFAULT '',
+  `salt` varchar(10) NOT NULL DEFAULT '',
+  `pwd` varchar(128) NOT NULL DEFAULT '',
+  `level` tinyint(4) NOT NULL,
+  `fname` varchar(80) NOT NULL DEFAULT '',
+  `lname` varchar(80) NOT NULL DEFAULT '',
+  `tmp_pass` varchar(128) DEFAULT '',
+  `tmp_expires` int(11) DEFAULT NULL,
+  `requires_password_change` tinyint(4) NOT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+
 }
 
