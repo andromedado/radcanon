@@ -38,6 +38,7 @@ abstract class Model implements Iterator
     protected static $sortDirection = 'ASC';
     protected static $AllData = array();
     protected static $PermitCache = true;
+    protected static $createTableSQLQuery = null;
 
     public function __construct ($id = 0)
     {
@@ -505,10 +506,16 @@ abstract class Model implements Iterator
         $r = $stmt->execute($vs);
         Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
         if (!$r) {
-            if ($dieOnFailure) {
-                vdump(DBCFactory::wPDO()->errorInfo(), $stmt, $sql, $vs);
+            if ($this->recoverFromDBError($stmt)) {
+                $r = $stmt->execute($vs);
+                Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
             }
-            throw new ExceptionPDO($stmt, $sql . ', Class: ' . $this->c . ' ' . json_encode(array('dberror' => DBCFactory::wPDO()->errorInfo(), 'args' => $vs)));
+            if (!$r) {
+                if ($dieOnFailure) {
+                    vdump(DBCFactory::wPDO()->errorInfo(), $stmt, $sql, $vs);
+                }
+                throw new ExceptionPDO($stmt, $sql . ', Class: ' . $this->c . ' ' . json_encode(array('dberror' => DBCFactory::wPDO()->errorInfo(), 'args' => $vs)));
+            }
         }
         if ($performAllFollowUp) {
             $this->id = DBCFactory::wPDO()->lastInsertId();
@@ -517,6 +524,28 @@ abstract class Model implements Iterator
             $this->createFollowUp();
         }
         return true;
+    }
+
+    /**
+     * @override
+     */
+    protected function createFollowUp()
+    {
+        //Override me
+    }
+
+    protected function recoverFromDBError(PDOStatement $stmt)
+    {
+        $errorInfo = $stmt->errorInfo();
+        switch ($errorInfo[0]) {
+            case '42S02':
+                if (isset(static::$createTableSQLQuery)) {
+                    $createTableStmt = DBCFactory::wPDO()->prepare(static::$createTableSQLQuery);
+                    return $createTableStmt->execute();
+                }
+            break;
+        }
+        return false;
     }
 
     /**
