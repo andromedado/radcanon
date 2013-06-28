@@ -9,12 +9,12 @@
 class ExceptionBase extends Exception {
 	protected $internalMessage = '';
 	protected static $publicMessage = 'The system has experienced an error (EC-%d), please try again later';
-	
+
 	public function __construct($msg = '', $code = 1, $previous = NULL){
 		$this->code = $code;
 		if (is_array($msg)) $msg = json_encode($msg);
 		$this->internalMessage = "Exception!,\nError: {$msg}";
-		$this->message = self::$publicMessage;
+		$this->message = static::$publicMessage;
 	}
 	
 	public function __toString(){
@@ -26,7 +26,7 @@ class ExceptionBase extends Exception {
 	}
 	
 	public static function getPublicMessage () {
-		return self::$publicMessage;
+		return static::$publicMessage;
 	}
 	
 } // END

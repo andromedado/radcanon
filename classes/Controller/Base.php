@@ -180,7 +180,7 @@ abstract class ControllerBase
             }
         }
         if (!$exists) {
-            throw new ExceptionBase('Unable to find template file for "' . $templateName . '"');
+            throw new ExceptionTemplate($templateName);
         }
         return $t;
     }
