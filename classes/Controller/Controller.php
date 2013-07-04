@@ -14,7 +14,12 @@ class Controller {
     private static $CustomHeaders = array();
     private static $DebugText = array();
     /** @var User $theUser */
-    private static $theUser = null;
+    private static $theUser = null,
+        $fallback = array(
+        'controller' => 'ControllerPages',
+        'method' => 'notFound',
+        'defaultArgs' => array(),
+    );
 
     public static function addControllerSynonym ($from, $to = NULL) {
         if (is_null($to) && is_array($from)) {
@@ -85,7 +90,8 @@ class Controller {
         if (is_string($filter)) {
             $filter = new $filter;
         }
-        if (!is_a($filter, 'Filter')) throw new ExceptionBase('Invalid Filter: ' . $Filter);
+        if (!is_a($filter, 'Filter')) throw new ExceptionBase('Invalid Filter: ' . $filter);
+        /** @var Filter $filter */
         $filter->filter($Request, $Response, $User);
         return;
     }
@@ -140,6 +146,32 @@ class Controller {
     }
 
     /**
+     * Set the fallback controller method to use
+     * Normally a 404 page
+     * @param string $controllerClass
+     * @param string $method
+     * @param array $defaultArgs
+     */
+    public static function setFallback($controllerClass, $method = 'index', array $defaultArgs = array())
+    {
+        self::$fallback = array(
+            'controller' => $controllerClass,
+            'method' => $method,
+            'defaultArgs' => $defaultArgs,
+        );
+    }
+
+    protected static function getFallbackAction(Request $Request, Response $Response, User $User)
+    {
+        $Parts = new stdClass;
+        $class = self::$fallback['controller'];
+        $Parts->class = new $class($Request, $Response, $User);
+        $Parts->method = self::$fallback['method'];
+        $Parts->arguments = self::$fallback['defaultArgs'];
+        return $Parts;
+    }
+
+    /**
      * Translate the Request into an Application Call
      * Translates Synonyms, return is ready to call as is
      *
@@ -148,16 +180,13 @@ class Controller {
      * @return stdClass
      */
     public static function prepareApplicationCall (Request $Request, Response $Response, User $User) {
-        $Parts = new stdClass;
-        $Parts->class = new ControllerPages($Request, $Response, $User);
-        $Parts->method = 'notFound';
-        $Parts->arguments = array();
-        $elems = explode('/', trim($Request->getURI(), '/'));
-        if (count($elems) > 1) {
-            list($c, $m) = array_slice($elems, 0, 2);
-            $Parts->arguments = array_slice($elems, 2);
+        $Parts = self::getFallbackAction($Request, $Response, $User);
+        $elements = explode('/', trim($Request->getURI(), '/'));
+        if (count($elements) > 1) {
+            list($c, $m) = array_slice($elements, 0, 2);
+            $Parts->arguments = array_slice($elements, 2);
         } else {
-            $c = array_shift($elems);
+            $c = array_shift($elements);
             $m = 'index';
         }
         if (array_key_exists($c, self::$ControllerSynonyms)) $c = self::$ControllerSynonyms[$c];
@@ -167,8 +196,7 @@ class Controller {
             if (!is_a($tempC, 'ControllerApp')) throw new ExceptionClear('Invalid Controller invoked: ' . $c . '; needs to be a subclass of ControllerApp');
             $tempM = $m;
             while (!method_exists($tempC, $tempM) && array_key_exists($m, self::$MethodSynonyms)) {
-                $m = self::$MethodSynonyms[$m];
-                $tempM = $prefix . $m;
+                $tempM = $m = self::$MethodSynonyms[$m];
             }
             if (in_array($tempM, get_class_methods($tempC))) {
                 //Looks Good
@@ -184,7 +212,7 @@ class Controller {
         } else {
             //Class $c Not Found
         }
-        //vdump($Request->getURI(), $c, $m, $elems, $C, $M);
+        //vdump($Request->getURI(), $c, $m, $elements, $C, $M);
         return $Parts;
     }
 

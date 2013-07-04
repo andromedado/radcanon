@@ -4,6 +4,11 @@
  * RAD-Canon Request Abstraction
  * Primarily wraps the super-globals for more convenient access
  * @author Shad Downey
+ * @method mixed get()
+ * @method mixed post()
+ * @method mixed server()
+ * @method mixed cookie()
+ * @method mixed files()
  */
 class Request
 {
