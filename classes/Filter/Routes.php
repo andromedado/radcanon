@@ -30,7 +30,17 @@ class FilterRoutes implements Filter
             'controller' => 'Pages',
             'action' => 'notFound',
         ),
-    );
+    ),
+    $externalRoutes = array();
+
+    /**
+     * @param $url
+     * @param $destination
+     */
+    public static function addExternalRoute($url, $destination)
+    {
+        self::$externalRoutes[$url] = $destination;
+    }
 
     /**
      * Add a static route
@@ -59,6 +69,10 @@ class FilterRoutes implements Filter
         $uri = $req->getURI();
         if (in_array($uri, self::$DeniedRoutes)) {
             $req->setURI($uri = 'Pages/notFound');
+        }
+        if (array_key_exists($uri, self::$externalRoutes)) {
+            $res->redirectTo(self::$externalRoutes[$uri]);
+            return;
         }
         foreach (self::$PregRoutes as $bits) {
             if (preg_match($bits['decode']['pattern'], $uri)) {

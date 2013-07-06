@@ -68,13 +68,16 @@ class Controller {
         $Response = new AppResponse($Request);
         $User = self::getUser();
         self::filterWith(self::$preFilters, $Request, $Response, $User);
-        try {
-            self::determineResponseType($Request, $Response);
-            self::executeApplicationCall(self::prepareApplicationCall($Request, $Response, $User), $Response);
-        } catch (ExceptionReroute $e) {
-            $Request->setURI($e->getUri());
-            self::determineResponseType($Request, $Response);
-            self::executeApplicationCall(self::prepareApplicationCall($Request, $Response, $User), $Response);
+        //If a filter made this into a bounce, no need to execute an application call
+        if ($Response->type !== Response::TYPE_LOCATION) {
+            try {
+                self::determineResponseType($Request, $Response);
+                self::executeApplicationCall(self::prepareApplicationCall($Request, $Response, $User), $Response);
+            } catch (ExceptionReroute $e) {
+                $Request->setURI($e->getUri());
+                self::determineResponseType($Request, $Response);
+                self::executeApplicationCall(self::prepareApplicationCall($Request, $Response, $User), $Response);
+            }
         }
         self::filterWith(self::$postFilters, $Request, $Response, $User);
         return $Response;
