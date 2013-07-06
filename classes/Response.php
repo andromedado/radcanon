@@ -275,8 +275,10 @@ class Response {
             $msg = $msg->getMessage();
             $bad = true;
         }
-        $k = $bad ? 'f_msg' : 'msg';
-        $_SESSION[$k][] = $msg;
+        if (!empty($msg)) {
+            $k = $bad ? 'f_msg' : 'msg';
+            $_SESSION[$k][] = $msg;
+        }
     }
 
     public function clearMessages ($bad = null)
