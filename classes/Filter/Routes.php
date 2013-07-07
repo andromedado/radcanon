@@ -72,6 +72,7 @@ class FilterRoutes implements Filter
         }
         if (array_key_exists($uri, self::$externalRoutes)) {
             $res->redirectTo(self::$externalRoutes[$uri]);
+            $res->redirectCode = 301;
             return;
         }
         foreach (self::$PregRoutes as $bits) {
