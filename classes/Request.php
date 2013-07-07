@@ -147,6 +147,26 @@ class Request
         return NULL;
     }
 
+    public function __set($var, $val) {
+        if (!in_array($var, $this->Accessable)) {
+            return null;
+        }
+        if (!is_array($val)) {
+            $this->$var = $val;
+            return null;
+        }
+        $k = &$this->$var;
+        for ($i = 0; $i < count($val) - 1; $i++) {
+            $v = $val[$i];
+            if (!isset($k[$v])) {
+                $k[$v] = array();
+            }
+            $k = &$k[$v];
+        }
+        $k = $val[$i];
+        return null;
+    }
+
     public function getGET() {
         return $this->get;
     }
