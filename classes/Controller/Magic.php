@@ -2,6 +2,8 @@
 
 class ControllerMagic extends ControllerApp
 {
+    const ACTION_ON_UPDATE = 'review';
+
     protected $GateKeeperMethods = array(
     );
 
@@ -43,7 +45,7 @@ class ControllerMagic extends ControllerApp
         switch ($invoked) {
             case "update":
                 $id = isset($args[0]) ? $args[0] : 0;
-                $dest = array($this->baseName, 'review', $id);
+                $dest = array($this->baseName, static::ACTION_ON_UPDATE, $id);
                 break;
             default:
                 $dest = array($this->baseName);
