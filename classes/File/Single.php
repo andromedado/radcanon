@@ -14,7 +14,7 @@ class FileSingle extends FileOfModel
 
     public function getFileSrc($noCache = false)
     {
-        return preg_replace('#^' . preg_quote(SERVER_PREFIX, '#') . '#', '', $this->getFilePath($noCache));
+        return APP_SUB_DIR . preg_replace('#^' . preg_quote(SERVER_PREFIX, '#') . '#', '', $this->getFilePath($noCache));
     }
 
     public function getFilePath($noCache = false)

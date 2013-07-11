@@ -63,7 +63,7 @@ abstract class FileOfModel
         $paths = $this->getFilePaths($noCache);
         $srcs = array();
         foreach ($paths as $path) {
-            $srcs[] = preg_replace('#^' . preg_quote(SERVER_PREFIX, '#') . '#', '', $path);
+            $srcs[] = APP_SUB_DIR . preg_replace('#^' . preg_quote(SERVER_PREFIX, '#') . '#', '', $path);
         }
         return $srcs;
     }
