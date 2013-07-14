@@ -2,7 +2,8 @@
 
 class ControllerMagic extends ControllerApp
 {
-    const ACTION_ON_UPDATE = 'review';
+    const ACTION_ON_UPDATE = 'review',
+        SORT_ORDER_FIELD_NAME = 'so';
 
     protected $GateKeeperMethods = array(
     );
@@ -15,6 +16,23 @@ class ControllerMagic extends ControllerApp
     protected function isAuthUser()
     {
         return is_a($this->user, 'AuthUser');
+    }
+
+    public function updateSo()
+    {
+        $ids = $this->request->post('ids');
+        $idCol = call_user_func(array($this->modelName, 'getIDCol'));
+        foreach ($ids as $so => $id) {
+            call_user_func(
+                array($this->modelName, 'updateWhere'),
+                array(static::SORT_ORDER_FIELD_NAME => $so),
+                array($idCol => $id)
+            );
+        }
+        if ($this->request->isAjax()) {
+            return array('good' => true);
+        }
+        $this->response->redirectTo(array($this->modelName, 'index'));
     }
 
     protected function mayProceed($invoked, array $args)
