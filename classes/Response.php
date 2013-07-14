@@ -130,6 +130,13 @@ class Response {
 
     public function setException(Exception $e) {
         $this->exception = $e;
+        if (DEBUG) {
+            $this->set('_exception', $e);
+            header('X-Exception: ' . $e->getMessage());
+            if ($e instanceof ExceptionBase) {
+                header('X-Exception: ' . $e->getInternalMessage());
+            }
+        }
         $this->error = true;
         return $this;
     }
