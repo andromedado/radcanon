@@ -76,6 +76,7 @@ class ControllerMagic extends ControllerApp
         if (!file_exists(APP_TEMPLATES_DIR . $this->getTemplateDir() . DS . 'create.html.twig')) {
             $this->response->template = 'Model' . DS . 'create.html.twig';
         }
+        $this->autoAddAssets('form');
         return $this->_create($this->determineSettings(__FUNCTION__, $args));
     }
 
@@ -98,6 +99,7 @@ class ControllerMagic extends ControllerApp
         if (!file_exists(APP_TEMPLATES_DIR . $this->getTemplateDir() . DS . 'update.html.twig')) {
             $this->response->template = 'Model' . DS . 'update.html.twig';
         }
+        $this->autoAddAssets('form');
         return $this->_update($id, $this->determineSettings(__FUNCTION__, $args));
     }
 
