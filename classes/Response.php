@@ -370,6 +370,7 @@ class Response {
                 $content = json_encode($array);
                 break;
             case self::TYPE_HTML :
+                header('Content-Type: text/html');
                 $content = $this->renderFromTemplate($this->template, true);
                 break;
             case self::TYPE_JSON :
