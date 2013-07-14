@@ -694,6 +694,11 @@ abstract class Model implements Iterator
         return static::$AllData[$id][$var] = $val;
     }
 
+    protected static function clearCache()
+    {
+        static::$AllData = array();
+    }
+
     protected static function updateCacheValues($id, array $varsToVals) {
         foreach ($varsToVals as $var => $val) {
             static::updateCacheValue($id, $var, $val);
@@ -816,6 +821,34 @@ abstract class Model implements Iterator
         }
         $this->updateFollowUp(array_keys($varsToVals));
         return true;
+    }
+
+    public static function updateWhere(array $vars, array $where)
+    {
+        $wheres = $sets = $vs = array();
+        if (empty($vars) || empty($where)) {
+            throw new ExceptionBase('You must pass in both vars and wheres');
+        }
+        foreach ($vars as $k => $v) {
+            $vs[] = $v;
+            $sets[] = DBCFactory::quote($k) . ' = ?';
+        }
+        $sets = implode(', ', $sets);
+        foreach ($where as $k => $v) {
+            $vs[] = $v;
+            $wheres[] = DBCFactory::quote($k) . ' = ?';
+        }
+        $wheres = implode(' AND ', $wheres);
+        $sql = "UPDATE " . DBCFactory::quote(static::$Table) . " " .
+            "SET {$sets} " .
+            "WHERE {$wheres}";
+        $stmt = DBCFactory::wPDO()->prepare($sql);
+        $r = $stmt->execute($vs);
+        Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
+        if (!$r) {
+            throw new ExceptionPDO($stmt, $sql . ', Class: ' . get_called_class());
+        }
+        static::clearCache();
     }
 
     public static function updateAll(array $varsToVals)
