@@ -132,9 +132,9 @@ class Response {
         $this->exception = $e;
         if (DEBUG) {
             $this->set('_exception', $e);
-            header('X-Exception: ' . $e->getMessage());
+            header('X-Exception: ' . str_replace("\n", '', $e->getMessage()));
             if ($e instanceof ExceptionBase) {
-                header('X-Exception: ' . $e->getInternalMessage());
+                header('X-Exception: ' . str_replace("\n", '', $e->getInternalMessage()));
             }
         }
         $this->error = true;
