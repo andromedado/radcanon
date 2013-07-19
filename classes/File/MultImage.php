@@ -18,8 +18,8 @@ class FileMultImage extends FileMultiple
     public function getSrcsToImagesAtWidth ($width) {
         $paths = $this->getPathsToImagesAtWidth($width);
         $srcs = array();
-        foreach ($paths as $path) {
-            $srcs[] = APP_SUB_DIR . str_replace(SERVER_PREFIX, '', $path);
+        foreach ($paths as $fn => $path) {
+            $srcs[$fn] = APP_SUB_DIR . str_replace(SERVER_PREFIX, '', $path);
         }
         return $srcs;
     }
@@ -39,7 +39,7 @@ class FileMultImage extends FileMultiple
             if (!file_exists($rd . $requestedName)) {
                 UtilsImage::resizeImage($this->getBaseDir() . $fileName, $rd . $requestedName, $width);
             }
-            $paths[] = $rd . $requestedName;
+            $paths[$fileName] = $rd . $requestedName;
         }
         return $paths;
     }
