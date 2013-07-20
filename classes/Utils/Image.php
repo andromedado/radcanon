@@ -1,6 +1,7 @@
 <?php
 
-abstract class UtilsImage {
+abstract class UtilsImage
+{
 	
 	public static function getMimeType ($filename) {
 		$ext = strtolower(preg_replace('/[^A-Z\d]+/i', '', array_pop(explode('.', $filename))));
@@ -16,7 +17,9 @@ abstract class UtilsImage {
 	}
 	
 	public static function resizeImage ($b_file, $store, $newWidth) {
-		if (file_exists($store) && !unlink($store)){return true;}
+		if (is_dir($b_file) || file_exists($store) && !unlink($store)) {
+            return true;
+        }
 		$img_parts = pathinfo($b_file);
 		$ext = strtolower($img_parts['extension']);
 		$fileNoExt=$img_parts['filename'];
