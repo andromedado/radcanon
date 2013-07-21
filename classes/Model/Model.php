@@ -289,11 +289,17 @@ abstract class Model implements Iterator
         return false;
     }
 
+    /**
+     * @param $id
+     * @param array $data
+     * @return $this
+     */
     public function loadAs($id, array $data = array())
     {
         $this->id = (int)$id;
         $this->valid = $this->loadFromData($data) || $this->loadFromCache() || $this->loadFromTable();
         $this->load();
+        return $this;
     }
 
     /**
