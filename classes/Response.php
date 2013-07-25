@@ -381,7 +381,7 @@ class Response {
                 $content = $this->renderFromTemplate($this->template, true);
                 break;
             case self::TYPE_JSON :
-                if (DEBUG && is_array($content)) {
+                if (DEBUG && is_array($content) && PERMIT_AJAX_DEBUG) {
                     $content['_invocation'] = $this->invocation;
                 }
                 if (is_array($content) && isset($content['html']) && is_object($content['html']) && get_class($content['html']) !== 'stdClass') {

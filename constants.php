@@ -2,6 +2,7 @@
 if (!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 if (!defined('DEBUG')) define('DEBUG', false);
 if (!defined('LOTS_OF_LOGS')) define('LOTS_OF_LOGS', false);
+if (!defined('PERMIT_AJAX_DEBUG')) define('PERMIT_AJAX_DEBUG', false);
 if (!defined('LIB_DIR')) define('LIB_DIR', dirname(__DIR__) . DS);
 if (!defined('SERVER_PREFIX')) define('SERVER_PREFIX', preg_replace('/^(.*)(public_html|httpdocs)(.*)$/i', '$1$2', LIB_DIR));
 if (!defined('APP_SUB_DIR')) define('APP_SUB_DIR', '');
