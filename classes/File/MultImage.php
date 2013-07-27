@@ -8,11 +8,19 @@ class FileMultImage extends FileMultiple
     {
         $this->checkForUploadErrors();
         foreach ($_FILES[$this->name]['name'] as $index => $name) {
-            $dest = $this->getBaseDir() . UtilsString::urlSafe($name, true);
+            do {
+                $dest = $this->getBaseDir() . UtilsString::urlSafe($name, true);
+                self::mutateFilename($name);
+            } while (file_exists($dest));
             if (!move_uploaded_file($_FILES[$this->name]['tmp_name'][$index], $dest)) {
                 throw new ExceptionBase('Couldnt move from ' . $_FILES[$this->name]['tmp_name'] . ' to ' . $dest);
             }
         }
+    }
+
+    public static function mutateFilename (&$name)
+    {
+        $name = rand(1, 9) . $name;
     }
 
     public function getSrcsToImagesAtWidth ($width) {
