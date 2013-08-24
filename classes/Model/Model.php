@@ -462,7 +462,7 @@ abstract class Model implements Iterator
         $c = count($data);
         $f = $this->dbFields;
         if ($c === count($f) - 1) {
-            array_unshift($f);
+            array_unshift($f, null);
         }
         if ($c !== count($f)) {
             throw new ExceptionBase('Column count mismatch');
@@ -1035,7 +1035,7 @@ abstract class Model implements Iterator
         $sql = "SELECT MAX(" . DBCFactory::quote($field) . ") FROM " . DBCFactory::quote(static::$Table);
         $stmt = DBCFactory::rPDO()->prepare($sql);
         if (!$stmt) throw new ExceptionBase(DBCFactory::rPDO()->errorInfo(), 1);
-        $r = $stmt->execute($params);
+        $r = $stmt->execute(array());
         Request::setInfo('db_queries', Request::getInfo('db_queries', 0) + 1);
         if (!$r) throw new ExceptionPDO($stmt, 'attempted field: ' . $field);
         list($value) = $stmt->fetch(PDO::FETCH_NUM);
@@ -1049,12 +1049,13 @@ abstract class Model implements Iterator
     ) {
         $c = get_called_class();
         if (is_null($Class)) $Class = $c;
+        $classVars = get_class_vars($c);
         switch ($type) {
             case "DELETE":
                 $sql = "DELETE";
                 break;
             case "COUNT":
-                $sql = "SELECT COUNT(" . DBCFactory::quote($c::$IdCol) . ")";
+                $sql = "SELECT COUNT(" . DBCFactory::quote($classVars['IdCol']) . ")";
                 break;
             case "SELECT":
             default:
@@ -1068,10 +1069,10 @@ abstract class Model implements Iterator
                 } elseif (isset($options['getAllColumns']) && $options['getAllColumns'] === true) {
                     $sql = "SELECT *";
                 } else {
-                    $sql = "SELECT " . DBCFactory::quote($c::$IdCol);
+                    $sql = "SELECT " . DBCFactory::quote($classVars['IdCol']);
                 }
         }
-        $sql .= " FROM " . DBCFactory::quote($c::$Table);
+        $sql .= " FROM " . DBCFactory::quote($classVars['Table']);
         $args = array();
         if (!empty($options['fields']) || !empty($options['conditions']) || !empty($options['likes'])) {
             $and = '';
@@ -1486,7 +1487,7 @@ abstract class Model implements Iterator
         if (!empty($groupBy)) {
             $sql .= " GROUP BY " . implode(', ', $groupBy);
         }
-//		vdump($sql, $args);
+//      vdump($sql, $args);
         $Instances = UtilsPDO::fetchIdsIntoInstances($sql, $args, get_called_class());
         static::postHandleSearchCriteria($SearchCriteria, $Instances);
         return $Instances;
