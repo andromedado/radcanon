@@ -193,7 +193,7 @@ abstract class ControllerBase
             try {
                 $callback = $model->determineEditAttrCallback($attr);
                 call_user_func($callback, $this->request->post(), $this->request);
-                $info = $model->getAttrInfo($attr);
+                $info = $model->getAttrInfo($attr, true);
                 if ($info['valueTemplate']) {
                     $this->set($info['tplVars']);
                     $this->response->type = Response::TYPE_TEMPLATE_IN_JSON;
@@ -208,7 +208,7 @@ abstract class ControllerBase
             }
             return $v;
         }
-        $attrInfo = $model->getAttrInfo($attr);
+        $attrInfo = $model->getAttrInfo($attr, false);
         $this->set(array($this->templateModelName, 'model'), $model->getData());
         $this->set($attrInfo['tplVars']);
         unset($attrInfo['tplVars']);

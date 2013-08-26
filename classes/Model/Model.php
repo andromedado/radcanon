@@ -75,12 +75,12 @@ abstract class Model implements Iterator
         );
     }
 
-    public function getAttrInfo($attr)
+    public function getAttrInfo($attr, $editing = false)
     {
         $keysToMethods = $this->getAttrsToMethods();
         $info = array();
         foreach ($keysToMethods as $key => $method) {
-            $info[$key] = call_user_func(array($this, $method), $attr);
+            $info[$key] = call_user_func(array($this, $method), $attr, $editing);
         }
         return $info;
     }
