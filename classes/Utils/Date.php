@@ -2,6 +2,8 @@
 
 abstract class UtilsDate
 {
+    const EMPTY_DATE = '0000-00-00';
+
     /**
      * Given two dates (String or UnixTimestamp) is
      * the first greater than the second? [for use in `usort`]
