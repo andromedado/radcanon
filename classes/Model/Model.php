@@ -1073,6 +1073,11 @@ abstract class Model implements Iterator
                 }
         }
         $sql .= " FROM " . DBCFactory::quote($classVars['Table']);
+        if (!empty($options['joins'])) {
+            foreach($options['joins'] as $join) {
+                $sql .= " " . $join;
+            }
+        }
         $args = array();
         if (!empty($options['fields']) || !empty($options['conditions']) || !empty($options['likes'])) {
             $and = '';
@@ -1230,7 +1235,7 @@ abstract class Model implements Iterator
                 $Arr = is_array(static::$sortDirection);
                 $concat = $sort = '';
                 foreach (static::$sortField as $k => $field) {
-                    $sort .= $concat . DBCFactory::quote($field) . ' ';
+                    $sort .= $concat . DBCFactory::quote(static::getTable()) . '.' . DBCFactory::quote($field) . ' ';
                     if ($Arr) {
                         $sort .= isset(static::$sortDirection[$k]) ? static::$sortDirection[$k] : 'ASC';
                     } else {
@@ -1239,7 +1244,7 @@ abstract class Model implements Iterator
                     $concat = ', ';
                 }
             } else {
-                $sort = DBCFactory::quote(static::$sortField) . ' ' . static::$sortDirection;
+                $sort = DBCFactory::quote(static::getTable()) . '.' . DBCFactory::quote(static::$sortField) . ' ' . static::$sortDirection;
             }
             $options = array_merge(array(
                 'sort' => $sort,
