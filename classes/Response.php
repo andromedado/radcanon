@@ -75,6 +75,7 @@ class Response {
         $this->request = $req;
         $this->location = $req->post('_bounceBack', $req->server('REQUEST_URI', APP_SUB_DIR . '/'));
         $this->set('currentUri', $this->request->getIniURI());
+        $this->set('currentPath', $this->request->getIniPath());
         if (!isset($_SESSION['msg'])) $_SESSION['msg'] = array();
         if (!isset($_SESSION['f_msg'])) $_SESSION['f_msg'] = array();
         if (defined('APP_TEMPLATES_DIR') && is_dir(APP_TEMPLATES_DIR)) {

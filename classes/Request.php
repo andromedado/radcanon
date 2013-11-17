@@ -284,6 +284,16 @@ class Request
         return $uri;
     }
 
+    public function getIniPath()
+    {
+        $uri = $this->getIniURI();
+        $qPos = strpos($uri, '?');
+        if ($qPos > -1) {
+            return substr($uri, 0, $qPos);
+        }
+        return $uri;
+    }
+
     public function getIniURI() {
         return empty($this->iniServer['REQUEST_URI']) ? '' : $this->iniServer['REQUEST_URI'];
     }
