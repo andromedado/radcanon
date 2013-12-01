@@ -59,6 +59,8 @@ class ControllerMagic extends ControllerApp
     {
         if ($this->request->post('_bounceBack', null) !== null) {
             return $this->request->post('_bounceBack');
+        } else if (session_id() && isset($_SESSION['bounceBack'])) {
+            return $_SESSION['bounceBack'];
         }
         switch ($invoked) {
             case "update":

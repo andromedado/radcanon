@@ -368,6 +368,9 @@ class Response {
                 if (DEBUG) {
                     header('X-Invocation: ' . json_encode($this->invocation));
                 }
+                if (session_id() && isset($_SESSION['bounceBack']) && $_SESSION['bounceBack'] === $this->location) {
+                    $_SESSION['bounceBack'] = null;
+                }
                 header('Location: ' . $this->location, true, $this->redirectCode);
                 return;
                 break;
