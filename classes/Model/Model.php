@@ -52,9 +52,16 @@ abstract class Model implements Iterator
         }
         $data = array();
         if (is_array($id)) {
-            if (!isset($id[$this->idCol])) throw new ExceptionBase('invalid parameter for Model::__construct');
-            $data = $id;
-            $id = $data[$this->idCol];
+            if (is_null($this->idCol)) {
+                $data = $id;
+                $id = null;
+            } else {
+                if (!isset($id[$this->idCol])) {
+                    throw new ExceptionBase('invalid parameter for Model::__construct');
+                }
+                $data = $id;
+                $id = $data[$this->idCol];
+            }
         }
         $this->loadAs($id, $data);
     }
