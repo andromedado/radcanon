@@ -1485,11 +1485,14 @@ abstract class Model implements Iterator
     public static function findWhereColumnInAndSearchCriteria(
         $column,
         array $acceptableValues,
-        UtilsArray $SearchCriteria
+        UtilsArray $SearchCriteria = null
     ) {
+        if (is_null($SearchCriteria)) {
+            $SearchCriteria = new UtilsArray();
+        }
         $mIdc = DBCFactory::quote(static::$IdCol);
         $groupBy = $joinArgs = array();
-        $args = $acceptableValues;
+        $args = array_values($acceptableValues);
         $sql = "SELECT `mt`.{$mIdc} FROM " . DBCFactory::quote(static::$Table) . " AS `mt` ";
         $qs = array();
         foreach ($acceptableValues as $blah) {
