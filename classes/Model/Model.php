@@ -358,6 +358,11 @@ abstract class Model implements Iterator
         }
     }
 
+    /**
+     * @deprecated
+     * @param bool $fPrompt
+     * @return string
+     */
     public function adminView($fPrompt = true){
         if (!$this->valid || !Visitor::AV()) return '';
         $a = HtmlE::n('a', '', 'edit');
