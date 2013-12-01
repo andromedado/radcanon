@@ -32,4 +32,5 @@ if (!defined('DEBUG_EMAIL_RECIPIENT')) define('DEBUG_EMAIL_RECIPIENT', 'shad.dow
 if (!defined('RUNNING_AS_CLI')) define('RUNNING_AS_CLI', strtolower(substr(php_sapi_name(), 0, 3)) === 'cli' || (isset($_SERVER['argv']) && is_array($_SERVER['argv']) && in_array('cli', $_SERVER['argv'])));
 if (!defined('APP_NAME')) define('APP_NAME', 'RADCanon');
 if (!defined('NO_OUTBOUND_EMAIL')) define('NO_OUTBOUND_EMAIL', false);
+if (!defined('SITE_HOST')) define('SITE_HOST', dirname(LIB_DIR) . DS);
 
