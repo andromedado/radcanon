@@ -559,11 +559,20 @@ class UtilsArray
         $array[get_class($Model) . $Model->id] = $Model;
     }
 
-    public static function pluckPropertyFromObjects(array $Os, $property)
+    /**
+     * @param array $Os
+     * @param $property
+     * @param bool $preserveKeys
+     * @return array
+     */
+    public static function pluckPropertyFromObjects(array $Os, $property, $preserveKeys = true)
     {
         $r = array();
         foreach ($Os as $key => $O) {
             $r[$key] = $O->$property;
+        }
+        if (!$preserveKeys) {
+            $r = array_values($r);
         }
         return $r;
     }
