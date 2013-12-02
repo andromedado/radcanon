@@ -1,0 +1,43 @@
+{% extends "genericForm.html.twig" %}
+{% block beforeTable %}
+{% if model.isValid %}
+    <input type="hidden" name="key" value="{{ model.key }}" />
+{% endif %}{% endblock %}
+{% block tbody %}
+{% if not model.isValid %}
+    <tr>
+        <th>Name:</th>
+        <td><input type="text" name="name" /></td>
+    </tr>
+    <tr>
+        <th>Key:</th>
+        <td><input type="text" name="key" size="10" maxlength="10" /></td>
+    </tr>
+    <tr>
+        <th>Type:</th>
+        <td>
+            <select name="type">
+            {% for key, type in model.Types %}
+                <option value="{{ key }}">{{ type }}</option>
+            {% endfor %}
+            </select>
+        </td>
+    </tr>
+{% endif %}
+    <tr>
+        <th>Value:</th>
+        <td>
+        {% if model.inputType == 'input' %}
+            <input type="text" name="value" value="{{ model.inputValue }}" />
+        {% elseif model.inputType == 'select' %}
+            <select name="value">
+            {% for option, display in options %}
+                <option value="{{ option }}">{{ display }}</option>
+            {% endfor %}
+            </select>
+        {% else %}
+            <textarea name="value" rows="2" cols="50">{{ model.inputValue }}</textarea>
+        {% endif %}
+        </td>
+    </tr>
+{% endblock %}

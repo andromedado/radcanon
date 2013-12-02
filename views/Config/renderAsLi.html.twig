@@ -1,0 +1,6 @@
+<li id="{{ model.baseName ~ '_' ~ model.id }}" class="model-li {{ model.baseName }}-li">
+    <a href="{{ model.href }}">{{ model.name }}</a> : {{ model.displayValue }}
+    {% if permitDeleteModel %}
+    {% include "deleteButton.html.twig" %}
+    {% endif %}
+</li>
