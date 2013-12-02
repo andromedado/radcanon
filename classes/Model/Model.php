@@ -1229,6 +1229,8 @@ abstract class Model implements Iterator
     }
 
     /**
+     * @param $fieldName
+     * @param $fieldValue
      * @return Array
      */
     public static function findAllByField($fieldName, $fieldValue)
@@ -1237,6 +1239,17 @@ abstract class Model implements Iterator
             'fields' => array(
                 $fieldName => $fieldValue,
             ),
+        ));
+    }
+
+    /**
+     * @param Array $fields
+     * @return Array
+     */
+    public static function findAllByFields(array $fields)
+    {
+        return static::findAll(array(
+            'fields' => $fields,
         ));
     }
 
