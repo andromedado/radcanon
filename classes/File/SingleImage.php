@@ -9,7 +9,7 @@ class FileSingleImage extends FileSingle
     }
 
     public function getSrcToImageAtWidth ($width) {
-        return APP_SUB_DIR . str_replace(SERVER_PREFIX, '', $this->getPathToImageAtWidth($width));
+        return $this->getAppSubDir() . str_replace($this->getServerPrefix(), '', $this->getPathToImageAtWidth($width));
     }
 
     public function getPathToImageAtWidth($width) {

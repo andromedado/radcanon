@@ -27,7 +27,7 @@ class FileMultImage extends FileMultiple
         $paths = $this->getPathsToImagesAtWidth($width);
         $srcs = array();
         foreach ($paths as $fn => $path) {
-            $srcs[$fn] = APP_SUB_DIR . str_replace(SERVER_PREFIX, '', $path);
+            $srcs[$fn] = $this->getAppSubDir() . str_replace($this->getServerPrefix(), '', $path);
         }
         return $srcs;
     }

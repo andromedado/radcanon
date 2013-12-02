@@ -7,6 +7,9 @@ abstract class FileOfModel
     /** @var Model $Model */
     protected $Model;
     protected $name;
+    protected $appSubDir = null;
+    protected $serverPrefix = null;
+    protected $modelDirectory = null;
     protected $baseDir = NULL;
     protected $resizeDir = NULL;
     protected $cachedScan = array();
@@ -41,6 +44,32 @@ abstract class FileOfModel
     }
 
     /**
+     * @param null $appSubDir
+     */
+    public function setAppSubDir($appSubDir)
+    {
+        $this->appSubDir = $appSubDir;
+    }
+
+    /**
+     * @return null
+     */
+    protected function getAppSubDir()
+    {
+        return is_null($this->appSubDir) ? APP_SUB_DIR : $this->appSubDir;
+    }
+
+    public function setServerPrefix($serverPrefix)
+    {
+        $this->serverPrefix = $serverPrefix;
+    }
+
+    protected function getServerPrefix()
+    {
+        return is_null($this->serverPrefix) ? SERVER_PREFIX : $this->serverPrefix;
+    }
+
+    /**
      * Create a file of the given name, with the given content
      * @throws ExceptionFile
      * @param String $name **Directory Separators are stripped out
@@ -63,7 +92,7 @@ abstract class FileOfModel
         $paths = $this->getFilePaths($noCache);
         $srcs = array();
         foreach ($paths as $path) {
-            $srcs[] = APP_SUB_DIR . preg_replace('#^' . preg_quote(SERVER_PREFIX, '#') . '#', '', $path);
+            $srcs[] = $this->getAppSubDir() . preg_replace('#^' . preg_quote($this->getServerPrefix(), '#') . '#', '', $path);
         }
         return $srcs;
     }
@@ -149,10 +178,23 @@ abstract class FileOfModel
         }
     }
 
+    public function setModelDirectory($dir)
+    {
+        $this->modelDirectory = $dir;
+    }
+
+    protected function getModelDirectory()
+    {
+        if (is_null($this->modelDirectory)) {
+            $this->modelDirectory = $this->Model->baseName . DS;
+        }
+        return $this->modelDirectory;
+    }
+
     protected function determineBaseDir()
     {
         $k = strval(floor($this->Model->id / 1000)) . 'k';
-        $baseDir = UPDIR_ROOT . $this->Model->baseName . DS . $k . DS . $this->Model->id . DS;
+        $baseDir = UPDIR_ROOT . $this->getModelDirectory() . $k . DS . $this->Model->id . DS;
         if (!empty($this->name)) {
             $baseDir .= $this->name . DS;
         }

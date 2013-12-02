@@ -9,12 +9,12 @@ class FileSingle extends FileOfModel
 
     public function getHref ()
     {
-        return APP_SUB_DIR . str_replace(SERVER_PREFIX, '', $this->getBaseDir() . $this->getFilename());
+        return $this->getAppSubDir() . str_replace($this->getServerPrefix(), '', $this->getBaseDir() . $this->getFilename());
     }
 
     public function getFileSrc($noCache = false)
     {
-        return APP_SUB_DIR . preg_replace('#^' . preg_quote(SERVER_PREFIX, '#') . '#', '', $this->getFilePath($noCache));
+        return $this->getAppSubDir() . preg_replace('#^' . preg_quote($this->getServerPrefix(), '#') . '#', '', $this->getFilePath($noCache));
     }
 
     public function getFilePath($noCache = false)

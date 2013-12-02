@@ -8,7 +8,7 @@ class FileMultiple extends FileOfModel
 		$hrefs = array();
 		$Paths = $this->getFilePaths();
 		foreach ($Paths as $Path) {
-			$hrefs[] = APP_SUB_DIR . str_replace(SERVER_PREFIX, '', $Path);
+			$hrefs[] = $this->getAppSubDir() . str_replace($this->getServerPrefix(), '', $Path);
 		}
 		return $hrefs;
 	}
