@@ -75,7 +75,7 @@ EOT;
 		if(file_exists($dest) && !unlink($dest)){return 'Unable to remove pre-existing file';}
 		if(!copy($_FILES[$this->inputName]['tmp_name'],$dest)){return 'There was a problem copying to '.$dest;}
 		if($this->File!=''){unlink($this->File);}
-		$_SESSION['msg']='File Uploaded Successfully';
+		$_SESSION[GOOD_MSG_KEY]='File Uploaded Successfully';
 		return true;
 	}
 	

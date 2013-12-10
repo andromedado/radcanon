@@ -76,8 +76,8 @@ class Response {
         $this->location = $req->post('_bounceBack', $req->server('REQUEST_URI', APP_SUB_DIR . '/'));
         $this->set('currentUri', $this->request->getIniURI());
         $this->set('currentPath', $this->request->getIniPath());
-        if (!isset($_SESSION['msg'])) $_SESSION['msg'] = array();
-        if (!isset($_SESSION['f_msg'])) $_SESSION['f_msg'] = array();
+        if (!isset($_SESSION[GOOD_MSG_KEY])) $_SESSION[GOOD_MSG_KEY] = array();
+        if (!isset($_SESSION[BAD_MSG_KEY])) $_SESSION[BAD_MSG_KEY] = array();
         if (defined('APP_TEMPLATES_DIR') && is_dir(APP_TEMPLATES_DIR)) {
             $this->tplDirs[] = APP_TEMPLATES_DIR;
         }
@@ -274,7 +274,7 @@ class Response {
     }
 
     public function setMessage ($msg, $bad = false) {
-        $k = $bad ? 'f_msg' : 'msg';
+        $k = $bad ? BAD_MSG_KEY : GOOD_MSG_KEY;
         $_SESSION[$k] = array($msg);
     }
 
@@ -284,7 +284,7 @@ class Response {
             $bad = true;
         }
         if (!empty($msg)) {
-            $k = $bad ? 'f_msg' : 'msg';
+            $k = $bad ? BAD_MSG_KEY : GOOD_MSG_KEY;
             $_SESSION[$k][] = $msg;
         }
     }
@@ -292,10 +292,10 @@ class Response {
     public function clearMessages ($bad = null)
     {
         if (is_null($bad) || $bad) {
-            $_SESSION['f_msg'] = array();
+            $_SESSION[BAD_MSG_KEY] = array();
         }
         if (is_null($bad) || !$bad) {
-            $_SESSION['msg'] = array();
+            $_SESSION[GOOD_MSG_KEY] = array();
         }
     }
 
@@ -320,8 +320,8 @@ class Response {
     {
         $msgs = array();
         if ($consumeMessages) {
-            $msgs = array('messages' => $_SESSION['msg'], 'errors' => $_SESSION['f_msg']);
-            $_SESSION['f_msg'] = $_SESSION['msg'] = array();
+            $msgs = array('messages' => $_SESSION[GOOD_MSG_KEY], 'errors' => $_SESSION[BAD_MSG_KEY]);
+            $_SESSION[BAD_MSG_KEY] = $_SESSION[GOOD_MSG_KEY] = array();
         }
         return array_merge($msgs, $this->getBasicTemplateVars(), $this->vars);
     }

@@ -139,7 +139,7 @@ class Controller {
     /**
      * Primary Handler For POST Requests
      * Throws a Location header and exits
-     * and should set a $_SESSION['msg'] or $_SESSION['fmsg']
+     * and should set a $_SESSION['msg'] or $_SESSION['f_msg']
      *
      * @param Request $Request
      * @param Response $Response

@@ -951,7 +951,7 @@ abstract class Model implements Iterator
      * @return void
      */
     public function setUpdatedMsg() {
-        $_SESSION['msg'] = $this->whatIAm . ' ' . $this->UpdatedWord;
+        $_SESSION[GOOD_MSG_KEY] = $this->whatIAm . ' ' . $this->UpdatedWord;
     }
 
     /**
@@ -959,20 +959,20 @@ abstract class Model implements Iterator
      * @return void
      */
     public function setCreatedMsg() {
-        $_SESSION['msg'] = $this->whatIAm . ' ' . $this->CreatedWord;
+        $_SESSION[GOOD_MSG_KEY] = $this->whatIAm . ' ' . $this->CreatedWord;
     }
 
     /**
-     * Set the Updated Final Destination
-     * @return void
+     * Get the Updated Final Destination
+     * @return string
      */
     public function getUpdatedLoc() {
         return FilterRoutes::buildUrl(array($this->baseName, 'Review', $this->id));
     }
 
     /**
-     * Set the Created Final Destination
-     * @return void
+     * Get the Created Final Destination
+     * @return string
      */
     public function getCreatedLoc() {
         return FilterRoutes::buildUrl(array($this->baseName, 'Review', $this->id));

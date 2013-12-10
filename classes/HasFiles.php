@@ -92,7 +92,7 @@ EOT;
 			}
 		}
 		if(!$v){return $msg;}
-		$_SESSION['msg']='File(s) Uploaded Successfully';
+		$_SESSION[GOOD_MSG_KEY]='File(s) Uploaded Successfully';
 		return true;
 	}
 	

@@ -33,4 +33,6 @@ if (!defined('RUNNING_AS_CLI')) define('RUNNING_AS_CLI', strtolower(substr(php_s
 if (!defined('APP_NAME')) define('APP_NAME', 'RADCanon');
 if (!defined('NO_OUTBOUND_EMAIL')) define('NO_OUTBOUND_EMAIL', false);
 if (!defined('SITE_HOST')) define('SITE_HOST', dirname(LIB_DIR) . DS);
+if (!defined('GOOD_MSG_KEY')) define('GOOD_MSG_KEY', 'msg');
+if (!defined('BAD_MSG_KEY')) define('BAD_MSG_KEY', 'f_msg');
 

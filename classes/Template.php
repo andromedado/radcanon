@@ -75,11 +75,11 @@ class Template {
     */
 
     public static function addNotifications($response) {
-        if (!empty($_SESSION['msg']) || !empty($_SESSION['fmsg'])) {
-            $msg = empty($_SESSION['msg']) ? '' : '<h2 class="msg s_msg">' . $_SESSION['msg'] . '</h2>';
+        if (!empty($_SESSION[GOOD_MSG_KEY]) || !empty($_SESSION['fmsg'])) {
+            $msg = empty($_SESSION[GOOD_MSG_KEY]) ? '' : '<h2 class="msg s_msg">' . $_SESSION[GOOD_MSG_KEY] . '</h2>';
             $msg .= empty($_SESSION['fmsg']) ? '' : '<h2 class="msg f_msg">' . $_SESSION['fmsg'] . '</h2>';
             $response = str_replace(self::$NotificationsPlaceHolder, $msg, $response);
-            $_SESSION['msg'] = $_SESSION['fmsg'] = '';
+            $_SESSION[GOOD_MSG_KEY] = $_SESSION['fmsg'] = '';
         }
         return $response;
     }

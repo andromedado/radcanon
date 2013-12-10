@@ -23,7 +23,7 @@ class ControllerAdmin extends ControllerAdminOnly
             $vars['level'] = $this->request->post('superAdmin', 'no') === 'yes' ? ModelSuperAdmin::MIN_VALID_LEVEL : 0;
             $A->safeUpdateVars($vars);
             $this->response->redirectTo(array('Admin', 'manage', $A->id));
-            $_SESSION['msg'] = 'Admin Updated';
+            $_SESSION[GOOD_MSG_KEY] = 'Admin Updated';
             return;
         }
         return array('html' => $this->renderForm($A));
@@ -39,7 +39,7 @@ class ControllerAdmin extends ControllerAdminOnly
             try {
                 $this->model->safeCreateWithVars($vars);
                 $this->response->redirectTo(array('Admin', 'manage', $this->model->id));
-                $_SESSION['msg'] = 'Admin Created';
+                $_SESSION[GOOD_MSG_KEY] = 'Admin Created';
                 return;
             } catch (ExceptionValidation $e) {
                 $errors->add($e->getMessage());
@@ -57,7 +57,7 @@ class ControllerAdmin extends ControllerAdminOnly
                         return Html::n('h1', '', 'You may not delete yourself');
                     }
                     $A->delete();
-                    $_SESSION['msg'] = 'Admin Deleted';
+                    $_SESSION[GOOD_MSG_KEY] = 'Admin Deleted';
                     $this->response->redirectTo(array('Admin', 'manage'));
                     return;
                 }
@@ -142,7 +142,7 @@ class ControllerAdmin extends ControllerAdminOnly
             Admin::removeLoginId();
             session_destroy();
             session_start();
-            $_SESSION['msg'] = 'You have logged out';
+            $_SESSION[GOOD_MSG_KEY] = 'You have logged out';
         }
         $this->response->redirectTo(array('Admin', 'login'));
         return;
@@ -200,7 +200,7 @@ class ControllerAdmin extends ControllerAdminOnly
             ));
             if ($MA->isValid() && $MA->passwordAcceptable($this->request->post('pwd'))) {
                 $MA->recordLogin();
-                $_SESSION['msg'] = 'You have logged in';
+                $_SESSION[GOOD_MSG_KEY] = 'You have logged in';
                 $dest = array('Admin');
                 if (!empty($_SESSION['afterLogin'])) {
                     $dest = $_SESSION['afterLogin'];

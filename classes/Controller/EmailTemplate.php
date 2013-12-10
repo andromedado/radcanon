@@ -66,7 +66,7 @@ class ControllerEmailTemplate extends ControllerSuperAdminOnly {
 				'last_email' => $this->request->post('last_email'),
 				'when_last_email' => time(),
 			));
-			$_SESSION['msg'] = 'Notification Sent';
+			$_SESSION[GOOD_MSG_KEY] = 'Notification Sent';
 			$this->response->redirectTo(array('Patient', 'review', $P->id));
 			return;
 		}
@@ -83,7 +83,7 @@ class ControllerEmailTemplate extends ControllerSuperAdminOnly {
 				$this->model->safeCreateWithVars($vars);
 				if ($this->model->isValid()) {
 					$this->response->redirectTo(array('EmailTemplate', 'review', $this->model->id));
-					$_SESSION['msg'] = 'Email Template Created';
+					$_SESSION[GOOD_MSG_KEY] = 'Email Template Created';
 					return;
 				} else {
 					$errors->add('There was a problem');
@@ -111,7 +111,7 @@ class ControllerEmailTemplate extends ControllerSuperAdminOnly {
 				try {
 					$ET->safeUpdateVars($vars);
 					$this->response->redirectTo(array('EmailTemplate', 'review', $ET->id));
-					$_SESSION['msg'] = 'Email Template Updated';
+					$_SESSION[GOOD_MSG_KEY] = 'Email Template Updated';
 					return;
 				} catch (ExceptionValidation $e) {
 					$errors->add($e->getMessage());
@@ -162,7 +162,7 @@ class ControllerEmailTemplate extends ControllerSuperAdminOnly {
 		if ($this->request->isPost()) {
 			$ET = EmailTemplateFactory::build($id);
 			$ET->updateVar('inactive', 1);
-			$_SESSION['msg'] = 'Email Template Deleted';
+			$_SESSION[GOOD_MSG_KEY] = 'Email Template Deleted';
 			$this->response->redirectTo(array('EmailTemplate', 'review'));
 		}
 	}
