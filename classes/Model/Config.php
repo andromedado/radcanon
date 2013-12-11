@@ -5,6 +5,7 @@ class ModelConfig extends ModelApp
     const TYPE_PX = 'px',
         TYPE_INT = 'int',
         TYPE_STR = 'str',
+        TYPE_CASH = 'cash',
         TYPE_BOOL = 'bool';
 
     const DEFAULT_TYPE = self::TYPE_STR;
@@ -45,6 +46,7 @@ class ModelConfig extends ModelApp
 
     protected static $Types = array(
         self::TYPE_PX => 'px',
+        self::TYPE_CASH => 'Cash',
         self::TYPE_INT => 'Number',
         self::TYPE_STR => 'Text',
         self::TYPE_BOOL => 'Yes/No',
@@ -65,6 +67,10 @@ class ModelConfig extends ModelApp
         }
         $this->displayValue = $this->value;
         switch ($this->type) {
+            case self::TYPE_CASH:
+                $this->inputType = 'input';
+                $this->inputValue = $this->displayValue = UtilsNumber::cashFormat($this->value);
+                break;
             case self::TYPE_PX:
                 $this->inputType = 'input';
                 $this->inputValue = $this->displayValue = sprintf('%dpx', $this->value);
@@ -90,6 +96,9 @@ class ModelConfig extends ModelApp
             case self::TYPE_PX:
             case self::TYPE_INT:
                 $vars['value'] = UtilsNumber::parseInt($vars['value']);
+                break;
+            case self::TYPE_CASH:
+                $vars['value'] = UtilsNumber::cashToNum($vars['value']);
                 break;
         }
     }
