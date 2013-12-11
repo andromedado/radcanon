@@ -243,6 +243,20 @@ abstract class Model implements Iterator
         return $d;
     }
 
+    /**
+     * Get basic data for this model
+     * [Includes db fields, and all read-only fields]
+     * @return Array
+     */
+    public function getBasicData()
+    {
+        $data = $this->getRawData();
+        foreach ($this->readOnly as $f) {
+            $data[$f] = $this->$f;
+        }
+        return $data;
+    }
+
     public function getData () {
         $d = isset(static::$AllData[$this->id]) ? static::$AllData[$this->id] : array();
         foreach ($this->genericallyAvailable as $f) {
