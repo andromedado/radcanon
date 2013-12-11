@@ -33,6 +33,7 @@ class ControllerMagic extends ControllerApp
             return array('good' => true);
         }
         $this->response->redirectTo(array($this->modelName, 'index'));
+        return;
     }
 
     protected function mayProceed($invoked, array $args)
