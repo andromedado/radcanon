@@ -10,7 +10,7 @@
 
     app.tpl = function (name, data, settings) {
         if (tpls[name]) {
-            return tpls[name](data, settings);
+            return tpls[name](data || {}, settings);
         }
         return '';
     };
