@@ -78,5 +78,11 @@ class AuthNet
         $this->transaction_key = $transaction_key;
     }
 
+    public static function maskCard($cardNumber)
+    {
+        $cardNumbers = preg_replace('/\D+/', '', $cardNumber);
+        return preg_replace('/\d(?=\d\d\d\d)/', '*', $cardNumbers);
+    }
+
 }
 
