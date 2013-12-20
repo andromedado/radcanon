@@ -11,6 +11,9 @@
 
     $(function () {
         $(document).on('click', '.toggle', handleToggle);
+        if ($.operator) {
+            $.operator.publish('toggle:loaded');
+        }
     });
 }(jQuery));
 
