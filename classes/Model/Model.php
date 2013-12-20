@@ -820,6 +820,9 @@ abstract class Model implements Iterator
      */
     public function updateVars(array $varsToVals)
     {
+        if (empty($varsToVals)) {
+            return true;
+        }
         $sets = $comma = '';
         $vs = array();
         foreach ($varsToVals as $var => $val) {
