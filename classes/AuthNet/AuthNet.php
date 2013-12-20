@@ -81,7 +81,7 @@ class AuthNet
     public static function maskCard($cardNumber)
     {
         $cardNumbers = preg_replace('/\D+/', '', $cardNumber);
-        return preg_replace('/\d(?=\d\d\d\d)/', '*', $cardNumbers);
+        return preg_replace('/(?<=\d\d\d\d)\d(?=\d\d\d\d)/', '*', $cardNumbers);
     }
 
 }
