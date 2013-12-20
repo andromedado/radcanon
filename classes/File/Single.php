@@ -29,6 +29,10 @@ class FileSingle extends FileOfModel
         return basename($this->getFilePath());
     }
 
+    public function deleteFile() {
+        return parent::deleteFile($this->getFilename());
+    }
+
     public function getFileExtension () {
         return array_pop(explode('.', $this->getFilename()));
     }
