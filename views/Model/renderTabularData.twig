@@ -1,0 +1,38 @@
+<h2>{{ rows|length }} {{ rowsName }}</h2>
+{% if rows|length > 0 %}
+<table class="data autoT">
+    <thead>
+        <tr>
+        {% for column in columns %}
+            <th>{{ column.name }}</th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+    {% for row in rows %}
+        <tr>
+        {% for cell in row.cells %}
+            <td>
+                {% if cell.href %}
+                <a href="{{ cell.href }}">
+                    {{ cell.value }}
+                </a>
+                {% else %}
+                {{ cell.value }}
+                {% endif %}
+            </td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+    {% if hasTFoot %}
+    <tfoot>
+    <tr>
+    {% for cell in tFoot.cells %}
+        <th>{{ cell.value }}</th>
+    {% endfor %}
+    </tr>
+    </tfoot>
+    {% endif %}
+</table>
+{% endif %}

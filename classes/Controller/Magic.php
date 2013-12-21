@@ -136,7 +136,9 @@ class ControllerMagic extends ControllerApp
     {
         $args = func_get_args();
         list($permitted, $return) = $this->mayProceed(__FUNCTION__, $args);
-        if (!$permitted) return $return;
+        if (!$permitted) {
+            return $return;
+        }
         if ($this->request->isAjax()) {
             try {
                 $this->defaultTemplate = $this->response->template = $this->getTemplate('ajIndex');
@@ -148,7 +150,61 @@ class ControllerMagic extends ControllerApp
         }
         $this->set('listTemplate', $this->getTemplate('renderList'));
         $this->set('liTemplate', $this->getTemplate('renderAsLi'));
-        return $this->_index($this->determineSettings(__FUNCTION__, $args));
+        $this->_index($this->determineSettings(__FUNCTION__, $args));
+    }
+
+    protected function renderTabularData(array $dataExposers)
+    {
+        $rows = array();
+        $columns = array();
+        $tFoot = array('cells' => array());
+        $hasTFoot = null;
+        $tFootCellValues = array();
+        foreach ($dataExposers as $dataExposer) {
+            /** @var ExposesTabularData $dataExposer */
+            if (!$dataExposer instanceof ExposesTabularData) {
+                throw new InvalidArgumentException('All elements passed to ' . __FUNCTION__ . 'must implement ExposesTabularData');
+            }
+            if (empty($columns)) {
+                $columns = $dataExposer->getColumns();
+            }
+            if (!isset($hasTFoot)) {
+                $hasTFoot = $dataExposer->hasTFoot();
+                if ($hasTFoot) {
+                    foreach ($columns as $index => $column) {
+                        $tFootCellValues[$index] = $dataExposer->getBaseTFootCellValueForColumn($column);
+                    }
+                }
+            }
+            $row = $dataExposer->getRowAttributes();
+            $row['cells'] = array();
+            foreach ($columns as $index => $column) {
+                $cell = $dataExposer->getCellAttributesForColumn($column);
+                $cell['value'] = $dataExposer->getCellValueForColumn($column);
+                $row['cells'][] = $cell;
+                if ($hasTFoot) {
+                    $dataExposer->mutateTFootCellValueForColumn($tFootCellValues[$index], $column);
+                }
+            }
+            $rows[] = $row;
+        }
+        if ($hasTFoot && isset($dataExposer)) {
+            $tFoot = $dataExposer->getTFootAttributes();
+            $tFoot['cells'] = array();
+            foreach ($columns as $index => $column) {
+                $footCell = array('value' => $tFootCellValues[$index]);
+                $dataExposer->finalTFootCellMutate($footCell, $column);
+                $tFoot['cells'][] = $footCell;
+            }
+        }
+        $this->response->template = 'Model/renderTabularData.twig';
+        $this->set(array(
+            'rowsName' => 'Entries',
+            'columns' => $columns,
+            'rows' => $rows,
+            'hasTFoot' => $hasTFoot,
+            'tFoot' => $tFoot,
+        ));
     }
 
 }
