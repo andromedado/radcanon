@@ -1113,13 +1113,20 @@ abstract class Model implements Iterator
             $sql .= " WHERE ";
             if (!empty($options['fields'])) {
                 if (isset($options['LIKE'])) {
-                    $args = array_values($options['fields']);
-                    foreach ($options['fields'] as $f => $v) {
-                        $sql .= $and . DBCFactory::quote($f) . " LIKE ?";
-                        $and = ' AND ';
-                    }
-                    foreach ($args as &$arg) {
-                        $arg = '%' . $arg . '%';
+                    if (!empty($options['fields'])) {
+                        $args = array_values($options['fields']);
+                        $sql .= $and . '(';
+                        $likeJoiner = isset($options['LIKE-JOINER']) ? sprintf(' %s ', trim($options['LIKE-JOINER'])) : ' AND ';
+                        $curLikeJoiner = '';
+                        foreach ($options['fields'] as $f => $v) {
+                            $sql .= $curLikeJoiner . DBCFactory::quote($f) . " LIKE ?";
+                            $curLikeJoiner = $likeJoiner;
+                            $and = ' AND ';
+                        }
+                        $sql .= ')';
+                        foreach ($args as &$arg) {
+                            $arg = '%' . $arg . '%';
+                        }
                     }
                 } else {
                     foreach ($options['fields'] as $f => $v) {
