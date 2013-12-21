@@ -1,5 +1,8 @@
 <h2>{{ rows|length }} {{ rowsName }}</h2>
 {% if rows|length > 0 %}
+    {% if csvHref %}
+        <a href="{{ csvHref }}" target="csv">Download As CSV</a>
+    {% endif %}
 <table class="data autoT">
     <thead>
         <tr>
@@ -35,4 +38,7 @@
     </tfoot>
     {% endif %}
 </table>
+{% if csvHref %}
+    <a href="{{ csvHref }}" target="csv">Download As CSV</a>
+{% endif %}
 {% endif %}

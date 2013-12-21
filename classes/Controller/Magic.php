@@ -153,7 +153,7 @@ class ControllerMagic extends ControllerApp
         $this->_index($this->determineSettings(__FUNCTION__, $args));
     }
 
-    protected function renderTabularData(array $dataExposers)
+    protected function renderTabularData(array $dataExposers, CSV $csv = null)
     {
         $rows = array();
         $columns = array();
@@ -167,6 +167,12 @@ class ControllerMagic extends ControllerApp
             }
             if (empty($columns)) {
                 $columns = $dataExposer->getColumns();
+                if (!is_null($csv)) {
+                    foreach ($columns as $column) {
+                        $csv->addCell($column['name']);
+                    }
+                    $csv->finishRow();
+                }
             }
             if (!isset($hasTFoot)) {
                 $hasTFoot = $dataExposer->hasTFoot();
@@ -181,10 +187,16 @@ class ControllerMagic extends ControllerApp
             foreach ($columns as $index => $column) {
                 $cell = $dataExposer->getCellAttributesForColumn($column);
                 $cell['value'] = $dataExposer->getCellValueForColumn($column);
+                if (!is_null($csv)) {
+                    $csv->addCell($dataExposer->getCellValueForColumn($column, false));
+                }
                 $row['cells'][] = $cell;
                 if ($hasTFoot) {
                     $dataExposer->mutateTFootCellValueForColumn($tFootCellValues[$index], $column);
                 }
+            }
+            if (!is_null($csv)) {
+                $csv->finishRow();
             }
             $rows[] = $row;
         }
