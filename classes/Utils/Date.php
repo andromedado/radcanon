@@ -227,13 +227,14 @@ abstract class UtilsDate
 
     /**
      * Given two dates, is the first one an earlier day than the second?
-     * @param String $this
+     * If same date, returns false
+     * @param String $_this
      * @param String $that
      * @return Boolean
      */
-    public static function thisDayIsBeforeThatDay($this, $that)
+    public static function thisDayIsBeforeThatDay($_this, $that)
     {
-        $thisTs = (int)strtotime($this);
+        $thisTs = (int)strtotime($_this);
         $thatTs = (int)strtotime($that);
         return $thisTs < $thatTs && date('Y-m-d', $thisTs) !== date('Y-m-d', $thatTs);
     }
