@@ -342,6 +342,9 @@ var App = (function ($) {
             obj.error = obj.error || function() {
                 obj.recip.text('There was an error. Please try again later');
             };
+            if (obj.hasOwnProperty('ajMask')) {
+                obj.recip.ajMask(obj.ajMask);
+            }
         }
         obj.success = obj.success || function(data){
             if (data) {
