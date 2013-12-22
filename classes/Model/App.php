@@ -6,6 +6,5 @@
  */
 class ModelApp extends Model
 {
-	
 }
 
