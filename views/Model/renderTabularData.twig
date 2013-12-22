@@ -1,3 +1,6 @@
+{% if tabularTitle %}
+    <h2>{{ tabularTitle }}</h2>
+{% endif %}
 <h2>{{ rows|length }} {{ rowsName }}</h2>
 {% if rows|length > 0 %}
     {% if csvHref %}
@@ -18,10 +21,14 @@
             <td>
                 {% if cell.href %}
                 <a href="{{ cell.href }}">
-                    {{ cell.value }}
-                </a>
+                {% endif %}
+                {% if cell.containsHtml %}
+                    {{ cell.value|raw }}
                 {% else %}
-                {{ cell.value }}
+                    {{ cell.value }}
+                {% endif %}
+                {% if cell.href %}
+                </a>
                 {% endif %}
             </td>
         {% endfor %}
