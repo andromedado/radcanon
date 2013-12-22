@@ -1210,12 +1210,20 @@ abstract class Model implements Iterator
         )));
     }
 
-    public static function findAllBelongingTo (Model $Model, $additionalOptions = array()) {
+    public static function findAllBelongingTo ($models, $additionalOptions = array()) {
         static::attachDefaultSort($additionalOptions);
+        $fields = array();
+        if (!is_array($models)) {
+            $models = array($models);
+        }
+        foreach ($models as $Model) {
+            if (!($Model instanceof Model)) {
+                throw new InvalidArgumentException('Invalid Param for ' . __FUNCTION__ . ', must be instance of Model');
+            }
+            $fields[$Model->idCol] = $Model->id;
+        }
         return static::findAll(array_merge($additionalOptions, array(
-            'fields' => array(
-                $Model->idCol => $Model->id,
-            ),
+            'fields' => $fields,
         )));
     }
 
