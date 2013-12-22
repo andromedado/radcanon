@@ -1133,14 +1133,23 @@ abstract class Model implements Iterator
                         if (is_null($v)) {
                             $sql .= $and . DBCFactory::quote($f) . " IS NULL";
                         } elseif (is_array($v)) {
-                            $sql .= $and . DBCFactory::quote($f) . " IN (";
+                            $setFragment = DBCFactory::quote($f) . " IN (";
                             $inComma = '';
+                            $incNull = false;
                             foreach ($v as $val) {
-                                $sql .= $inComma . '?';
+                                if (is_null($val)) {
+                                    $incNull = true;
+                                    continue;
+                                }
+                                $setFragment .= $inComma . '?';
                                 $args[] = $val;
                                 $inComma = ', ';
                             }
-                            $sql .= ")";
+                            $setFragment .= ")";
+                            if ($incNull) {
+                                $setFragment = sprintf("(%s OR %s IS NULL)", $setFragment, DBCFactory::quote($f));
+                            }
+                            $sql .= $and . $setFragment;
                         } else {
                             $sql .= $and . DBCFactory::quote($f) . " = ?";
                             $args[] = $v;
