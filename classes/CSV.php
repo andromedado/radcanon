@@ -43,12 +43,21 @@ class CSV
 		switch ($this->type) {
 			case self::TYPE_SESSION ://Intentional Fall-Thru
 			default:
-				if (!isset($_SESSION[__CLASS__])) $_SESSION[__CLASS__] = array();
-				if (!isset($_SESSION[__CLASS__][$this->name])) $_SESSION[__CLASS__][$this->name] = '';
+				if (!isset($_SESSION[__CLASS__]) || !is_array($_SESSION[__CLASS__])) {
+                    $_SESSION[__CLASS__] = array();
+                }
+				if (!isset($_SESSION[__CLASS__][$this->name])) {
+                    $_SESSION[__CLASS__][$this->name] = '';
+                }
 				$this->data =& $_SESSION[__CLASS__][$this->name];
 		}
 		$this->preFilters = $preFilters;
 	}
+
+    public function getName()
+    {
+        return $this->name;
+    }
 	
 	public function isEmpty()
 	{
