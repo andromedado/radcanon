@@ -18,7 +18,7 @@
     {% for row in rows %}
         <tr>
         {% for cell in row.cells %}
-            <td>
+            <td{% for attrName, attrValue in cell.attributes %} {{ attrName }}="{{ attrValue }}"{% endfor %}>
                 {% if cell.href %}
                 <a href="{{ cell.href }}">
                 {% endif %}
