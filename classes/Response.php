@@ -74,6 +74,7 @@ class Response {
     public function __construct(Request $req) {
         $this->request = $req;
         $this->location = $req->post('_bounceBack', $req->server('REQUEST_URI', APP_SUB_DIR . '/'));
+        $this->set('_defaultSiteHost', DEFAULT_SITE_HOST);
         $this->set('currentUri', $this->request->getIniURI());
         $this->set('currentPath', $this->request->getIniPath());
         if (!isset($_SESSION[GOOD_MSG_KEY])) $_SESSION[GOOD_MSG_KEY] = array();
