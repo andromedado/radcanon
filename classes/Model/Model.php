@@ -1270,6 +1270,17 @@ abstract class Model implements Iterator
     }
 
     /**
+     * @param Array $fields
+     * @return Model
+     */
+    public static function findOneByFields(array $fields)
+    {
+        return static::findOne(array(
+            'fields' => $fields,
+        ));
+    }
+
+    /**
      * @param $fieldName
      * @param $fieldValue
      * @return Array
