@@ -2,6 +2,7 @@
 new App.Module(function ($, app) {
     'use strict';
     var Module = {name : 'ajaxForm'},
+        Operator,
         ajaxForm,
         forms = [],
         inputUsable,
@@ -23,7 +24,7 @@ new App.Module(function ($, app) {
     };
 
     ajaxForm.prototype.submit = function () {
-        var data = {};
+        var data = {}, self = this;
         this.$results.ajMask(1);
         this.inputs.each(function (i, E) {
             var $E = $(E);
@@ -36,6 +37,10 @@ new App.Module(function ($, app) {
             data : data,
             type : this.type,
             recip : this.$results
+        }).done(function () {
+            if (Operator) {
+                $.operator.publish('ajaxForm:loadedResults', {results : self.$results});
+            }
         });
     };
 
@@ -81,6 +86,10 @@ new App.Module(function ($, app) {
         });
     };
     Module.onReady = Module.listen;
+
+    $(function () {
+        Operator = !!($.operator && $.operator.publish);
+    });
 
     return Module;
 });
