@@ -139,7 +139,7 @@ class Email {
         if (preg_match('/[^\s]<br\s*\/>[^\s]/', $htmlBody)){
             $htmlBody = preg_replace('/<br\s*\/>/', "<br />\n", $htmlBody);
         }
-        $Contact_Email = preg_replace('/[\s\S]+<([^>]+)>[\s\S]+/', '$1', $from);
+        $Contact_Email = preg_replace('/[\s\S]+<([^>]+)>[\s\S]*$/', '$1', $from);
 
         $mime_boundary = "----=_" . date('Ymd') . rand(100000000000, 1000000000000) . date('_His');
         $nl = "\r\n";
