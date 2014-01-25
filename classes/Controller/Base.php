@@ -109,7 +109,9 @@ abstract class ControllerBase
 
     public function invoke ($method, array $arguments = array()) {
         $this->prefilterInvocation($method, $arguments);
-        $this->response->set('invocation', array(get_class($this), $method, $arguments));
+        $inv = array(get_class($this), $method, $arguments);
+        $this->response->set('invocation', $inv);
+        call_user_func_array(array($this->response, 'setInvocation'), $inv);
         if (!method_exists($this, $method)) throw new ExceptionBase('Invoke called on with invalid combo: ' . $method);
         $this->defaultTemplate = $this->getTemplateDir() . DS . $method . '.html.twig';
         if ($this->response->templateExists($this->defaultTemplate)) {

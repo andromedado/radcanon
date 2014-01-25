@@ -144,7 +144,7 @@ class Response {
     }
 
     public function setInvocation ($This, $method, $args) {
-        $this->invocation = array('This' => $This, 'Method' => $method, 'Arguments' => $args);
+        $this->invocation = array('This' => strval($This), 'Method' => $method, 'Arguments' => $args);
     }
 
     /**
@@ -364,11 +364,15 @@ class Response {
             header('Content-Type: ' . $this->contentType, true);
         }
         $echoContent = true;
+        if (DEBUG) {
+            header('X-Debug: true');
+            header('X-Invocation: ' . json_encode($this->invocation));
+            if ($this->exception) {
+                header('X-Exception: ' . $this->exception->getMessage());
+            }
+        }
         switch ($this->type) {
             case self::TYPE_LOCATION :
-                if (DEBUG) {
-                    header('X-Invocation: ' . json_encode($this->invocation));
-                }
                 if (session_id() && isset($_SESSION['bounceBack']) && $_SESSION['bounceBack'] === $this->location) {
                     $_SESSION['bounceBack'] = null;
                 }
@@ -386,9 +390,6 @@ class Response {
                 $content = $this->renderFromTemplate($this->template, true);
                 break;
             case self::TYPE_JSON :
-                if (DEBUG && is_array($content) && PERMIT_AJAX_DEBUG) {
-                    $content['_invocation'] = $this->invocation;
-                }
                 if (is_array($content) && isset($content['html']) && is_object($content['html']) && get_class($content['html']) !== 'stdClass') {
                     $content['html'] = "{$content['html']}";
                 }

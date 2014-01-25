@@ -1,0 +1,22 @@
+{% extends "base.html.twig" %}
+{% block mainContent %}
+    <h1>Login</h1>
+    <form action="{{ action }}" method="post">
+        <table class="autoT">
+            <tbody>
+            <tr>
+                <th>E-mail Address:</th>
+                <td><input type="text" name="email" /></td>
+            </tr>
+            <tr>
+                <th>Password</th>
+                <td><input type="password" name="pwd" /></td>
+            </tr>
+            </tbody>
+        </table>
+        <div align="center">
+            <input type="submit" value="login" />
+        </div>
+    </form>
+    <a href="{{ forgotHref }}">forgot your password?</a>
+{% endblock %}
