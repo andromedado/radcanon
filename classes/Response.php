@@ -65,7 +65,7 @@ class Response {
 
     protected static $ContentTypes = array(
         'text/html',
-        'text/json',
+        'application/json',
         'text/xml',
         null,
         'text/csv',
