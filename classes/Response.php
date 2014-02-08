@@ -312,6 +312,11 @@ class Response {
         return $this->TwigEnvironment;
     }
 
+    public function clearCompiledTemplates()
+    {
+        $this->getTwigEnvironment()->clearCacheFiles();
+    }
+
     public function getBasicTemplateVars()
     {
         return array_merge($this->defaultVars, $this->appVars);
