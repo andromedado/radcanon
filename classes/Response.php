@@ -170,6 +170,15 @@ class Response {
         return $this;
     }
 
+    public function rmScript()
+    {
+        $args = func_get_args();
+        foreach ($args as $arg) {
+            unset($this->vars['scripts'][$arg]);
+        }
+        return $this;
+    }
+
     public function addStyle () {
         $args = func_get_args();
         foreach ($args as $arg) {
