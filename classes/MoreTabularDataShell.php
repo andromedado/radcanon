@@ -18,6 +18,16 @@ abstract class MoreTabularDataShell
         $this->wrapped = $wrapped;
     }
 
+    public function __call($method, $arguments)
+    {
+        return call_user_func_array(array($this->wrapped, $method), $arguments);
+    }
+
+    public function __get($var)
+    {
+        return $this->wrapped->{$var};
+    }
+
     public function getRowAttributes()
     {
         return $this->wrapped->getRowAttributes();

@@ -66,7 +66,7 @@ class Response {
 
     protected static $ContentTypes = array(
         'text/html',
-        'text/json',
+        'application/json',
         'text/xml',
         null,
         'text/csv',
@@ -167,6 +167,15 @@ class Response {
         $args = func_get_args();
         foreach ($args as $arg) {
             $this->vars['scripts'][$arg] = $arg;
+        }
+        return $this;
+    }
+
+    public function rmScript()
+    {
+        $args = func_get_args();
+        foreach ($args as $arg) {
+            unset($this->vars['scripts'][$arg]);
         }
         return $this;
     }
@@ -311,6 +320,11 @@ class Response {
             $this->TwigEnvironment->addExtension(new Twig_Extension_Debug());
         }
         return $this->TwigEnvironment;
+    }
+
+    public function clearCompiledTemplates()
+    {
+        $this->getTwigEnvironment()->clearCacheFiles();
     }
 
     public function getBasicTemplateVars()
