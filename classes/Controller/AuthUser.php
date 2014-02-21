@@ -37,7 +37,7 @@ class ControllerAuthUser extends ControllerMagic
         if ($User->requiresPasswordChange()) {
             return FilterRoutes::buildUrl(array('AuthUser', 'changePassword', 'must'));
         }
-        return FilterRoutes::buildUrl(array('Schedule'));
+        return '/' . APP_SUB_DIR;
     }
 
     public function forgotPassword ()
