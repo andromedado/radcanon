@@ -122,7 +122,7 @@ class ModelUser extends ModelApp
     }
 
     public function requiresPasswordChange () {
-        return $this->requires_password_change === '1';
+        return intval($this->requires_password_change) === 1;
     }
 
     public function getTmpPasswordExpires () {
@@ -168,6 +168,11 @@ class ModelUser extends ModelApp
         return self::$HashAlgo;
     }
 
+    public function logout()
+    {
+        Admin::removeLoginId();
+    }
+
     public function recordLogin () {
         Admin::setLoginId($this->id);
         if ($this->tmp_expires > time()) {
@@ -193,7 +198,7 @@ class ModelUser extends ModelApp
 
     public static function findAll()
     {
-        return static::findAll(array(
+        return parent::findAll(array(
             'conditions' => array(
                 'sql' => DBCFactory::quote('level') . " >= ?",
                 'args' => array(

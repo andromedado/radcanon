@@ -3,7 +3,7 @@
 abstract class UtilsString
 {
 	const IMAGE_FILENAME_REGEXP = '/\.(gif|jpg|jpeg|png)$/i';
-	const EMAIL_REGEXP = '/[A-Z]+[A-Z\d_\.]*@[^\.]+\.[^\.]+/i';
+	const EMAIL_REGEXP = '/[A-Z]+[A-Z\d_\.\+]*@[^\.]+\.[^\.]+/i';
 	const DOMAIN_REGEXP = '/[A-Z\d-]+\.[A-Z]{2,}/i';
 	
 	/**

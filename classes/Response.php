@@ -42,6 +42,7 @@ class Response {
         'styles' => array(),
         'scripts' => array(),
         'title' => DEFAULT_PAGE_TITLE,
+        'appName' => APP_NAME,
         'content' => '',
         'metas' => '',
         'baseHref' => BASE_URL,

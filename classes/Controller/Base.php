@@ -91,20 +91,26 @@ abstract class ControllerBase
         return preg_replace('/^Controller/', '', get_class($this));
     }
 
+    protected function ifCssExistsAddIt($name)
+    {
+        if (file_exists(CSS_DIR . $name . '.css') || file_exists(RADCANON_CSS_DIR . $name . '.css')) {
+            $this->addStyle($name);
+        }
+    }
+
+    protected function ifJsExistsAddIt($name)
+    {
+        if (file_exists(JS_DIR . $name . '.js') || file_exists(RADCANON_JS_DIR . $name . '.js')) {
+            $this->addScript($name);
+        }
+    }
+
     protected function autoAddAssets($method, $arguments = array())
     {
-        if (file_exists(CSS_DIR . strtolower($this->baseName) . '.css')) {
-            $this->addStyle(strtolower($this->baseName));
-        }
-        if (file_exists(CSS_DIR . strtolower($this->baseName . '-' . $method) . '.css')) {
-            $this->addStyle(strtolower($this->baseName . '-' . $method));
-        }
-        if (file_exists(JS_DIR . strtolower($this->baseName) . '.js')) {
-            $this->addScript(strtolower($this->baseName));
-        }
-        if (file_exists(JS_DIR . strtolower($this->baseName . '-' . $method) . '.js')) {
-            $this->addScript(strtolower($this->baseName . '-' . $method));
-        }
+        $this->ifCssExistsAddIt(strtolower($this->baseName));
+        $this->ifCssExistsAddIt(strtolower($this->baseName . '-' . $method));
+        $this->ifJsExistsAddIt(strtolower($this->baseName));
+        $this->ifJsExistsAddIt(strtolower($this->baseName . '-' . $method));
     }
 
     public function invoke ($method, array $arguments = array()) {

@@ -30,7 +30,7 @@ class AuthUser extends User
     }
 
     /**
-     * @return Model
+     * @return ModelUser
      */
     public function getModel ()
     {

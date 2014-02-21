@@ -2,16 +2,17 @@
 
 class EmailWelcome extends Email
 {
+    const SUBJECT = 'New User Account';
 	/** @var ModelUser $User */
 	protected $User = NULL;
 	protected $firstPassword;
-	protected $subject = 'New User Account';
-	
+
 	public function __construct(ModelUser $U, $firstPassword) {
 		if (!$U->isValid()) throw new ExceptionBase('Invalid User');
 		$this->User = $U;
 		$this->firstPassword = $firstPassword;
-		parent::__construct($U->email, $this->subject);
+        $this->subject = self::SUBJECT;
+		parent::__construct($U->email, self::SUBJECT);
 	}
 	
 	protected function load() {

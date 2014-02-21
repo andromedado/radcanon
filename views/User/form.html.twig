@@ -1,0 +1,20 @@
+{% extends "genericForm.html.twig" %}
+{% block tbody %}
+    <tr>
+        <th>First Name</th>
+        <td><input type="text" name="fname" value="{{ model.fname }}" /></td>
+    </tr>
+    <tr>
+        <th>Last Name</th>
+        <td><input type="text" name="lname" value="{{ model.lname }}" /></td>
+    </tr>
+    <tr>
+        <th>Email</th>
+        <td><input type="text" name="email" value="{{ model.email }}" class="not_blank email_required" /></td>
+    </tr>
+    <tr>
+        <th>Set Password</th>
+        <td><input type="text" name="pwd" value="" class="{% if not model.isValid %}not_blank{% endif %}" /></td>
+    </tr>
+    {% include "User/moreTbody.html.twig" ignore missing %}
+{% endblock %}

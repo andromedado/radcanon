@@ -5,13 +5,15 @@
  * This is left abstract in radcanon, so, just subclass or copy this file into
  * your app and remove abstract if you want it for free.
  */
-/*
-abstract
-*/
 class ControllerAuthUser extends ControllerMagic
 {
-    protected $GateKeeperMethods = array(
-    );
+    protected $modelName = 'ModelAuthUser',
+        $TemplateDir = 'AuthUser',
+        $baseName = 'AuthUser',
+        $GateKeeperMethods = array(
+            'isAuthUser' => null,
+        );
+
     protected static $anytime = array(
         'login', 'forgotpassword', 'resetsent'
     );
@@ -32,7 +34,10 @@ class ControllerAuthUser extends ControllerMagic
 
     protected function getLoggedInDestination(ModelUser $User)
     {
-        return APP_SUB_DIR . '/';
+        if ($User->requiresPasswordChange()) {
+            return FilterRoutes::buildUrl(array('AuthUser', 'changePassword', 'must'));
+        }
+        return FilterRoutes::buildUrl(array('Schedule'));
     }
 
     public function forgotPassword ()
@@ -64,6 +69,34 @@ class ControllerAuthUser extends ControllerMagic
 
     public function resetSent()
     {}
+
+    public function logout()
+    {
+        if ($this->user instanceof AuthUser) {
+            $this->user->getModel()->logout();
+            $this->response->redirectTo(FilterRoutes::buildUrl(array('AuthUser', 'login')));
+            $this->response->addMessage('You\'ve been logged out');
+            return;
+        }
+    }
+
+    public function changePassword ($modifier = '') {
+        $user = $this->user;
+        if ($this->request->isPost() && $user instanceof AuthUser) {
+            /** @var AuthUser $user */
+            try {
+                $user->getModel()->updatePassword($this->request->post());
+                $this->response->addMessage('Password Updated');
+                $this->response->redirectTo($this->getLoggedInDestination($user->getModel()));
+                return;
+            } catch (ExceptionValidation $e) {
+                $this->response->addMessage($e->getMessage(), true);
+            }
+        }
+
+        $this->set('modifier', $modifier);
+        return;
+    }
 
     public function login()
     {

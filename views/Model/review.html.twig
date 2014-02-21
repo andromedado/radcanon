@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "appBase.html.twig" %}
 {% block mainContent %}
 <h1><a href="{{ model.updateHref }}" class="fr edit-model">edit</a>{{ model.whatIAm }}: {{ model.name }}</h1>
 {% include templateDir ~ "/review.body.html.twig" ignore missing %}
