@@ -2,7 +2,8 @@
 
 abstract class UtilsDate
 {
-    const EMPTY_DATE = '0000-00-00';
+    const EMPTY_DATE = '0000-00-00',
+        DB_FORMAT = 'Y-m-d';
 
     /**
      * Given two dates (String or UnixTimestamp) is
