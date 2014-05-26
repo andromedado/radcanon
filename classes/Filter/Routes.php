@@ -6,20 +6,20 @@ class FilterRoutes implements Filter
     protected static $DeniedRoutes = array(
     );
     protected static $PregRoutes = array(
-        'example' => array(
-            'decode' => array(
-                'pattern' => '#^example-example/(\d+)$#',
-                'controller' => 'Example',
-                'action' => 'example',
-                'arguments' => array('$1'),
-            ),
-            'encode' => array(
-                'pattern' => 'example-example/%3$d',
-                'controller' => '#^Example#',
-                'action' => '#^example#',
-                'arguments' => array('#^\d+$#'),
-            ),
-        ),
+//        'example' => array(
+//            'decode' => array(
+//                'pattern' => '#^example-example/(\d+)$#',
+//                'controller' => 'Example',
+//                'action' => 'example',
+//                'arguments' => array('$1'),
+//            ),
+//            'encode' => array(
+//                'pattern' => 'example-example/%3$d',
+//                'controller' => '#^Example#',
+//                'action' => '#^example#',
+//                'arguments' => array('#^\d+$#'),
+//            ),
+//        ),
     );
     protected static $Routes = array(
         '' => array(
@@ -63,6 +63,10 @@ class FilterRoutes implements Filter
             }
         }
         self::$Routes[$url] = $path;
+    }
+
+    public static function addPregRoute($name, $route) {
+        self::$PregRoutes[$name] = $route;
     }
 
     public function filter(Request $req, Response $res, User $user) {
@@ -125,8 +129,8 @@ class FilterRoutes implements Filter
                 }
             }
             if (!isset($path['arguments'])) $path['arguments'] = array();
-            foreach (self::$PregRoutes as $bits) {
-                if (isset($path['controller']) && isset($path['action']) && count($path['arguments']) === count($bits['encode']['arguments'])) {
+            foreach (self::$PregRoutes as $routeName => $bits) {
+                if (isset($bits['encode']) && isset($path['controller']) && isset($path['action']) && count($path['arguments']) === count($bits['encode']['arguments'])) {
                     if (preg_match($bits['encode']['controller'], $path['controller']) && preg_match($bits['encode']['action'], $path['action'])) {
                         $continue = true;
                         foreach ($bits['encode']['arguments'] as $k => $pattern) {
